@@ -77,8 +77,7 @@ class MenuHandler:
                 current_button.exec_command()
 
             elif event.type == pygame.MOUSEWHEEL:
-                self.menues[current_menu].scroll += event.y * self.scroll_strength_multiplier
-                self.menues[current_menu].set_render_flag_all()
+                self.menues[current_menu].scroll_event(event.y * self.scroll_strength_multiplier)
 
             if event.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
                 for key, obj in self.menues[current_menu].objects.items():

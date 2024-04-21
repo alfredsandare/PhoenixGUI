@@ -1,5 +1,6 @@
+from .rendered_menu_object import RenderedMenuObject
 from .shape import Shape
-from .util import flatten_list, is_button
+from .util import flatten_list, is_button, update_pos_by_anchor
 import time
 
 class Menu:
@@ -15,7 +16,7 @@ class Menu:
         self.bg_color = bg_color
 
         self.enable_scroll = False
-        self.scroll = 0
+        self.scroll = 100
         self.scroll_slidebar = None
 
     def add_object(self, id, _object):
@@ -35,7 +36,7 @@ class Menu:
 
         for key, item in self.objects.items():
             if item.render_flag:
-                rendered = item.render(self.pos, self.size, ui_size, self.scroll)
+                rendered = item.render(self.pos, self.size, ui_size, -self.scroll)
                 self.rendered_objects[key] = rendered
                 item.render_flag = False
 
@@ -78,9 +79,22 @@ class Menu:
         # gets the total size of the menu dependent on the items
         largest_x = 0
         largest_y = 0
-        for obj in self.rendered_objects:
-            size = obj.image.get_size()
-            pos = obj.pos()
+        pairs = []
+        for key, objs in self.rendered_objects.items():
+            if key in ("_bg", "_outline"):
+                continue
+            if type(objs) is list:
+                for obj in objs:
+                    pairs.append([key, obj])
+            else:
+                pairs.append([key, objs])
+
+        for key, obj in pairs:
+            if isinstance(obj, RenderedMenuObject):
+                size = obj.image.get_size()
+            else:  # RenderedMenuShape
+                size = obj.size
+            pos = update_pos_by_anchor(self.objects[key].pos, size, self.objects[key].anchor)
             if size[0] + pos[0] > largest_x:
                 largest_x = size[0] + pos[0]
             if size[1] + pos[1] > largest_y:
@@ -91,3 +105,18 @@ class Menu:
     def set_render_flag_all(self):
         for obj in self.objects.values():
             obj.render_flag = True
+
+    def scroll_event(self, scroll):
+        self.scroll -= scroll
+
+        max_scroll = self.get_size_from_items()[1] - self.size[1]
+        if max_scroll < 0:
+            max_scroll = 0
+
+        if self.scroll < 0:
+            self.scroll = 0
+        if self.scroll > max_scroll:
+            self.scroll = max_scroll
+        
+        self.set_render_flag_all()
+        

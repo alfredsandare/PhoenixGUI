@@ -24,7 +24,7 @@ menu_handler.add_object("menu", "my_image", menu_image)
 text2 = Text((50, 150), "Hello lorem ipsum dolor%%0 255 0%There lorem ipsum% Hello again", "arial", 20, color=(255, 0, 0), wrap_lines=True)
 menu_handler.add_object("menu2", "my_text", text2)
 
-button = Button((50, 50), 
+button = Button((50, 700), 
                 text="Johannes",
                 text_color=(255, 255, 255),
                 text_hover_color=(255, 100, 100),

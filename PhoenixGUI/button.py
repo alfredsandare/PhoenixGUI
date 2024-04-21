@@ -82,7 +82,6 @@ class Button(MenuObject):
                                max_size=self.max_size, 
                                anchor=self.anchor)
             rendered_menu_image = menu_image.render(menu_pos, menu_size, ui_size, scroll)
-        print("HOLA BINGSUS:", scroll)
 
         if self.text:
             text_color_to_use = self.text_color
