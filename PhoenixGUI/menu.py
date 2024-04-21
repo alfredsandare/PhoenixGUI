@@ -16,7 +16,7 @@ class Menu:
         self.bg_color = bg_color
 
         self.enable_scroll = False
-        self.scroll = 100
+        self.scroll = 0
         self.scroll_slidebar = None
 
     def add_object(self, id, _object):
