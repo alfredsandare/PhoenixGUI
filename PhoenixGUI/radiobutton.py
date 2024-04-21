@@ -1,3 +1,4 @@
+from .image import Image
 from .text import Text
 from .util import update_pos_by_anchor, flatten_list
 from .shape import Shape
@@ -70,7 +71,7 @@ class Radiobutton(MenuObject):
     def switch(self):
         self.is_checked = not self.is_checked
 
-    def render(self, menu_pos, menu_size, ui_size):
+    def render(self, menu_pos, menu_size, ui_size, scroll):
         rendered_objects = []
 
         text_color = self.text_color
@@ -92,11 +93,11 @@ class Radiobutton(MenuObject):
             image = self.click_image
 
         menu_text = Text(self.pos, self.text, self.font, self.font_size, color=text_color)
-        text_size = menu_text.get_size(menu_pos, menu_size, ui_size)
+        text_size = menu_text.get_size(menu_pos, menu_size, ui_size, scroll)
 
         if self.image != None:
             menu_image = Image(self.pos, image)
-            rendered_objects.append(menu_image.render(menu_pos, menu_size, ui_size))
+            rendered_objects.append(menu_image.render(menu_pos, menu_size, ui_size, scroll))
             menu_text.pos = self._update_text_pos(menu_image.get_size(), text_size)
             total_x_size = menu_image.get_size()[0] + self.text_offset + text_size[0]
             total_y_size = max([menu_image.get_size()[1], text_size[1]])
@@ -104,18 +105,18 @@ class Radiobutton(MenuObject):
         else:  # circle
             circle_size = text_size[1]*self.circle_size
             menu_circle_1 = Shape(self.pos, (circle_size, circle_size), circle_color, "ellipse", width=round(0.1*circle_size))
-            rendered_objects.append(menu_circle_1.render(menu_pos, menu_size, ui_size))
+            rendered_objects.append(menu_circle_1.render(menu_pos, menu_size, ui_size, scroll))
 
             if self.is_checked:  # only render the middle circle when the button is checked
                 circle_2_pos = (round(self.pos[0]+0.2*circle_size), round(self.pos[1]+0.2*circle_size))
                 menu_circle_2 = Shape(circle_2_pos, (0.6*circle_size, 0.6*circle_size), circle_color, "ellipse")
-                rendered_objects.append(menu_circle_2.render(menu_pos, menu_size, ui_size))
+                rendered_objects.append(menu_circle_2.render(menu_pos, menu_size, ui_size, scroll))
   
             menu_text.pos = self._update_text_pos((circle_size, circle_size), text_size)
             total_x_size = circle_size + self.text_offset + text_size[0]
             total_y_size = max([circle_size, text_size[1]])
 
-        rendered_objects.append(menu_text.render(menu_pos, menu_size, ui_size))
+        rendered_objects.append(menu_text.render(menu_pos, menu_size, ui_size, scroll))
 
         rendered_objects = flatten_list(rendered_objects)
         for obj in rendered_objects:

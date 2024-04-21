@@ -15,8 +15,8 @@ class Text(MenuObject):
         self.color = color
         self.bg_color = bg_color
 
-    def get_size(self, menu_pos, menu_size, ui_size=1):
-        objects = self.render(menu_pos, menu_size, ui_size)
+    def get_size(self, menu_pos, menu_size, ui_size, scroll):
+        objects = self.render(menu_pos, menu_size, ui_size, scroll)
         
         height = objects[len(objects)-1].pos[0] - objects[0].pos[0] + objects[0].image.get_rect()[3]
         max_width = 0
@@ -28,7 +28,7 @@ class Text(MenuObject):
 
         return (max_width, height)
 
-    def render(self, menu_pos, menu_size, ui_size=1):
+    def render(self, menu_pos, menu_size, ui_size, scroll):
         font = get_font("", self.font, self.font_size * ui_size)
         font_height = font.size('H')[1]
 

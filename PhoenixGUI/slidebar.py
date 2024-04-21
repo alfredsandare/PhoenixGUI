@@ -33,7 +33,7 @@ class Slidebar(MenuObject):
     def get_progress(self):
         return self.progress
 
-    def render(self, menu_pos, menu_size, ui_size):
+    def render(self, menu_pos, menu_size, ui_size, scroll):
         color_to_use = self.circle_color
         if self.circle_hover_color != None and self.state == "hover":
             color_to_use = self.circle_hover_color
@@ -46,7 +46,7 @@ class Slidebar(MenuObject):
         else:
             pos[1] += self.length * self.progress
         circle = Shape(pos, [self.circle_size, self.circle_size], color_to_use, 'circle', anchor="c")
-        return circle.render(menu_pos, menu_size, ui_size)
+        return circle.render(menu_pos, menu_size, ui_size, scroll)
 
     def event(self, event, menu_pos):
         if event.type == pygame.MOUSEMOTION:

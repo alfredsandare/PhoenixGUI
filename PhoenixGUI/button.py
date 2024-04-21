@@ -68,7 +68,7 @@ class Button(MenuObject):
         if self.text == None and self.image == None:
             raise Exception("Cannot instanstiate button with neither text nor image.")
 
-    def render(self, menu_pos, menu_size, ui_size):
+    def render(self, menu_pos, menu_size, ui_size, scroll):
         rendered_objects = []
         if self.image:
             image_to_use = self.image
@@ -81,8 +81,7 @@ class Button(MenuObject):
                                image_to_use, 
                                max_size=self.max_size, 
                                anchor=self.anchor)
-            rendered_menu_image = menu_image.render(menu_pos, menu_size, ui_size)
-            #rendered_objects.append(menu_image.render(menu_pos, menu_size, ui_size))
+            rendered_menu_image = menu_image.render(menu_pos, menu_size, ui_size, scroll)
 
         if self.text:
             text_color_to_use = self.text_color
@@ -99,11 +98,10 @@ class Button(MenuObject):
                              anchor=self.anchor,
                              wrap_lines=True,
                              color=text_color_to_use)
-            rendered_menu_text = menu_text.render(menu_pos, menu_size, ui_size)
-            #rendered_objects.append(menu_text.render(menu_pos, menu_size, ui_size))
+            rendered_menu_text = menu_text.render(menu_pos, menu_size, ui_size, scroll)
 
         if self.enable_rect:
-            text_size = menu_text.get_size(menu_pos, menu_size, ui_size)
+            text_size = menu_text.get_size(menu_pos, menu_size, ui_size, scroll)
             rect_size = (text_size[0] + 2*self.rect_padx, text_size[1] + 2*self.rect_pady)
             rect_pos = (self.pos[0]-self.rect_padx, self.pos[1]-self.rect_pady)
 
@@ -128,13 +126,13 @@ class Button(MenuObject):
                              border_radius=self.rect_border_radius,
                              max_size=self.max_size,
                              anchor=self.anchor)
-            rendered_menu_rect = menu_rect.render(menu_pos, menu_size, ui_size)
+            rendered_menu_rect = menu_rect.render(menu_pos, menu_size, ui_size, scroll)
 
-        largest_x = max([menu_text.get_size(menu_pos, menu_size)[0] if self.text else 0,
+        largest_x = max([menu_text.get_size(menu_pos, menu_size, ui_size, scroll)[0] if self.text else 0,
                          menu_image.get_size()[0] if self.image else 0,
                          menu_rect.size[0] if self.enable_rect else 0])
 
-        largest_y = max([menu_text.get_size(menu_pos, menu_size)[1] if self.text else 0,
+        largest_y = max([menu_text.get_size(menu_pos, menu_size, ui_size, scroll)[1] if self.text else 0,
                          menu_image.get_size()[1] if self.image else 0,
                          menu_rect.size[1] if self.enable_rect else 0])
 

@@ -27,15 +27,15 @@ class Menu:
         time_stamp = time.time()
         if self.bg_color != None:
             rect = Shape((0, 0), self.size, self.bg_color, "rect")
-            self.rendered_objects["_bg"] = rect.render(self.pos, self.size, ui_size)[0]
+            self.rendered_objects["_bg"] = rect.render(self.pos, self.size, ui_size, self.scroll)[0]
 
         if self.outline_width != None and self.outline_color != None:
             rect = Shape((0, 0), self.size, self.outline_color, "rect", width=self.outline_width)
-            self.rendered_objects["_outline"] = rect.render(self.pos, self.size, ui_size)[0]
+            self.rendered_objects["_outline"] = rect.render(self.pos, self.size, ui_size, self.scroll)[0]
 
         for key, item in self.objects.items():
             if item.render_flag:
-                rendered = item.render(self.pos, self.size, ui_size)
+                rendered = item.render(self.pos, self.size, ui_size, self.scroll)
                 self.rendered_objects[key] = rendered
                 item.render_flag = False
 
@@ -81,3 +81,6 @@ class Menu:
         
         return (largest_x, largest_y)
     
+    def set_render_flag_all(self):
+        for obj in self.objects.values():
+            obj.render_flag = True

@@ -7,10 +7,10 @@ class Image(MenuObject):
         super().__init__(pos, max_size, anchor)
         self.image = image
 
-    def render(self, menu_pos, menu_size, ui_size=1):
+    def render(self, menu_pos, menu_size, ui_size, scroll):
         image_size = [self.image.get_rect()[2], self.image.get_rect()[3]]
 
-        pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]]
+        pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]+scroll]
         pos = update_pos_by_anchor(pos, image_size, self.anchor)
         crop, pos_change = object_crop(image_size, pos, menu_size, menu_pos, self.max_size)
         pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])

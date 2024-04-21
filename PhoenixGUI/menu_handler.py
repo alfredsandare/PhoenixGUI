@@ -14,6 +14,7 @@ class MenuHandler:
         self.ui_size = ui_size
         self.menues = {}
         self.current_menu = None
+        self.scroll_strength_multiplier = 0
 
     def update(self, events, screen):
 
@@ -36,7 +37,6 @@ class MenuHandler:
             if not menu.active:
                 continue
             menu.render_all(screen, self.ui_size)
-
 
         if current_menu == None:
             return
@@ -76,6 +76,10 @@ class MenuHandler:
                     self.update_radiobuttons(current_menu, current_button.group, current_button_key)
                 current_button.exec_command()
 
+            elif event.type == pygame.MOUSEWHEEL:
+                self.menues[current_menu].scroll += event.y * self.scroll_strength_multiplier
+                self.menues[current_menu].set_render_flag_all()
+
             if event.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
                 for key, obj in self.menues[current_menu].objects.items():
                     if is_button(obj) and key != current_button_key and event.type == pygame.MOUSEMOTION and obj.state != "none":
@@ -108,3 +112,9 @@ class MenuHandler:
         for key, obj in self.menues[current_menu].objects.items():
             if isinstance(obj, Radiobutton) and obj.group == group:
                 obj.is_checked = False
+
+    def set_scroll_strength_multiplier(self, strength):
+        self.scroll_strength_multiplier = strength
+        
+    def get_scroll_strength_multiplier(self):
+        return self.scroll_strength_multiplier
