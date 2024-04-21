@@ -25,7 +25,6 @@ class Menu:
         self.objects[id] = _object
 
     def render_all(self, screen, ui_size):
-        time_stamp = time.time()
         if self.bg_color != None:
             rect = Shape((0, 0), self.size, self.bg_color, "rect")
             self.rendered_objects["_bg"] = rect.render(self.pos, self.size, ui_size, 0)[0]
@@ -83,11 +82,8 @@ class Menu:
         for key, objs in self.rendered_objects.items():
             if key in ("_bg", "_outline"):
                 continue
-            if type(objs) is list:
-                for obj in objs:
-                    pairs.append([key, obj])
-            else:
-                pairs.append([key, objs])
+            for obj in objs:
+                pairs.append([key, obj])
 
         for key, obj in pairs:
             if isinstance(obj, RenderedMenuObject):
