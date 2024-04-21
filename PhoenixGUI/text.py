@@ -74,7 +74,7 @@ class Text(MenuObject):
         total_chars = 0
         for i, text in enumerate(final_text_pieces):
             x_pos = self.pos[0] + menu_pos[0]
-            y_pos = self.pos[1] + zones[i].y_level*font_height + menu_pos[1]
+            y_pos = self.pos[1] + zones[i].y_level*font_height + menu_pos[1] + scroll
 
             # fix the x positions of the indented text pieces, when justify="w"
             for j in range(i):

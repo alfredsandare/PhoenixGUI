@@ -27,11 +27,11 @@ class Menu:
         time_stamp = time.time()
         if self.bg_color != None:
             rect = Shape((0, 0), self.size, self.bg_color, "rect")
-            self.rendered_objects["_bg"] = rect.render(self.pos, self.size, ui_size, self.scroll)[0]
+            self.rendered_objects["_bg"] = rect.render(self.pos, self.size, ui_size, 0)[0]
 
         if self.outline_width != None and self.outline_color != None:
             rect = Shape((0, 0), self.size, self.outline_color, "rect", width=self.outline_width)
-            self.rendered_objects["_outline"] = rect.render(self.pos, self.size, ui_size, self.scroll)[0]
+            self.rendered_objects["_outline"] = rect.render(self.pos, self.size, ui_size, 0)[0]
 
         for key, item in self.objects.items():
             if item.render_flag:
@@ -42,10 +42,17 @@ class Menu:
         self.draw_all(screen)
 
     def draw_all(self, screen):
-        items = flatten_list(self.rendered_objects.values())
-        for item in items:
-            item.draw(screen)
+        if "_bg" in self.rendered_objects.keys():
+            self.rendered_objects["_bg"].draw(screen)
 
+        for key, items in self.rendered_objects.items():
+            if key not in ("_bg", "_outline"):
+                for item in items:
+                    item.draw(screen)
+
+        if "_outline" in self.rendered_objects.keys():
+            self.rendered_objects["_outline"].draw(screen)
+        
     def set_layer(self, layer):
         self.layer = layer
 
