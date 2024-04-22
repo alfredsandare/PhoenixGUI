@@ -76,10 +76,10 @@ class MenuHandler:
                     self.update_radiobuttons(current_menu, current_button.group, current_button_key)
                 current_button.exec_command()
 
-            elif event.type == pygame.MOUSEWHEEL:
+            elif event.type == pygame.MOUSEWHEEL and self.menues[current_menu].enable_scroll:
                 self.menues[current_menu].scroll_event(event.y * self.scroll_strength_multiplier)
 
-            if event.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
+            if event.type == pygame.MOUSEMOTION or (event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP) and event.button == 1):
                 for key, obj in self.menues[current_menu].objects.items():
                     if is_button(obj) and key != current_button_key and event.type == pygame.MOUSEMOTION and obj.state != "none":
                         obj.state = "none"
@@ -87,9 +87,11 @@ class MenuHandler:
                     if is_button(obj) and key != current_button_key and event.type == pygame.MOUSEBUTTONUP:
                         obj.is_selected = False
 
-                for obj in self.menues[current_menu].objects.values():
+                for key, obj in self.menues[current_menu].objects.items():
                     if isinstance(obj, Slidebar):
-                        obj.event(event, menu_pos)
+                        obj.event(event, menu_pos, self.menues[current_menu].scroll)
+                        if self.menues[current_menu].scroll_slidebar == key and self.menues[current_menu].enable_scroll and obj.state != "none":
+                            self.menues[current_menu].set_scroll_by_progress(obj.progress)
 
     def add_object(self, menu_id, object_id, _object):
         self.menues[menu_id].add_object(object_id, _object)

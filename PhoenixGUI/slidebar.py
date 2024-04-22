@@ -48,7 +48,7 @@ class Slidebar(MenuObject):
         circle = Shape(pos, [self.circle_size, self.circle_size], color_to_use, 'circle', anchor="c")
         return circle.render(menu_pos, menu_size, ui_size, scroll)
 
-    def event(self, event, menu_pos):
+    def event(self, event, menu_pos, menu_scroll):
         if event.type == pygame.MOUSEMOTION:
             if self.state == "none" and self.is_hovering(event, menu_pos):
                 self.state = "hover"
@@ -79,7 +79,7 @@ class Slidebar(MenuObject):
             if self.orientation == "horizontal":
                 self.progress = (event.pos[0] - menu_pos[0] - self.pos[0]) / self.length
             else:
-                self.progress = (event.pos[1] - menu_pos[1] - self.pos[1]) / self.length
+                self.progress = (event.pos[1] - menu_pos[1] - self.pos[1] + menu_scroll) / self.length
 
         elif event.type == pygame.MOUSEBUTTONUP and self.state == "click":
             self.state = "hover"

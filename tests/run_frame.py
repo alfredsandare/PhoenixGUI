@@ -5,7 +5,7 @@ screen = pygame.display.set_mode((800, 800))
 menu_handler = MenuHandler(screen, 1)
 menu_handler.set_scroll_strength_multiplier(3)
 
-my_menu = Menu((50, 50), (500, 600))
+my_menu = Menu((50, 50), (500, 600), enable_scroll=True, scroll_slidebar="sldbr")
 menu_handler.add_menu("menu", my_menu)
 my_menu.set_outline(1, (255, 0, 0))
 

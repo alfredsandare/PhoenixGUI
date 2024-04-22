@@ -4,7 +4,7 @@ from .util import flatten_list, is_button, update_pos_by_anchor
 import time
 
 class Menu:
-    def __init__(self, pos, size, layer=0, active=True, bg_color=None):
+    def __init__(self, pos, size, layer=0, active=True, bg_color=None, enable_scroll=False, scroll_slidebar=None):
         self.pos = pos
         self.size = size
         self.objects = {}
@@ -15,9 +15,9 @@ class Menu:
         self.active = active
         self.bg_color = bg_color
 
-        self.enable_scroll = False
+        self.enable_scroll = enable_scroll
         self.scroll = 0
-        self.scroll_slidebar = None
+        self.scroll_slidebar = scroll_slidebar
 
     def add_object(self, id, _object):
         if id in ("_bg", "_outline"):
@@ -35,7 +35,10 @@ class Menu:
 
         for key, item in self.objects.items():
             if item.render_flag:
-                rendered = item.render(self.pos, self.size, ui_size, -self.scroll)
+                if key == self.scroll_slidebar:
+                    rendered = item.render(self.pos, self.size, ui_size, 0)
+                else:
+                    rendered = item.render(self.pos, self.size, ui_size, -self.scroll)
                 self.rendered_objects[key] = rendered
                 item.render_flag = False
 
@@ -80,7 +83,7 @@ class Menu:
         largest_y = 0
         pairs = []
         for key, objs in self.rendered_objects.items():
-            if key in ("_bg", "_outline"):
+            if key in ("_bg", "_outline", self.scroll_slidebar):
                 continue
             for obj in objs:
                 pairs.append([key, obj])
@@ -105,14 +108,16 @@ class Menu:
     def scroll_event(self, scroll):
         self.scroll -= scroll
 
-        max_scroll = self.get_size_from_items()[1] - self.size[1]
-        if max_scroll < 0:
-            max_scroll = 0
-
+        max_scroll = self.get_size_from_items()[1] - self.size[1] \
+            if self.get_size_from_items()[1] > 0 else 0
         if self.scroll < 0:
             self.scroll = 0
         if self.scroll > max_scroll:
             self.scroll = max_scroll
-        
+
         self.set_render_flag_all()
         
+    def set_scroll_by_progress(self, progress):
+        max_scroll = self.get_size_from_items()[1] - self.size[1] \
+            if self.get_size_from_items()[1] > 0 else 0
+        self.scroll = progress * max_scroll
