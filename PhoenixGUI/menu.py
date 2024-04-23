@@ -121,3 +121,4 @@ class Menu:
         max_scroll = self.get_size_from_items()[1] - self.size[1] \
             if self.get_size_from_items()[1] > 0 else 0
         self.scroll = progress * max_scroll
+        self.set_render_flag_all()
