@@ -57,6 +57,7 @@ class MenuHandler:
                 and current_button.is_selected and current_button.state != "click":
                 current_button.state = "click"
                 current_button.render_flag = True
+                print("doin this dumbass shit")
 
             elif event.type == pygame.MOUSEMOTION and current_button is not None \
                 and not current_button.is_selected and current_button.state != "hover":
@@ -79,9 +80,6 @@ class MenuHandler:
             elif event.type == pygame.MOUSEWHEEL and self.menues[current_menu].enable_scroll:
                 self.menues[current_menu].scroll_event(event.y * self.scroll_strength_multiplier)
 
-            if "sldbr" in self.menues[current_menu].objects.keys():
-                print(round(self.menues[current_menu].objects["sldbr"].progress, 3), end=" ")
-
             if event.type == pygame.MOUSEMOTION or (event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP) and event.button == 1):
                 for key, obj in self.menues[current_menu].objects.items():
                     if is_button(obj) and key != current_button_key and event.type == pygame.MOUSEMOTION and obj.state != "none":
@@ -99,6 +97,7 @@ class MenuHandler:
 
                         elif self.menues[current_menu].scroll_slidebar == key and self.menues[current_menu].enable_scroll:
                             obj.event(event, menu_pos, 0)
+                            self.menues[current_menu].set_scroll_by_progress(obj.progress)
 
                         else:
                             obj.event(event, menu_pos, self.menues[current_menu].scroll)
