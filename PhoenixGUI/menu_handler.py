@@ -57,19 +57,20 @@ class MenuHandler:
                 and current_button.is_selected and current_button.state != "click":
                 current_button.state = "click"
                 current_button.render_flag = True
-                print("doin this dumbass shit")
 
             elif event.type == pygame.MOUSEMOTION and current_button is not None \
                 and not current_button.is_selected and current_button.state != "hover":
                 current_button.state = "hover"
                 current_button.render_flag = True
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and current_button is not None:
+            elif event.type == pygame.MOUSEBUTTONDOWN and current_button is not None \
+                and event.button == 1:
                 current_button.state = "click"
                 current_button.is_selected = True
                 current_button.render_flag = True
 
-            elif event.type == pygame.MOUSEBUTTONUP and current_button is not None:
+            elif event.type == pygame.MOUSEBUTTONUP and current_button is not None \
+                and event.button == 1:
                 current_button.state = "hover"
                 current_button.is_selected = False
                 current_button.render_flag = True
