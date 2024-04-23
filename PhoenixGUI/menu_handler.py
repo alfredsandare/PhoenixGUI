@@ -30,6 +30,8 @@ class MenuHandler:
 
         if self.current_menu != current_menu and self.current_menu != None:  # mouse is hovering over a different menu
             self.menues[self.current_menu].reset_buttons()
+
+        #### DECLARE HERE
         self.current_menu = current_menu
 
         sorted_menues.reverse()
@@ -42,7 +44,8 @@ class MenuHandler:
             return
 
         menu_pos = self.menues[current_menu].pos
-        sorted_objects = sorted(self.menues[current_menu].objects.items(), key=lambda obj: obj[1].layer)
+        #sorted_objects = sorted(self.menues[current_menu].objects.items(), 
+        #                        key=lambda obj: obj[1].layer)
         current_button = None
         current_button_key = None
         for key, obj in self.menues[current_menu].objects.items():
@@ -53,29 +56,33 @@ class MenuHandler:
         for event in events:
             #print(event)
 
-            if event.type == pygame.MOUSEMOTION and current_button is not None \
-                and current_button.is_selected and current_button.state != "click":
+            if (event.type == pygame.MOUSEMOTION and current_button is not None
+                and current_button.is_selected
+                and current_button.state != "click"):
                 current_button.state = "click"
                 current_button.render_flag = True
 
-            elif event.type == pygame.MOUSEMOTION and current_button is not None \
-                and not current_button.is_selected and current_button.state != "hover":
+            elif (event.type == pygame.MOUSEMOTION and current_button is not None
+                  and not current_button.is_selected 
+                  and current_button.state != "hover"):
                 current_button.state = "hover"
                 current_button.render_flag = True
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and current_button is not None \
-                and event.button == 1:
+            elif (event.type == pygame.MOUSEBUTTONDOWN 
+                  and current_button is not None and event.button == 1):
                 current_button.state = "click"
                 current_button.is_selected = True
                 current_button.render_flag = True
 
-            elif event.type == pygame.MOUSEBUTTONUP and current_button is not None \
-                and event.button == 1:
+            elif (event.type == pygame.MOUSEBUTTONUP 
+                and current_button is not None and event.button == 1):
                 current_button.state = "hover"
                 current_button.is_selected = False
                 current_button.render_flag = True
                 if isinstance(current_button, Radiobutton):
-                    self.update_radiobuttons(current_menu, current_button.group, current_button_key)
+                    self.update_radiobuttons(current_menu, 
+                                             current_button.group, 
+                                             current_button_key)
                 current_button.exec_command()
 
             elif event.type == pygame.MOUSEWHEEL and self.menues[current_menu].enable_scroll:
