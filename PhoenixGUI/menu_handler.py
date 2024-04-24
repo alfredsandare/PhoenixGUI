@@ -13,26 +13,25 @@ class MenuHandler:
         self.screen = screen
         self.ui_size = ui_size
         self.menues = {}
-        self.current_menu = None
+        self.current_menu_key = None
         self.scroll_strength_multiplier = 0
 
     def update(self, events, screen):
-
         # sort the menues by layer
         sorted_menues = sorted(self.menues.items(), key=lambda menu: menu[1].layer, reverse=True)
         mouse_pos = pygame.mouse.get_pos()
-        current_menu = None
+        current_menu_key = None
         for key, menu in sorted_menues:
             if menu.pos[0] <= mouse_pos[0] <= menu.pos[0] + menu.size[0] and \
                 menu.pos[1] <= mouse_pos[1] <= menu.pos[1] + menu.size[1] and menu.active:
-                current_menu = key
+                current_menu_key = key
                 break
 
-        if self.current_menu != current_menu and self.current_menu != None:  # mouse is hovering over a different menu
-            self.menues[self.current_menu].reset_buttons()
+        if (self.current_menu_key != current_menu_key 
+            and self.current_menu_key != None):
 
-        #### DECLARE HERE
-        self.current_menu = current_menu
+            # mouse is hovering over a different menu
+            self.menues[self.current_menu_key].reset_buttons()
 
         sorted_menues.reverse()
         for key, menu in sorted_menues:
@@ -40,15 +39,17 @@ class MenuHandler:
                 continue
             menu.render_all(screen, self.ui_size)
 
-        if current_menu == None:
+        self.current_menu_key = current_menu_key
+        if current_menu_key == None:
             return
+        current_menu = self.menues[current_menu_key]
 
-        menu_pos = self.menues[current_menu].pos
-        #sorted_objects = sorted(self.menues[current_menu].objects.items(), 
+        menu_pos = current_menu.pos
+        #sorted_objects = sorted(current_menu.objects.items(), 
         #                        key=lambda obj: obj[1].layer)
         current_button = None
         current_button_key = None
-        for key, obj in self.menues[current_menu].objects.items():
+        for key, obj in current_menu.objects.items():
             if is_button(obj) and self.compare_coords(obj.hitbox, menu_pos, mouse_pos):
                 current_button = obj
                 current_button_key = key
@@ -80,35 +81,47 @@ class MenuHandler:
                 current_button.is_selected = False
                 current_button.render_flag = True
                 if isinstance(current_button, Radiobutton):
-                    self.update_radiobuttons(current_menu, 
-                                             current_button.group, 
-                                             current_button_key)
+                    self.update_radiobuttons(current_menu, current_button.group)
                 current_button.exec_command()
 
-            elif event.type == pygame.MOUSEWHEEL and self.menues[current_menu].enable_scroll:
-                self.menues[current_menu].scroll_event(event.y * self.scroll_strength_multiplier)
+            elif event.type == pygame.MOUSEWHEEL and current_menu.enable_scroll:
+                current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
 
-            if event.type == pygame.MOUSEMOTION or (event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP) and event.button == 1):
-                for key, obj in self.menues[current_menu].objects.items():
-                    if is_button(obj) and key != current_button_key and event.type == pygame.MOUSEMOTION and obj.state != "none":
+            if (event.type == pygame.MOUSEMOTION 
+                or (event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP) 
+                    and event.button == 1)):
+                
+                for key, obj in current_menu.objects.items():
+                    if (is_button(obj) and key != current_button_key 
+                        and event.type == pygame.MOUSEMOTION 
+                        and obj.state != "none"):
+
                         obj.state = "none"
                         obj.render_flag = True
-                    if is_button(obj) and key != current_button_key and event.type == pygame.MOUSEBUTTONUP:
+
+                    if (is_button(obj) and key != current_button_key 
+                        and event.type == pygame.MOUSEBUTTONUP):
                         obj.is_selected = False
 
-                for key, obj in self.menues[current_menu].objects.items():
-                    if isinstance(obj, Slidebar):
+                for key, obj in current_menu.objects.items():
+                    if not isinstance(obj, Slidebar):
+                        continue
 
-                        if self.menues[current_menu].scroll_slidebar == key and self.menues[current_menu].enable_scroll and obj.state == "click":
-                            self.menues[current_menu].set_scroll_by_progress(obj.progress)
-                            obj.event(event, menu_pos, 0)
+                    if (current_menu.scroll_slidebar == key 
+                        and current_menu.enable_scroll 
+                        and obj.state == "click"):
 
-                        elif self.menues[current_menu].scroll_slidebar == key and self.menues[current_menu].enable_scroll:
-                            obj.event(event, menu_pos, 0)
-                            self.menues[current_menu].set_scroll_by_progress(obj.progress)
+                        current_menu.set_scroll_by_progress(obj.progress)
+                        obj.event(event, menu_pos, 0)
 
-                        else:
-                            obj.event(event, menu_pos, self.menues[current_menu].scroll)
+                    elif (current_menu.scroll_slidebar == key 
+                          and current_menu.enable_scroll):
+                        
+                        obj.event(event, menu_pos, 0)
+                        current_menu.set_scroll_by_progress(obj.progress)
+
+                    else:
+                        obj.event(event, menu_pos, current_menu.scroll)
 
     def add_object(self, menu_id, object_id, _object):
         self.menues[menu_id].add_object(object_id, _object)
@@ -126,8 +139,8 @@ class MenuHandler:
         return hitbox[0] + menu_pos[0] <= mouse_pos[0] <= hitbox[2] + menu_pos[0] and \
                hitbox[1] + menu_pos[1] <= mouse_pos[1] <= hitbox[3] + menu_pos[1]
 
-    def update_radiobuttons(self, current_menu, group, btn_key):
-        for key, obj in self.menues[current_menu].objects.items():
+    def update_radiobuttons(self, current_menu, group):
+        for obj in current_menu.objects.values():
             if isinstance(obj, Radiobutton) and obj.group == group:
                 obj.is_checked = False
 

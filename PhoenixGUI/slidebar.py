@@ -45,7 +45,11 @@ class Slidebar(MenuObject):
             pos[0] += self.length * self.progress
         else:
             pos[1] += self.length * self.progress
-        circle = Shape(pos, [self.circle_size, self.circle_size], color_to_use, 'circle', anchor="c")
+        circle = Shape(pos, 
+                       [self.circle_size, self.circle_size], 
+                       color_to_use, 
+                       'circle', 
+                       anchor="c")
         return circle.render(menu_pos, menu_size, ui_size, scroll)
 
     def event(self, event, menu_pos, menu_scroll):
@@ -58,16 +62,24 @@ class Slidebar(MenuObject):
                 self.state = "none"
                 self.render_flag = True
 
-            elif self.state == "click" and self.orientation == "horizontal" \
-                and (self.pos[0] + menu_pos[0] <= event.pos[0] <= self.pos[0] + self.length + menu_pos[0] \
-                or self.progress not in (0, 1)):
+            elif (self.state == "click" 
+                  and self.orientation == "horizontal" 
+                  and (self.pos[0] + menu_pos[0] 
+                       <= event.pos[0] 
+                       <= self.pos[0] + self.length + menu_pos[0] 
+                       or self.progress not in (0, 1))):
+                
                 self.progress += event.rel[0] / self.length
                 self.set_progress_in_limits()
                 self.render_flag = True
 
-            elif self.state == "click" and self.orientation == "vertical" \
-                and (self.pos[1] + menu_pos[1] <= event.pos[1] <= self.pos[1] + self.length + menu_pos[1] \
-                or self.progress not in (0, 1)):
+            elif (self.state == "click" 
+                  and self.orientation == "vertical" 
+                  and (self.pos[1] + menu_pos[1] 
+                       <= event.pos[1] 
+                       <= self.pos[1] + self.length + menu_pos[1] 
+                       or self.progress not in (0, 1))):
+                
                 self.progress += event.rel[1] / self.length
                 self.set_progress_in_limits()
                 self.render_flag = True
@@ -77,9 +89,14 @@ class Slidebar(MenuObject):
             self.render_flag = True
 
             if self.orientation == "horizontal":
-                self.progress = (event.pos[0] - menu_pos[0] - self.pos[0]) / self.length
+                self.progress = (event.pos[0] 
+                                 - menu_pos[0] 
+                                 - self.pos[0]) / self.length
             else:
-                self.progress = (event.pos[1] - menu_pos[1] - self.pos[1] + menu_scroll) / self.length
+                self.progress = (event.pos[1] 
+                                 - menu_pos[1] 
+                                 - self.pos[1] 
+                                 + menu_scroll) / self.length
 
         elif event.type == pygame.MOUSEBUTTONUP and self.state == "click":
             self.state = "hover"
@@ -87,10 +104,21 @@ class Slidebar(MenuObject):
 
     def is_hovering(self, event, menu_pos):
         if self.orientation == "horizontal":
-            return self.pos[0] + menu_pos[0] - self.circle_size/2 <= event.pos[0] <= self.pos[0] + self.length + self.circle_size/2 + menu_pos[0] and \
-                self.pos[1] - self.circle_size/2 + menu_pos[1] <= event.pos[1] <= self.pos[1] + self.circle_size/2 + menu_pos[1]
-        return self.pos[0] - self.circle_size/2 + menu_pos[0] <= event.pos[0] <= self.pos[0] + self.circle_size/2 + menu_pos[0] and \
-            self.pos[1] + menu_pos[1] - self.circle_size/2 <= event.pos[1] <= self.pos[1] + self.length + self.circle_size/2 + menu_pos[1]
+            left_boundary = self.pos[0] + menu_pos[0] - self.circle_size/2
+            right_boundary = self.pos[0] + self.length + self.circle_size/2 + menu_pos[0]
+            top_boundary = self.pos[1] - self.circle_size/2 + menu_pos[1]
+            bottom_boundary = self.pos[1] + self.circle_size/2 + menu_pos[1]
+
+            return (left_boundary <= event.pos[0] <= right_boundary 
+                    and top_boundary <= event.pos[1] <= bottom_boundary)
+
+        left_boundary = self.pos[0] - self.circle_size/2 + menu_pos[0]
+        right_boundary = self.pos[0] + self.circle_size/2 + menu_pos[0]
+        top_boundary = self.pos[1] + menu_pos[1] - self.circle_size/2
+        bottom_boundary = self.pos[1] + self.length + self.circle_size/2 + menu_pos[1]
+
+        return (left_boundary <= event.pos[0] <= right_boundary 
+                and top_boundary <= event.pos[1] <= bottom_boundary)
 
     def set_progress_in_limits(self):
         if self.progress > 1:

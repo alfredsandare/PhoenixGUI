@@ -4,7 +4,14 @@ from .util import flatten_list, is_button, update_pos_by_anchor
 import time
 
 class Menu:
-    def __init__(self, pos, size, layer=0, active=True, bg_color=None, enable_scroll=False, scroll_slidebar=None):
+    def __init__(self, 
+                 pos, 
+                 size, 
+                 layer=0, 
+                 active=True, 
+                 bg_color=None, 
+                 enable_scroll=False, 
+                 scroll_slidebar=None):
         self.pos = pos
         self.size = size
         self.objects = {}
@@ -27,11 +34,21 @@ class Menu:
     def render_all(self, screen, ui_size):
         if self.bg_color != None:
             rect = Shape((0, 0), self.size, self.bg_color, "rect")
-            self.rendered_objects["_bg"] = rect.render(self.pos, self.size, ui_size, 0)[0]
+            self.rendered_objects["_bg"] = rect.render(self.pos, 
+                                                       self.size, 
+                                                       ui_size, 
+                                                       0)[0]
 
         if self.outline_width != None and self.outline_color != None:
-            rect = Shape((0, 0), self.size, self.outline_color, "rect", width=self.outline_width)
-            self.rendered_objects["_outline"] = rect.render(self.pos, self.size, ui_size, 0)[0]
+            rect = Shape((0, 0), 
+                         self.size, 
+                         self.outline_color, 
+                         "rect", 
+                         width=self.outline_width)
+            self.rendered_objects["_outline"] = rect.render(self.pos, 
+                                                            self.size, 
+                                                            ui_size, 
+                                                            0)[0]
 
         for key, item in self.objects.items():
             if item.render_flag:
@@ -93,7 +110,8 @@ class Menu:
                 size = obj.image.get_size()
             else:  # RenderedMenuShape
                 size = obj.size
-            pos = update_pos_by_anchor(self.objects[key].pos, size, self.objects[key].anchor)
+            pos = update_pos_by_anchor(self.objects[key].pos, size, 
+                                       self.objects[key].anchor)
             if size[0] + pos[0] > largest_x:
                 largest_x = size[0] + pos[0]
             if size[1] + pos[1] > largest_y:
