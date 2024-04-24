@@ -90,7 +90,11 @@ class Button(MenuObject):
             elif self.state == "click" and self.text_click_color != None:
                 text_color_to_use = self.text_click_color
 
-            menu_text = Text(self.pos, 
+            pos = self.pos
+            if self.enable_rect:
+                pos = [self.pos[0] + self.rect_padx, self.pos[1] + self.rect_pady]
+
+            menu_text = Text(pos, 
                              self.text, 
                              self.font, 
                              self.font_size, 
@@ -103,7 +107,6 @@ class Button(MenuObject):
         if self.enable_rect:
             text_size = menu_text.get_size(menu_pos, menu_size, ui_size, scroll)
             rect_size = (text_size[0] + 2*self.rect_padx, text_size[1] + 2*self.rect_pady)
-            rect_pos = (self.pos[0]-self.rect_padx, self.pos[1]-self.rect_pady)
 
             rect_color = self.rect_color
             if self.state == "hover" and self.rect_hover_color != None:
@@ -117,7 +120,7 @@ class Button(MenuObject):
             elif self.state == "click" and self.rect_outline_click_color != None:
                 rect_outline_color = self.rect_outline_click_color
 
-            menu_rect = Shape(rect_pos,
+            menu_rect = Shape(self.pos,
                              rect_size,
                              rect_color,
                              "rect",
@@ -138,9 +141,9 @@ class Button(MenuObject):
 
         self.hitbox = [
             self.pos[0] - self.hitbox_padding,
-            self.pos[1] - self.hitbox_padding,
+            self.pos[1] - self.hitbox_padding + scroll,
             self.pos[0] + largest_x + self.hitbox_padding,
-            self.pos[1] + largest_y + self.hitbox_padding
+            self.pos[1] + largest_y + self.hitbox_padding + scroll
         ]
 
         to_return = []
