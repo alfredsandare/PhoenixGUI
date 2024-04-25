@@ -155,7 +155,13 @@ class MenuHandler:
             for obj_key, obj in menu["objects"].items():
                 module = importlib.import_module("." + obj["type"], package=__package__)
                 class_ = getattr(module, obj["type"].capitalize())
-                del obj["type"]  # this may delete it from the original item perhaps
+
+                image_keys = ["image", "hover_image", "click_image"]
+                for image_key in image_keys:
+                    if image_key in obj.keys():
+                        obj[image_key] = images[obj[image_key]]
+
+                del obj["type"]
                 objs[obj_key] = class_(**obj)
 
             del menu["objects"]

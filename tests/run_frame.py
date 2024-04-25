@@ -80,10 +80,15 @@ slidebar = Slidebar((475, 25), 550, 40, circle_hover_color=(255, 0, 0), circle_c
 menu_handler.add_object("menu", "sldbr", slidebar)
 '''
 
+
+images = {
+    "my_image": pygame.image.load(__file__[:-18]+"kenneth.jpg")
+}
+
 data = {
     "my_menu": {
         "pos": (0, 0),
-        "size": (100, 100),
+        "size": (200, 200),
         "objects": {
             "my_shape": {
                 "type": "shape",
@@ -91,12 +96,19 @@ data = {
                 "size": (40, 40),
                 "color": (255, 0, 0),
                 "type_": "rect"
+            },
+            "my_image": {
+                "type": "image",
+                "pos": (50, 50),
+                "image": "my_image"
             }
         }
     }
 }
 
-menu_handler.load_data_from_dict(data)
+print(data)
+
+menu_handler.load_data_from_dict(data, images)
 menu_handler.menues["my_menu"].activate()
 
 
