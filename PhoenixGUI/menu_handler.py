@@ -1,12 +1,11 @@
 import pygame
-import os
+import importlib
 from .menu import Menu
 from .rendered_menu_object import RenderedMenuObject
-from .button import Button
-from .checkbutton import Checkbutton
 from .util import is_button
 from .radiobutton import Radiobutton
 from .slidebar import Slidebar
+
 
 class MenuHandler:
     def __init__(self, screen, ui_size):
@@ -149,3 +148,18 @@ class MenuHandler:
         
     def get_scroll_strength_multiplier(self):
         return self.scroll_strength_multiplier
+    
+    def load_data_from_dict(self, data: dict, images: dict):
+        for menu_key, menu in data.items():
+            objs = {}
+            for obj_key, obj in menu["objects"].items():
+                module = importlib.import_module("." + obj["type"], package=__package__)
+                class_ = getattr(module, obj["type"].capitalize())
+                del obj["type"]  # this may delete it from the original item perhaps
+                objs[obj_key] = class_(**obj)
+
+            del menu["objects"]
+            instatiated_menu = Menu(**menu)
+            instatiated_menu.deactivate()
+            instatiated_menu.objects = objs
+            self.add_menu(menu_key, instatiated_menu)

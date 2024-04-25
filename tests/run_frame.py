@@ -5,6 +5,7 @@ screen = pygame.display.set_mode((800, 800))
 menu_handler = MenuHandler(screen, 1)
 menu_handler.set_scroll_strength_multiplier(3)
 
+'''
 my_menu = Menu((50, 50), (500, 600), enable_scroll=True, scroll_slidebar="sldbr")
 menu_handler.add_menu("menu", my_menu)
 my_menu.set_outline(1, (255, 0, 0))
@@ -77,7 +78,26 @@ menu_handler.add_object("menu", "rbtn2", radiobutton2)
 
 slidebar = Slidebar((475, 25), 550, 40, circle_hover_color=(255, 0, 0), circle_click_color=(0, 255, 255), orientation="vertical")
 menu_handler.add_object("menu", "sldbr", slidebar)
+'''
 
+data = {
+    "my_menu": {
+        "pos": (0, 0),
+        "size": (100, 100),
+        "objects": {
+            "my_shape": {
+                "type": "shape",
+                "pos": (0, 0),
+                "size": (40, 40),
+                "color": (255, 0, 0),
+                "type_": "rect"
+            }
+        }
+    }
+}
+
+menu_handler.load_data_from_dict(data)
+menu_handler.menues["my_menu"].activate()
 
 
 clock = pygame.time.Clock()
