@@ -7,6 +7,16 @@ class MenuHandler(frame_size, ui_size)
 frame_size: tuple, (x, y). The size of the screen in pixels.
 ui_size: int. Multiplicative factor of the ui's size.
 
+### Methods
+
+load_data_from_dict(data, images)
+
+Parameters:
+data: dict. A dict with data. See below for formatting specifications.
+images: dict. A dict with identifier keys and pygame.surface values.
+
+
+
 ## Class MenuObject
 
 The superclass for all menu objects.
