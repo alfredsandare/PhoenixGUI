@@ -9,13 +9,36 @@ ui_size: int. Multiplicative factor of the ui's size.
 
 ### Methods
 
-load_data_from_dict(data, images)
+#### load_data_from_dict(data, images)
 
-Parameters:
-data: dict. A dict with data. See below for formatting specifications.
+Parameters:  
+data: dict. A dict with data. See below for formatting specifications.  
 images: dict. A dict with identifier keys and pygame.surface values.
 
-
+The data dict should be formatted as such:  
+```
+data = {
+    "my_menu": {
+        "pos": (0, 0),
+        "size": (200, 200),
+        "objects": {
+            "my_shape": {
+                "type": "shape",
+                "pos": (0, 0),
+                "size": (40, 40),
+                "color": (255, 0, 0),
+                "type_": "rect"
+            },
+            "my_image": {
+                "type": "image",
+                "pos": (50, 50),
+                "image": "my_image"
+            }
+        }
+    }
+}
+```
+'my_menu' will be assigned as the id of that menu. Each menu has a 'objects' key that holds all the menu objects. Again, the key of the object will be assigned as the id of that object. Inside the objects all properties are assigned, but also a 'type' is used to specify what type of object it is.
 
 ## Class MenuObject
 
@@ -26,6 +49,7 @@ Each property has a getter and setter, see subtitle "methods" further down.
 
 pos: The position (in pixels) of the object relative to the menu's position.
 max_size: Used to set a maximum size of the object. The object will automatically never exceed the menu borders. E.g. if you have a text object with alternating text based on the state of the game/application, you define a maximum size for the text.
+
 anchor: Which part of the object that will be anchored to the position coordinates. Valid anchors are: "nw", "n", "ne", "w", "c", "e", "sw", "s", "se".
 
 ### Methods

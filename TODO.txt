@@ -1,3 +1,2 @@
 Fix slidebar click/hover when moving mouse outside of menu
-Add ability to load data from a JSON file
 Add hover menu
