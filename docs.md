@@ -40,6 +40,8 @@ data = {
 ```
 'my_menu' will be assigned as the id of that menu. Each menu has a 'objects' key that holds all the menu objects. Again, the key of the object will be assigned as the id of that object. Inside the objects all properties are assigned, but also a 'type' is used to specify what type of object it is.
 
+To assign images correctly, the dict should only contain an image id as the value of the keys 'image', 'hover_image' or 'click_image'. The images will then be searched for in the 'images' parameter, where the actual images should be.
+
 ## Class MenuObject
 
 The superclass for all menu objects.
