@@ -106,10 +106,7 @@ class Menu:
                 pairs.append([key, obj])
 
         for key, obj in pairs:
-            if isinstance(obj, RenderedMenuObject):
-                size = obj.image.get_size()
-            else:  # RenderedMenuShape
-                size = obj.size
+            size = obj.image.get_size()
             pos = update_pos_by_anchor(self.objects[key].pos, size, 
                                        self.objects[key].anchor)
             if size[0] + pos[0] > largest_x:

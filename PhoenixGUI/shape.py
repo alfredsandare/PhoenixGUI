@@ -1,5 +1,5 @@
+from .rendered_menu_object import RenderedMenuObject
 from .menu_object import MenuObject
-from .rendered_menu_shape import RenderedMenuShape
 from .util import object_crop, update_pos_by_anchor
 import pygame
 
@@ -31,12 +31,31 @@ class Shape(MenuObject):
         crop, pos_change = object_crop(self.size, pos, menu_size, menu_pos, self.max_size)
         pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])
 
-        return [RenderedMenuShape(pos, 
-                                  self.size, 
-                                  self.color,
-                                  crop,
-                                  self.type_,
-                                  outline_width=self.outline_width,
-                                  outline_color=self.outline_color,
-                                  border_radius=self.border_radius,
-                                  width=self.width)]
+        surface = pygame.Surface(self.size, pygame.SRCALPHA)
+        if self.type_ == "rect":
+            pygame.draw.rect(surface,
+                             self.color,
+                             pygame.Rect((0, 0), self.size),
+                             border_radius=self.border_radius,
+                             width=self.width)
+            
+            if self.outline_width is not None and self.outline_color is not None:
+                pygame.draw.rect(surface,
+                                 self.outline_color,
+                                 pygame.Rect((0, 0), self.size),
+                                 border_radius=self.border_radius,
+                                 width=self.outline_width)
+                
+        else:
+            pygame.draw.ellipse(surface,
+                                self.color,
+                                pygame.Rect((0, 0), self.size),
+                                width=self.width)
+            
+            if self.outline_width is not None and self.outline_color is not None:
+                pygame.draw.ellipse(surface,
+                                    self.outline_color,
+                                    pygame.Rect((0, 0), self.size),
+                                    width=self.outline_width)
+                
+        return [RenderedMenuObject(surface, pos, crop)]

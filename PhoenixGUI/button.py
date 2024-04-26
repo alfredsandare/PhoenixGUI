@@ -1,6 +1,5 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
-from .rendered_menu_shape import RenderedMenuShape
 from .util import object_crop, get_font, flatten_list
 from .image import Image
 from .text import Text
