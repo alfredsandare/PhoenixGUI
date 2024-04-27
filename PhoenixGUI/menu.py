@@ -52,11 +52,12 @@ class Menu:
 
         for key, item in self.objects.items():
             if item.render_flag:
-                if key == self.scroll_slidebar:
-                    rendered = item.render(self.pos, self.size, ui_size, 0)
+                if key == self.scroll_slidebar and item.active:
+                    self.rendered_objects[key] = item.render(self.pos, self.size, ui_size, 0)
+                elif item.active:
+                    self.rendered_objects[key] = item.render(self.pos, self.size, ui_size, -self.scroll)
                 else:
-                    rendered = item.render(self.pos, self.size, ui_size, -self.scroll)
-                self.rendered_objects[key] = rendered
+                    self.rendered_objects[key] = None
                 item.render_flag = False
 
         self.draw_all(screen)
@@ -66,7 +67,7 @@ class Menu:
             self.rendered_objects["_bg"].draw(screen)
 
         for key, items in self.rendered_objects.items():
-            if key not in ("_bg", "_outline"):
+            if key not in ("_bg", "_outline") and items is not None:
                 for item in items:
                     item.draw(screen)
 
@@ -94,13 +95,16 @@ class Menu:
     def deactivate(self):
         self.active = False
 
+    def switch_active(self):
+        self.active = not self.active
+
     def get_size_from_items(self):
         # gets the total size of the menu dependent on the items
         largest_x = 0
         largest_y = 0
         pairs = []
         for key, objs in self.rendered_objects.items():
-            if key in ("_bg", "_outline", self.scroll_slidebar):
+            if key in ("_bg", "_outline", self.scroll_slidebar) or objs is None:
                 continue
             for obj in objs:
                 pairs.append([key, obj])

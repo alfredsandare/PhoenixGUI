@@ -33,14 +33,17 @@ class MenuObject:
     def get_anchor(self):
         return self.anchor
 
-    def set_active(self, active):
-        self.active = active
-
     def get_active(self):
         return self.active
 
-    def enable(self):
+    def activate(self):
         self.active = True
+        self.render_flag = True
 
-    def disable(self):
+    def deactivate(self):
         self.active = False
+        self.render_flag = True
+
+    def switch_active(self):
+        self.active = not self.active
+        self.render_flag = True

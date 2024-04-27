@@ -66,6 +66,7 @@ def c2():
 
 circle = Shape((200, 200), (100, 100), (255, 0, 255), "ellipse")
 menu_handler.add_object("menu", "circle", circle)
+button2.command = circle.switch_active
 
 checkbutton = Checkbutton((50, 400), "Hola Bingus", "arial", 20, (255, 255, 255), anchor="nw", square_color=(255, 255, 255), square_size=1, text_hover_color=(255, 0, 0))
 menu_handler.add_object("menu", "cbtn", checkbutton)
