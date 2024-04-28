@@ -6,14 +6,12 @@ menu_handler = MenuHandler(screen, 1)
 menu_handler.set_scroll_strength_multiplier(3)
 
 
-my_menu = Menu((50, 50), (500, 600), enable_scroll=True, scroll_slidebar="sldbr")
+my_menu = Menu((50, 50), (500, 600), enable_scroll=True, scroll_slidebar="sldbr", outline_width=1, outline_color=(255, 0, 0))
 menu_handler.add_menu("menu", my_menu)
-my_menu.set_outline(1, (255, 0, 0))
 
-menu2 = Menu((200, 200), (300, 300), active=False, bg_color=(100, 100, 100, 200))
+menu2 = Menu((200, 200), (300, 300), active=False, bg_color=(100, 100, 100, 200), outline_width=1, outline_color=(0, 255, 0))
 menu_handler.add_menu("menu2", menu2)
 menu2.set_layer(1)
-menu2.set_outline(1, (0, 255, 0))
 
 #text = Text((50, 50), "Hello lorem ipsum dolor%%0 255 0%There lorem ipsum% Hello again", "arial", 20, color=(255, 0, 0), wrap_lines=True)
 #menu_handler.add_object("menu", "my_text", text)

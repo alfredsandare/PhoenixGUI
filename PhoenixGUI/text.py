@@ -29,6 +29,7 @@ class Text(MenuObject):
         return (max_width, height)
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
+        print(__file__)
         font = get_font("", self.font, self.font_size * ui_size)
         font_height = font.size('H')[1]
 

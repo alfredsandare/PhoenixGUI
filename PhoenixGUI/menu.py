@@ -10,14 +10,16 @@ class Menu:
                  layer=0, 
                  active=True, 
                  bg_color=None, 
+                 outline_width=None,
+                 outline_color=None,
                  enable_scroll=False, 
                  scroll_slidebar=None):
         self.pos = pos
         self.size = size
         self.objects = {}
         self.rendered_objects = {}
-        self.outline_width = None
-        self.outline_color = None
+        self.outline_width = outline_width
+        self.outline_color = outline_color
         self.layer = layer
         self.active = active
         self.bg_color = bg_color
@@ -79,10 +81,6 @@ class Menu:
 
     def get_layer(self):
         return self.layer
-
-    def set_outline(self, width, color):
-        self.outline_width = width
-        self.outline_color = color
 
     def reset_buttons(self):
         for obj in self.objects.values():
