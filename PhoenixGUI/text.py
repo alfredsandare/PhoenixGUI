@@ -1,7 +1,7 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
 import pygame
-from .util import get_font, cut_line, wrap_line, object_crop
+from .util import get_font, cut_line, update_pos_by_anchor, wrap_line, object_crop
 
 pygame.font.init()
 
@@ -62,10 +62,14 @@ class Text(MenuObject):
             final_text_pieces.append(joined_lines[prev_zone_end:zone.end_point])
             prev_zone_end = zone.end_point
 
-        # get data for calculating positions from anchor
+        # The problem lies here. The paragraph below does not work at all.
+        # It treats all text pieces as if they all had different y levels.
+        # TODO: Write code that properly calculates the longest line and total height.
+        # The total height can probably be calculated by multiplying the last text
+        # piece's y level with the font height.
         longest_line = 0
-        total_height = 0
-        for i, text in  enumerate(final_text_pieces):
+        total_height = font_height
+        for i, text in enumerate(final_text_pieces):
             if font.size(text)[0] > longest_line:
                 longest_line = font.size(text)[0]
 
@@ -73,12 +77,11 @@ class Text(MenuObject):
             if i!=0 and zones[i].y_level != zones[i-1].y_level:
                 total_height += font_height
 
-
-        rendered_objects = []
-        total_chars = 0
+        surface_size = (longest_line, total_height)
+        surface = pygame.Surface(surface_size, pygame.SRCALPHA)
         for i, text in enumerate(final_text_pieces):
-            x_pos = self.pos[0] + menu_pos[0]
-            y_pos = self.pos[1] + zones[i].y_level*font_height + menu_pos[1] + scroll
+            x_pos = 0
+            y_pos = zones[i].y_level*font_height
 
             # fix the x positions of the indented text pieces, when justify="w"
             for j in range(i):
@@ -87,14 +90,17 @@ class Text(MenuObject):
 
             rendered_text = font.render(text, True, zones[i].color, self.bg_color)
 
-            crop, pos_change = object_crop(font.size(text), (x_pos, y_pos), menu_size, menu_pos, self.max_size)
-            pos = (x_pos+pos_change[0], y_pos+pos_change[1])
-            rendered_objects.append(RenderedMenuObject(rendered_text, pos, crop))
+            #crop, pos_change = object_crop(font.size(text), (x_pos, y_pos), menu_size, menu_pos, self.max_size)
+            #pos = (x_pos+pos_change[0], y_pos+pos_change[1])
+            #rendered_objects.append(RenderedMenuObject(rendered_text, pos, crop))
+            surface.blit(rendered_text, (x_pos, y_pos))
 
-            total_chars += len(text)
+        pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
+        
+        crop, pos_change = object_crop(surface_size, pos, menu_size, menu_pos, self.max_size)
+        pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])
 
-        return rendered_objects
-
+        return [RenderedMenuObject(surface, pos, crop)]
 
     def decode_text(self, text, default_color):
         decoded_text = ''  # the extracted text
