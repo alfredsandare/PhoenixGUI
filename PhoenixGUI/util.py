@@ -6,12 +6,9 @@ def get_font(path, font, size):
     if type(size) is not int:
         raise SyntaxError(f"Font size needs to be int, not {type(size)}")
     try:
-        return pygame.font.Font(path+font, size)
+        return pygame.font.Font(path+font+".ttf", size)
     except:
         return pygame.font.SysFont(font, size)
-    else:
-        raise Exception(f"No font named {font} found.")
-
 
 def trunc_line(text, font, max_width):
     '''Internal function for WrapLine'''

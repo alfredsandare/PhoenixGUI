@@ -1,3 +1,4 @@
+from .menu_object import MenuObject
 import pygame
 import importlib
 from .menu import Menu
@@ -5,13 +6,14 @@ from .rendered_menu_object import RenderedMenuObject
 from .util import is_button
 from .radiobutton import Radiobutton
 from .slidebar import Slidebar
+from .text import Text
 
 
 class MenuHandler:
     def __init__(self, screen, ui_size):
         self.screen = screen
         self.ui_size = ui_size
-        self.menues = {}
+        self.menues: dict[str, MenuObject] = {}
         self.current_menu_key = None
         self.scroll_strength_multiplier = 0
 
@@ -169,3 +171,11 @@ class MenuHandler:
             instatiated_menu.deactivate()
             instatiated_menu.objects = objs
             self.add_menu(menu_key, instatiated_menu)
+
+    def add_font_path(self, path: str):
+        # adds an absolute path where the menu handler will search for fonts.
+        # this function should be called after all menu objects have been loaded.
+        for menu in self.menues.values():
+            for obj in menu.objects.values():
+                if isinstance(obj, Text):
+                    obj.font_path = path

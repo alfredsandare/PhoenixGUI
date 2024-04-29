@@ -14,6 +14,7 @@ class Text(MenuObject):
         self.wrap_lines = wrap_lines
         self.color = color
         self.bg_color = bg_color
+        self.font_path = None
 
     def get_size(self, menu_pos, menu_size, ui_size, scroll):
         objects = self.render(menu_pos, menu_size, ui_size, scroll)
@@ -29,8 +30,10 @@ class Text(MenuObject):
         return (max_width, height)
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
-        print(__file__)
-        font = get_font("", self.font, self.font_size * ui_size)
+        font = get_font(self.font_path if self.font_path is not None else "", 
+                        self.font, 
+                        self.font_size * ui_size)
+        
         font_height = font.size('H')[1]
 
         original_text, zone_borders, colors = self.decode_text(self.text, self.color)
