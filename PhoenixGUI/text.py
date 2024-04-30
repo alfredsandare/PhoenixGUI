@@ -1,7 +1,7 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
 import pygame
-from .util import get_font, cut_line, update_pos_by_anchor, wrap_line, object_crop
+from .util import flatten_list, get_font, cut_line, update_pos_by_anchor, wrap_line, object_crop
 
 pygame.font.init()
 
@@ -39,6 +39,9 @@ class Text(MenuObject):
         original_text, zone_borders, colors = self.decode_text(self.text, self.color)
         text_pieces = original_text.split('\n')
 
+        words = flatten_list([piece.split() for piece in text_pieces])
+        longest_word_length = max([font.size(word)[0] for word in words])
+
         processed_text_pieces = []
         for text in text_pieces:
             if self.max_size != None and self.max_size[0] < menu_size[0] - self.pos[0]:
@@ -50,41 +53,31 @@ class Text(MenuObject):
                 max_width = menu_size[0] - self.pos[0]
             else:
                 max_width = self.pos[0]
+                
+            if print_here:
+                print(text)
+            if max_width < longest_word_length:
+                max_width = longest_word_length
 
             if self.wrap_lines:
                 processed_text_pieces.extend(wrap_line(text, font, max_width))
             else:
                 processed_text_pieces.append(cut_line(text, font, max_width))
 
-        zone_borders = self.consider_removed_chars(processed_text_pieces, zone_borders, original_text)
-        zones = self.apply_text_colour_insertion(processed_text_pieces, zone_borders, colors, self.color)
+        zone_borders = self.consider_removed_chars(processed_text_pieces, 
+                                                   zone_borders, 
+                                                   original_text)
+        zones = self.apply_text_colour_insertion(processed_text_pieces, 
+                                                 zone_borders, colors, 
+                                                 self.color)
 
         #make lines out of the zones
         joined_lines = ''.join(line for line in processed_text_pieces)
-        print_here = False
-        if 'dolor' in joined_lines:
-            print_here = True
         final_text_pieces = []
         prev_zone_end = 0
         for zone in zones:
             final_text_pieces.append(joined_lines[prev_zone_end:zone.end_point])
             prev_zone_end = zone.end_point
-
-        # The problem lies here. The paragraph below does not work at all.
-        # It treats all text pieces as if they all had different y levels.
-        # TODO: Write code that properly calculates the longest line and total height.
-        # The total height can probably be calculated by multiplying the last text
-        # piece's y level with the font height.
-
-        # longest_line = 0
-        # total_height = font_height
-        # for i, text in enumerate(final_text_pieces):
-        #     if font.size(text)[0] > longest_line:
-        #         longest_line = font.size(text)[0]
-
-        #     # if the y level does not match the previous y level, it's a new line.
-        #     if i!=0 and zones[i].y_level != zones[i-1].y_level:
-        #         total_height += font_height
 
         line_lengths = [font.size(final_text_pieces[0])[0]]
         for i, text in enumerate(final_text_pieces[1:]):
@@ -99,24 +92,13 @@ class Text(MenuObject):
         surface_size = (longest_line, total_height)
         surface = pygame.Surface(surface_size, pygame.SRCALPHA)
         for i, text in enumerate(final_text_pieces):
-            
             pos = self.get_text_piece_pos(zones, font_height, i, final_text_pieces, font, longest_line)
-
             rendered_text = font.render(text, True, zones[i].color, self.bg_color)
-
-            #crop, pos_change = object_crop(font.size(text), (x_pos, y_pos), menu_size, menu_pos, self.max_size)
-            #pos = (x_pos+pos_change[0], y_pos+pos_change[1])
-            #rendered_objects.append(RenderedMenuObject(rendered_text, pos, crop))
             surface.blit(rendered_text, pos)
 
         pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
 
-        if print_here:
-            print("första", pos)
         pos = update_pos_by_anchor(pos, surface_size, self.anchor)
-        if print_here:
-            print("andra", pos)
-        
         crop, pos_change = object_crop(surface_size, pos, menu_size, menu_pos, self.max_size)
         pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])
 
@@ -130,7 +112,7 @@ class Text(MenuObject):
                 x_pos += font.size(final_text_pieces[i])[0]
         
         y_level = zones[current_piece_index].y_level
-        this_line_length = 4353
+        this_line_length = 0
         for i, zone in enumerate(zones):
             if zone.y_level == y_level:
                 this_line_length += font.size(final_text_pieces[i])[0]
@@ -141,7 +123,7 @@ class Text(MenuObject):
         elif self.anchor in ["ne", "e", "se"]:
             x_pos += longest_line - this_line_length
 
-        y_pos = zones[i].y_level*font_height
+        y_pos = zones[current_piece_index].y_level*font_height
         return (x_pos, y_pos)
             
 

@@ -20,7 +20,7 @@ image = pygame.image.load(__file__[:-18]+"kenneth.jpg")
 menu_image = Image((0, 0), image, anchor="nw")
 menu_handler.add_object("menu", "my_image", menu_image)
 
-text2 = Text((0, 0), "Hello lorem ipsum dolor%%0 255 0%There lorem ipsum% Hello again", "arial", 20, color=(255, 0, 0), wrap_lines=True, anchor="c")
+text2 = Text([300, 300], "Hello lorem ipsum dolor%%0 255 0%There lorem ipsum% Hello again", "arial", 20, color=(255, 0, 0), wrap_lines=True, anchor="se")
 menu_handler.add_object("menu2", "my_text", text2)
 
 button = Button((50, 700), 
@@ -120,5 +120,5 @@ while 1:
     #pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(200, 200, 200, 200), 1)
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(30)
     #print("FPS:", clock.get_fps())
