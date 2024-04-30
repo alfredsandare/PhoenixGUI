@@ -56,6 +56,9 @@ class Text(MenuObject):
 
         #make lines out of the zones
         joined_lines = ''.join(line for line in processed_text_pieces)
+        print_here = False
+        if 'dolor' in joined_lines:
+            print_here = True
         final_text_pieces = []
         prev_zone_end = 0
         for zone in zones:
@@ -67,15 +70,26 @@ class Text(MenuObject):
         # TODO: Write code that properly calculates the longest line and total height.
         # The total height can probably be calculated by multiplying the last text
         # piece's y level with the font height.
-        longest_line = 0
-        total_height = font_height
-        for i, text in enumerate(final_text_pieces):
-            if font.size(text)[0] > longest_line:
-                longest_line = font.size(text)[0]
 
-            # if the y level does not match the previous y level, it's a new line.
-            if i!=0 and zones[i].y_level != zones[i-1].y_level:
-                total_height += font_height
+        # longest_line = 0
+        # total_height = font_height
+        # for i, text in enumerate(final_text_pieces):
+        #     if font.size(text)[0] > longest_line:
+        #         longest_line = font.size(text)[0]
+
+        #     # if the y level does not match the previous y level, it's a new line.
+        #     if i!=0 and zones[i].y_level != zones[i-1].y_level:
+        #         total_height += font_height
+
+        line_lengths = [font.size(final_text_pieces[0])[0]]
+        for i, text in enumerate(final_text_pieces[1:]):
+            if zones[i+1].y_level != zones[i].y_level:  # new line
+                line_lengths.append(font.size(text)[0])
+            else:
+                line_lengths[-1] += font.size(text)[0]
+        
+        longest_line = max(line_lengths)
+        total_height = font_height * (zones[-1].y_level + 1)
 
         surface_size = (longest_line, total_height)
         surface = pygame.Surface(surface_size, pygame.SRCALPHA)
@@ -96,6 +110,12 @@ class Text(MenuObject):
             surface.blit(rendered_text, (x_pos, y_pos))
 
         pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
+
+        if print_here:
+            print("första", pos)
+        pos = update_pos_by_anchor(pos, surface_size, self.anchor)
+        if print_here:
+            print("andra", pos)
         
         crop, pos_change = object_crop(surface_size, pos, menu_size, menu_pos, self.max_size)
         pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])

@@ -20,7 +20,7 @@ image = pygame.image.load(__file__[:-18]+"kenneth.jpg")
 menu_image = Image((0, 0), image, anchor="nw")
 menu_handler.add_object("menu", "my_image", menu_image)
 
-text2 = Text((0, 0), "Hello lorem ipsum dolor%%0 255 0%There lorem ipsum% Hello again", "arial", 20, color=(255, 0, 0), wrap_lines=True, anchor="nw")
+text2 = Text((0, 0), "Hello lorem ipsum dolor%%0 255 0%There lorem ipsum% Hello again", "arial", 20, color=(255, 0, 0), wrap_lines=True, anchor="c")
 menu_handler.add_object("menu2", "my_text", text2)
 
 button = Button((50, 700), 
