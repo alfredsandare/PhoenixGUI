@@ -6,7 +6,17 @@ from .util import flatten_list, get_font, cut_line, update_pos_by_anchor, wrap_l
 pygame.font.init()
 
 class Text(MenuObject):
-    def __init__(self, pos, text, font, font_size, max_size=None, wrap_lines=False, color=(255, 255, 255), bg_color=None, anchor="nw", justify="w"):
+    def __init__(self, 
+                 pos, 
+                 text, 
+                 font, 
+                 font_size, 
+                 max_size=None, 
+                 wrap_lines=False, 
+                 color=(255, 255, 255), 
+                 bg_color=None, 
+                 anchor="nw"):
+        
         super().__init__(pos, max_size, anchor)
         self.text = text
         self.font = font
@@ -18,16 +28,7 @@ class Text(MenuObject):
 
     def get_size(self, menu_pos, menu_size, ui_size, scroll):
         objects = self.render(menu_pos, menu_size, ui_size, scroll)
-        
-        height = objects[len(objects)-1].pos[0] - objects[0].pos[0] + objects[0].image.get_rect()[3]
-        max_width = 0
-        starting_x_pos = objects[0].pos[0]
-        for text in objects:
-            width = text.pos[0] - starting_x_pos + text.image.get_rect()[2]
-            if width > max_width:
-                max_width = width
-
-        return (max_width, height)
+        return objects[0].image.get_size()
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
         font = get_font(self.font_path if self.font_path is not None else "", 
@@ -36,7 +37,8 @@ class Text(MenuObject):
         
         font_height = font.size('H')[1]
 
-        original_text, zone_borders, colors = self.decode_text(self.text, self.color)
+        original_text, zone_borders, colors = self.decode_text(self.text, 
+                                                               self.color)
         text_pieces = original_text.split('\n')
 
         words = flatten_list([piece.split() for piece in text_pieces])
@@ -44,7 +46,8 @@ class Text(MenuObject):
 
         processed_text_pieces = []
         for text in text_pieces:
-            if self.max_size != None and self.max_size[0] < menu_size[0] - self.pos[0]:
+            if (self.max_size != None 
+                and self.max_size[0] < menu_size[0] - self.pos[0]):
                 max_width = self.max_size[0]
             elif self.anchor in ["n", "c", "s"]:
                 distance_to_borders = [self.pos[0], menu_size[0] - self.pos[0]]
@@ -90,19 +93,37 @@ class Text(MenuObject):
         surface_size = (longest_line, total_height)
         surface = pygame.Surface(surface_size, pygame.SRCALPHA)
         for i, text in enumerate(final_text_pieces):
-            pos = self.get_text_piece_pos(zones, font_height, i, final_text_pieces, font, longest_line)
-            rendered_text = font.render(text, True, zones[i].color, self.bg_color)
+            pos = self.get_text_piece_pos(zones, 
+                                          font_height, 
+                                          i, 
+                                          final_text_pieces, 
+                                          font, 
+                                          longest_line)
+            rendered_text = font.render(text, 
+                                        True, 
+                                        zones[i].color, 
+                                        self.bg_color)
             surface.blit(rendered_text, pos)
 
         pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
 
         pos = update_pos_by_anchor(pos, surface_size, self.anchor)
-        crop, pos_change = object_crop(surface_size, pos, menu_size, menu_pos, self.max_size)
+        crop, pos_change = object_crop(surface_size, 
+                                       pos, 
+                                       menu_size, 
+                                       menu_pos, 
+                                       self.max_size)
         pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])
 
         return [RenderedMenuObject(surface, pos, crop)]
     
-    def get_text_piece_pos(self, zones, font_height, current_piece_index, final_text_pieces, font, longest_line):
+    def get_text_piece_pos(self, 
+                           zones, 
+                           font_height, 
+                           current_piece_index, 
+                           final_text_pieces, 
+                           font, 
+                           longest_line):
         x_pos = 0
 
         for i in range(current_piece_index):
@@ -139,7 +160,9 @@ class Text(MenuObject):
         # the total number of chars that are not part of the actual text
         chars_to_be_ignored = 0
         for i, char in enumerate(text):
-            if char == '%' and i+1<len(text) and text[i+1] == '%' and i not in to_skip:  # found a zone
+            if (char == '%' and i+1<len(text) 
+                and text[i+1] == '%' 
+                and i not in to_skip):  # found a zone
                 # end previous nozone
                 if i > 0 and i-1 not in to_skip:
                     zone_borders.append(len(decoded_text))
@@ -155,7 +178,8 @@ class Text(MenuObject):
 
                 # get the text
                 j=1
-                while not (text[i+offset+j+1] == '%' and text[i+offset+j] != "\\"):
+                while not (text[i+offset+j+1] == '%' 
+                           and text[i+offset+j] != "\\"):
                     j+=1
                 zone_borders.append(i+j-1-chars_to_be_ignored)
                 colours.append(zone_color)
@@ -172,8 +196,10 @@ class Text(MenuObject):
             colours.append(default_color)
 
         # purge decoded_text of preventative backslashes
-        decoded_text = "".join([c if c != "\\" or (c == "\\" and decoded_text[i+1] != "%")\
-                                else "" for i, c in enumerate(decoded_text)])
+        decoded_text = "".join([c if c != "\\" 
+                                or (c == "\\" and decoded_text[i+1] != "%")
+                                else "" 
+                                for i, c in enumerate(decoded_text)])
 
         return decoded_text, zone_borders, colours
 
