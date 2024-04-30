@@ -43,8 +43,13 @@ class Text(MenuObject):
         for text in text_pieces:
             if self.max_size != None and self.max_size[0] < menu_size[0] - self.pos[0]:
                 max_width = self.max_size[0]
-            else:
+            elif self.anchor in ["n", "c", "s"]:
+                distance_to_borders = [self.pos[0], menu_size[0] - self.pos[0]]
+                max_width = 2 * min(distance_to_borders)
+            elif self.anchor in ["nw", "w", "sw"]:
                 max_width = menu_size[0] - self.pos[0]
+            else:
+                max_width = self.pos[0]
 
             if self.wrap_lines:
                 processed_text_pieces.extend(wrap_line(text, font, max_width))
@@ -94,20 +99,15 @@ class Text(MenuObject):
         surface_size = (longest_line, total_height)
         surface = pygame.Surface(surface_size, pygame.SRCALPHA)
         for i, text in enumerate(final_text_pieces):
-            x_pos = 0
-            y_pos = zones[i].y_level*font_height
-
-            # fix the x positions of the indented text pieces, when justify="w"
-            for j in range(i):
-                if zones[j].y_level == zones[i].y_level:
-                    x_pos += font.size(final_text_pieces[j])[0]
+            
+            pos = self.get_text_piece_pos(zones, font_height, i, final_text_pieces, font, longest_line)
 
             rendered_text = font.render(text, True, zones[i].color, self.bg_color)
 
             #crop, pos_change = object_crop(font.size(text), (x_pos, y_pos), menu_size, menu_pos, self.max_size)
             #pos = (x_pos+pos_change[0], y_pos+pos_change[1])
             #rendered_objects.append(RenderedMenuObject(rendered_text, pos, crop))
-            surface.blit(rendered_text, (x_pos, y_pos))
+            surface.blit(rendered_text, pos)
 
         pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
 
@@ -121,6 +121,30 @@ class Text(MenuObject):
         pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])
 
         return [RenderedMenuObject(surface, pos, crop)]
+    
+    def get_text_piece_pos(self, zones, font_height, current_piece_index, final_text_pieces, font, longest_line):
+        x_pos = 0
+
+        for i in range(current_piece_index):
+            if zones[i].y_level == zones[current_piece_index].y_level:
+                x_pos += font.size(final_text_pieces[i])[0]
+        
+        y_level = zones[current_piece_index].y_level
+        this_line_length = 4353
+        for i, zone in enumerate(zones):
+            if zone.y_level == y_level:
+                this_line_length += font.size(final_text_pieces[i])[0]
+
+        if self.anchor in ["n", "c", "s"]:
+            x_pos += (longest_line - this_line_length) / 2
+
+        elif self.anchor in ["ne", "e", "se"]:
+            x_pos += longest_line - this_line_length
+
+        y_pos = zones[i].y_level*font_height
+        return (x_pos, y_pos)
+            
+
 
     def decode_text(self, text, default_color):
         decoded_text = ''  # the extracted text
