@@ -54,8 +54,6 @@ class Text(MenuObject):
             else:
                 max_width = self.pos[0]
                 
-            if print_here:
-                print(text)
             if max_width < longest_word_length:
                 max_width = longest_word_length
 
