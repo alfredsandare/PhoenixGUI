@@ -125,9 +125,9 @@ class SelectionButton(MenuObject):
             text_pos = self._get_text_pos((shape_size, shape_size), 
                                             font_height)
 
-        rendered_objects = flatten_list(rendered_objects)
+        #rendered_objects = flatten_list(rendered_objects)
 
-        rendered_objects.append(menu_text.render((0, 0), menu_size, ui_size, 0)[0])
+        rendered_objects.append(menu_text.render((0, 0), menu_size, ui_size, 0))
         rendered_objects[-1].pos = text_pos
 
         x_size = max([obj.pos[0] + obj.get_image_size()[0] 
@@ -154,7 +154,7 @@ class SelectionButton(MenuObject):
             pos[1] + surface_size[1] + self.hitbox_padding - menu_pos[1]
         ]
 
-        return [RenderedMenuObject(surface, pos, crop)]
+        return RenderedMenuObject(surface, pos, crop)
             
     def _get_text_pos(self, obj_size, font_height):
         x_pos = obj_size[0] + self.text_offset

@@ -39,7 +39,7 @@ class Menu:
             self.rendered_objects["_bg"] = rect.render(self.pos, 
                                                        self.size, 
                                                        ui_size, 
-                                                       0)[0]
+                                                       0)
 
         if self.outline_width != None and self.outline_color != None:
             rect = Shape((0, 0), 
@@ -50,7 +50,7 @@ class Menu:
             self.rendered_objects["_outline"] = rect.render(self.pos, 
                                                             self.size, 
                                                             ui_size, 
-                                                            0)[0]
+                                                            0)
 
         for key, item in self.objects.items():
             if item.render_flag:
@@ -68,10 +68,9 @@ class Menu:
         if "_bg" in self.rendered_objects.keys():
             self.rendered_objects["_bg"].draw(screen)
 
-        for key, items in self.rendered_objects.items():
-            if key not in ("_bg", "_outline") and items is not None:
-                for item in items:
-                    item.draw(screen)
+        for key, item in self.rendered_objects.items():
+            if key not in ("_bg", "_outline") and item is not None:
+                item.draw(screen)
 
         if "_outline" in self.rendered_objects.keys():
             self.rendered_objects["_outline"].draw(screen)
@@ -101,11 +100,10 @@ class Menu:
         largest_x = 0
         largest_y = 0
         pairs = []
-        for key, objs in self.rendered_objects.items():
-            if key in ("_bg", "_outline", self.scroll_slidebar) or objs is None:
+        for key, obj in self.rendered_objects.items():
+            if key in ("_bg", "_outline", self.scroll_slidebar) or obj is None:
                 continue
-            for obj in objs:
-                pairs.append([key, obj])
+            pairs.append([key, obj])
 
         for key, obj in pairs:
             size = obj.image.get_size()

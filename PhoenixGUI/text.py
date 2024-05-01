@@ -27,8 +27,8 @@ class Text(MenuObject):
         self.font_path = None
 
     def get_size(self, menu_pos, menu_size, ui_size, scroll):
-        objects = self.render(menu_pos, menu_size, ui_size, scroll)
-        return objects[0].image.get_size()
+        object = self.render(menu_pos, menu_size, ui_size, scroll)
+        return object.image.get_size()
     
     def get_font_height(self):
         font = get_font(self.font_path if self.font_path is not None else "", 
@@ -122,7 +122,7 @@ class Text(MenuObject):
                                        self.max_size)
         pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])
 
-        return [RenderedMenuObject(surface, pos, crop)]
+        return RenderedMenuObject(surface, pos, crop)
     
     def get_text_piece_pos(self, 
                            zones, 

@@ -83,7 +83,7 @@ class Button(MenuObject):
                                max_size=self.max_size, 
                                anchor=self.anchor)
             rendered_menu_image = menu_image.render(menu_pos, menu_size, 
-                                                    ui_size, scroll)[0]
+                                                    ui_size, scroll)
 
         if self.text:
             text_color_to_use = get_value_from_state(self.state,
@@ -102,7 +102,7 @@ class Button(MenuObject):
                              max_size=self.max_size,
                              wrap_lines=False,
                              color=text_color_to_use)
-            rendered_menu_text = menu_text.render(menu_pos, menu_size, ui_size, scroll)[0]
+            rendered_menu_text = menu_text.render(menu_pos, menu_size, ui_size, scroll)
 
         if self.enable_rect:
             text_size = rendered_menu_text.get_image_size()
@@ -126,7 +126,7 @@ class Button(MenuObject):
                              outline_color=rect_outline_color,
                              border_radius=self.rect_border_radius,
                              max_size=self.max_size)
-            rendered_menu_rect = menu_rect.render(menu_pos, menu_size, ui_size, scroll)[0]
+            rendered_menu_rect = menu_rect.render(menu_pos, menu_size, ui_size, scroll)
             
         surface_size = (0, 0)
         if self.image is not None:
@@ -158,7 +158,7 @@ class Button(MenuObject):
             pos[1] + surface_size[1] + self.hitbox_padding - menu_pos[1]
         ]
 
-        return [RenderedMenuObject(surface, pos, crop)]
+        return RenderedMenuObject(surface, pos, crop)
 
     def exec_command(self):
         if self.command is not None and self.enabled:

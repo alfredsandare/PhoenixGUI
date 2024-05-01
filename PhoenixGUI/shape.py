@@ -58,4 +58,4 @@ class Shape(MenuObject):
                                     pygame.Rect((0, 0), self.size),
                                     width=self.outline_width)
                 
-        return [RenderedMenuObject(surface, pos, crop)]
+        return RenderedMenuObject(surface, pos, crop)

@@ -14,7 +14,7 @@ class Image(MenuObject):
         pos = update_pos_by_anchor(pos, image_size, self.anchor)
         crop, pos_change = object_crop(image_size, pos, menu_size, menu_pos, self.max_size)
         pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])
-        return [RenderedMenuObject(self.image, pos, crop)]
+        return RenderedMenuObject(self.image, pos, crop)
 
     def get_size(self):
         return self.image.get_rect()[2:]
