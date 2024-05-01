@@ -1,3 +1,4 @@
 Fix slidebar click/hover when moving mouse outside of menu
 Add hover menu
 Refactor Checkbutton and Radiobutton. Make sure that anchors work.
+Change object_crop() so that it returns position rather than pos_change
