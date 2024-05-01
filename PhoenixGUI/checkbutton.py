@@ -1,8 +1,10 @@
+from .rendered_menu_object import RenderedMenuObject
 from .image import Image
 from .text import Text
-from .util import update_pos_by_anchor, flatten_list
+from .util import object_crop, update_pos_by_anchor, flatten_list, get_value_from_state
 from .shape import Shape
-from .menu_object import MenuObject 
+from .menu_object import MenuObject
+import pygame
 
 class Checkbutton(MenuObject):
     def __init__(self,
@@ -72,66 +74,89 @@ class Checkbutton(MenuObject):
     def render(self, menu_pos, menu_size, ui_size, scroll):
         rendered_objects = []
 
-        text_color = self.text_color
-        if self.state == "hover" and self.text_hover_color != None:
-            text_color = self.text_hover_color
-        elif self.state == "click" and self.text_click_color != None:
-            text_color = self.text_click_color
+        text_color = get_value_from_state(self.state,
+                                          self.text_color,
+                                          self.text_hover_color,
+                                          self.text_click_color)
+        
+        square_color = get_value_from_state(self.state,
+                                            self.square_color,
+                                            self.square_hover_color,
+                                            self.square_click_color)
+        
+        image = get_value_from_state(self.state,
+                                     self.image,
+                                     self.hover_image,
+                                     self.click_image)
 
-        square_color = self.square_color
-        if self.state == "hover" and self.square_hover_color != None:
-            square_color = self.square_hover_color
-        elif self.state == "click" and self.square_click_color != None:
-            square_color = self.square_click_color
+        menu_text = Text((0, 0), self.text, self.font, 
+                         self.font_size, color=text_color)
+        
+        font_height = menu_text.get_font_height()
 
-        image = self.image
-        if self.state == "hover" and self.hover_image != None:
-            image = self.hover_image
-        elif self.state == "click" and self.click_image != None:
-            image = self.click_image
-
-        menu_text = Text(self.pos, self.text, self.font, self.font_size, color=text_color)
-        text_size = menu_text.get_size(menu_pos, menu_size, ui_size, scroll)
-
-        if self.image != None:
-            menu_image = Image(self.pos, image)
-            rendered_objects.append(menu_image.render(menu_pos, menu_size, ui_size, scroll))
-            menu_text.pos = self._update_text_pos(menu_image.get_size(), text_size)
-            total_x_size = menu_image.get_size()[0] + self.text_offset + text_size[0]
-            total_y_size = max([menu_image.get_size()[1], text_size[1]])
+        text_pos = (0, 0)
+        if self.image is not None:
+            menu_image = Image((0, 0), image)
+            rendered_objects.append(menu_image.render((0, 0), menu_size, 
+                                                      ui_size, 0))
+            text_pos = self._get_text_pos(menu_image.get_size(), font_height)
 
         else:  # square
-            square_size = text_size[1]*self.square_size
-            menu_square_1 = Shape(self.pos, (square_size, square_size), square_color, "rect", width=round(0.1*square_size))
-            rendered_objects.append(menu_square_1.render(menu_pos, menu_size, ui_size, scroll))
+            square_size = font_height*self.square_size
+            menu_square_1 = Shape((0, 0), 
+                                  (square_size, square_size), 
+                                  square_color, 
+                                  "rect", 
+                                  width=round(0.1*square_size))
+            rendered_objects.append(menu_square_1.render((0, 0), menu_size, 
+                                                         ui_size, 0))
 
-            if self.is_checked:  # only render the middle square when the button is checked
-                square_2_pos = (round(self.pos[0]+0.2*square_size), round(self.pos[1]+0.2*square_size))
-                menu_square_2 = Shape(square_2_pos, (0.6*square_size, 0.6*square_size), square_color, "rect")
-                rendered_objects.append(menu_square_2.render(menu_pos, menu_size, ui_size, scroll))
-  
-            menu_text.pos = self._update_text_pos((square_size, square_size), text_size)
-            total_x_size = square_size + self.text_offset + text_size[0]
-            total_y_size = max([square_size, text_size[1]])
-
-        rendered_objects.append(menu_text.render(menu_pos, menu_size, ui_size, scroll))
+            # only render the middle square when the button is checked
+            if self.is_checked:
+                square_2_pos = (round(0.2*square_size), round(0.2*square_size))
+                menu_square_2 = Shape(square_2_pos, 
+                                      (0.6*square_size, 0.6*square_size), 
+                                      square_color, "rect")
+                rendered_objects.append(menu_square_2.render((0, 0), menu_size, 
+                                                             ui_size, 0))
+                
+            text_pos = self._get_text_pos((square_size, square_size), 
+                                            font_height)
 
         rendered_objects = flatten_list(rendered_objects)
-        for obj in rendered_objects:
-            obj.pos = update_pos_by_anchor(obj.pos, (total_x_size, total_y_size), self.anchor)
 
+        rendered_objects.append(menu_text.render((0, 0), menu_size, ui_size, 0)[0])
+        rendered_objects[-1].pos = text_pos
+
+        x_size = max([obj.pos[0] + obj.get_image_size()[0] 
+                      for obj in rendered_objects])
+        y_size = max([obj.pos[1] + obj.get_image_size()[1] 
+                      for obj in rendered_objects])
+        
+        surface_size = (x_size, y_size)
+        surface = pygame.Surface(surface_size, pygame.SRCALPHA)
+
+        for obj in rendered_objects:
+            obj.draw(surface)
+        
+        pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
+        pos = update_pos_by_anchor(pos, surface_size, self.anchor)
+        crop, pos_change = object_crop(surface_size, pos, 
+                                       menu_size, menu_pos, self.max_size)
+        pos = (pos[0] + pos_change[0], pos[1] + pos_change[1])
+        
         self.hitbox = [
-            rendered_objects[0].pos[0] - self.hitbox_padding - menu_pos[0],
-            rendered_objects[0].pos[1] - self.hitbox_padding - menu_pos[1],
-            rendered_objects[0].pos[0] + total_x_size + self.hitbox_padding - menu_pos[0],
-            rendered_objects[0].pos[1] + total_y_size + self.hitbox_padding - menu_pos[1]
+            pos[0] - self.hitbox_padding - menu_pos[0],
+            pos[1] - self.hitbox_padding - menu_pos[1],
+            pos[0] + surface_size[0] + self.hitbox_padding - menu_pos[0],
+            pos[1] + surface_size[1] + self.hitbox_padding - menu_pos[1]
         ]
 
-        return rendered_objects
+        return [RenderedMenuObject(surface, pos, crop)]
             
-    def _update_text_pos(self, obj_size, text_size):
-        x_pos = self.pos[0] + obj_size[0] + self.text_offset
-        y_pos = int(self.pos[1] + obj_size[1]/2 - text_size[1]/2)
+    def _get_text_pos(self, obj_size, font_height):
+        x_pos = obj_size[0] + self.text_offset
+        y_pos = int(obj_size[1]/2 - font_height/2)
         return (x_pos, y_pos)
 
     def exec_command(self):

@@ -29,6 +29,13 @@ class Text(MenuObject):
     def get_size(self, menu_pos, menu_size, ui_size, scroll):
         objects = self.render(menu_pos, menu_size, ui_size, scroll)
         return objects[0].image.get_size()
+    
+    def get_font_height(self):
+        font = get_font(self.font_path if self.font_path is not None else "", 
+                        self.font, 
+                        self.font_size)
+        return font.size('H')[1]
+
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
         font = get_font(self.font_path if self.font_path is not None else "", 

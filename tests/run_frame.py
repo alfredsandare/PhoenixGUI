@@ -70,11 +70,11 @@ button2.command = circle.switch_active
 checkbutton = Checkbutton((50, 400), "Hola Bingus", "arial", 20, (255, 255, 255), anchor="nw", square_color=(255, 255, 255), square_size=1, text_hover_color=(255, 0, 0))
 menu_handler.add_object("menu", "cbtn", checkbutton)
 
-radiobutton = Radiobutton((50, 450), "Not Bingus", "arial", 20, (255, 255, 255), text_hover_color=(255, 0, 0), group="r", command=c1)
-menu_handler.add_object("menu", "rbtn", radiobutton)
+# radiobutton = Radiobutton((50, 450), "Not Bingus", "arial", 20, (255, 255, 255), text_hover_color=(255, 0, 0), group="r", command=c1)
+# menu_handler.add_object("menu", "rbtn", radiobutton)
 
-radiobutton2 = Radiobutton((50, 500), "Really Not Bingus", "arial", 20, (255, 255, 255), text_hover_color=(255, 0, 0), group="r", command=c2, circle_size=2)
-menu_handler.add_object("menu", "rbtn2", radiobutton2)
+# radiobutton2 = Radiobutton((50, 500), "Really Not Bingus", "arial", 20, (255, 255, 255), text_hover_color=(255, 0, 0), group="r", command=c2, circle_size=2)
+# menu_handler.add_object("menu", "rbtn2", radiobutton2)
 
 slidebar = Slidebar((475, 25), 550, 40, circle_hover_color=(255, 0, 0), circle_click_color=(0, 255, 255), orientation="vertical")
 menu_handler.add_object("menu", "sldbr", slidebar)

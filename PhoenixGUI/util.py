@@ -129,3 +129,10 @@ def compare_objects(a, b):
         if not attr1 == attr2:
             return False
     return True
+
+def get_value_from_state(state, standard, hover, click):
+    if state == "hover" and hover != None:
+        return hover
+    elif state == "click" and click != None:
+        return click
+    return standard
