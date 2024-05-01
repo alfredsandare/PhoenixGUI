@@ -38,7 +38,7 @@ button = Button((50, 700),
                 rect_outline_color=(255, 255, 255))
 menu_handler.add_object("menu", "button", button)
 
-button2 = Button((350, 500), 
+button2 = Button((520, 620), 
                 text="Inte Johannes",
                 text_color=(255, 255, 255),
                 text_hover_color=(255, 100, 100),
@@ -50,7 +50,8 @@ button2 = Button((350, 500),
                 rect_padx=10,
                 rect_pady=5,
                 rect_color=(0, 0, 255),
-                rect_outline_color=(255, 255, 255))
+                rect_outline_color=(255, 255, 255),
+                anchor="se")
 menu_handler.add_object("menu", "button2", button2)
 
 def c1():

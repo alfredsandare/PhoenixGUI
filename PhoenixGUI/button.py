@@ -1,9 +1,10 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
-from .util import object_crop, get_font, flatten_list
+from .util import object_crop, get_font, flatten_list, update_pos_by_anchor
 from .image import Image
 from .text import Text
 from .shape import Shape
+import pygame
 
 class Button(MenuObject):
     def __init__(self, 
@@ -16,7 +17,7 @@ class Button(MenuObject):
                  text=None, 
                  font=None, 
                  font_size=None, 
-                 text_color=None,
+                 text_color=(255, 255, 255),
                  text_hover_color=None,
                  text_click_color=None,
                  hitbox_padding=0,
@@ -66,93 +67,104 @@ class Button(MenuObject):
 
         if self.text == None and self.image == None:
             raise Exception("Cannot instanstiate button with neither text nor image.")
+        
+        if self.image is not None and self.enable_rect:
+            raise Exception("Cannot instaniate button with both image and rect.")
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
-        rendered_objects = []
-        if self.image:
-            image_to_use = self.image
-            if self.state == "hover" and self.hover_image != None:
-                image_to_use = self.hover_image
-            elif self.state == "click" and self.click_image != None:
-                image_to_use = self.click_image
+        if self.image is not None:
+            image_to_use = self.get_value_from_state(self.image,
+                                                     self.hover_image,
+                                                     self.click_image)
 
-            menu_image = Image(self.pos, 
+            menu_image = Image((0, 0), 
                                image_to_use, 
                                max_size=self.max_size, 
                                anchor=self.anchor)
-            rendered_menu_image = menu_image.render(menu_pos, menu_size, ui_size, scroll)
+            rendered_menu_image = menu_image.render(menu_pos, menu_size, 
+                                                    ui_size, scroll)[0]
 
         if self.text:
-            text_color_to_use = self.text_color
-            if self.state == "hover" and self.text_hover_color != None:
-                text_color_to_use = self.text_hover_color
-            elif self.state == "click" and self.text_click_color != None:
-                text_color_to_use = self.text_click_color
-
-            pos = self.pos
+            text_color_to_use = self.get_value_from_state(self.text_color,
+                                                          self.text_hover_color,
+                                                          self.text_click_color)
+            
+            pos = (0, 0)
             if self.enable_rect:
-                pos = [self.pos[0] + self.rect_padx, self.pos[1] + self.rect_pady]
+                pos = (self.rect_padx, self.rect_pady)
 
             menu_text = Text(pos, 
                              self.text, 
                              self.font, 
                              self.font_size, 
                              max_size=self.max_size,
-                             anchor=self.anchor,
-                             wrap_lines=True,
+                             wrap_lines=False,
                              color=text_color_to_use)
-            rendered_menu_text = menu_text.render(menu_pos, menu_size, ui_size, scroll)
+            rendered_menu_text = menu_text.render(menu_pos, menu_size, ui_size, scroll)[0]
 
         if self.enable_rect:
-            text_size = menu_text.get_size(menu_pos, menu_size, ui_size, scroll)
+            text_size = rendered_menu_text.get_image_size()
             rect_size = (text_size[0] + 2*self.rect_padx, text_size[1] + 2*self.rect_pady)
 
-            rect_color = self.rect_color
-            if self.state == "hover" and self.rect_hover_color != None:
-                rect_color = self.rect_hover_color
-            elif self.state == "click" and self.rect_click_color != None:
-                rect_color = self.rect_click_color
+            rect_color = self.get_value_from_state(self.rect_color,
+                                                   self.rect_hover_color,
+                                                   self.rect_click_color)
 
-            rect_outline_color = self.rect_outline_color
-            if self.state == "hover" and self.rect_outline_hover_color != None:
-                rect_outline_color = self.rect_outline_hover_color
-            elif self.state == "click" and self.rect_outline_click_color != None:
-                rect_outline_color = self.rect_outline_click_color
+            rect_outline_color = self.get_value_from_state(self.rect_outline_color,
+                                                           self.rect_outline_hover_color,
+                                                           self.rect_outline_click_color)
 
-            menu_rect = Shape(self.pos,
+            menu_rect = Shape((0, 0),
                              rect_size,
                              rect_color,
                              "rect",
                              outline_width=self.rect_outline_width,
                              outline_color=rect_outline_color,
                              border_radius=self.rect_border_radius,
-                             max_size=self.max_size,
-                             anchor=self.anchor)
-            rendered_menu_rect = menu_rect.render(menu_pos, menu_size, ui_size, scroll)
+                             max_size=self.max_size)
+            rendered_menu_rect = menu_rect.render(menu_pos, menu_size, ui_size, scroll)[0]
+            
+        surface = None
+        if self.image is not None:
+            surface = pygame.Surface(rendered_menu_image.get_image_size(),
+                                     pygame.SRCALPHA)
+        elif self.enable_rect:
+            surface = pygame.Surface(rendered_menu_rect.get_image_size(),
+                                     pygame.SRCALPHA)
+        else:
+            surface = pygame.Surface(rendered_menu_text.get_image_size(),
+                                     pygame.SRCALPHA)
+            
+        surface_size = surface.get_size()
+            
+        if self.image is not None:
+            surface.blit(rendered_menu_image.image, (0, 0))
+        if self.enable_rect:
+            surface.blit(rendered_menu_rect.image, (0, 0))
+        if self.text:
+           surface.blit(rendered_menu_text.image, (self.rect_padx, self.rect_pady))
 
-        largest_x = max([menu_text.get_size(menu_pos, menu_size, ui_size, scroll)[0] if self.text else 0,
-                         menu_image.get_size()[0] if self.image else 0,
-                         menu_rect.size[0] if self.enable_rect else 0])
-
-        largest_y = max([menu_text.get_size(menu_pos, menu_size, ui_size, scroll)[1] if self.text else 0,
-                         menu_image.get_size()[1] if self.image else 0,
-                         menu_rect.size[1] if self.enable_rect else 0])
-
+        pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
+        pos = update_pos_by_anchor(pos, surface.get_size(), self.anchor)
+        crop, pos_change = object_crop(surface.get_size(), pos, 
+                                       menu_size, menu_pos, self.max_size)
+        pos = (pos[0] + pos_change[0], pos[1] + pos_change[1])
+        
         self.hitbox = [
-            self.pos[0] - self.hitbox_padding,
-            self.pos[1] - self.hitbox_padding + scroll,
-            self.pos[0] + largest_x + self.hitbox_padding,
-            self.pos[1] + largest_y + self.hitbox_padding + scroll
+            pos[0] - self.hitbox_padding - menu_pos[0],
+            pos[1] - self.hitbox_padding - menu_pos[1],
+            pos[0] + surface_size[0] + self.hitbox_padding - menu_pos[0],
+            pos[1] + surface_size[1] + self.hitbox_padding - menu_pos[1]
         ]
 
-        to_return = []
-        if self.enable_rect:
-            to_return.append(rendered_menu_rect)
-        if self.image:
-            to_return.append(rendered_menu_image)
-        if self.text:
-            to_return.append(rendered_menu_text)
-        return flatten_list(to_return)
+        return [RenderedMenuObject(surface, pos, crop)]
+    
+    def get_value_from_state(self, standard, hover, click):
+        if self.state == "hover" and hover != None:
+            return hover
+        elif self.state == "click" and click != None:
+            return click
+        return standard
 
     def exec_command(self):
         if self.command is not None and self.enabled:

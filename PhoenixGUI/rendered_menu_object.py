@@ -9,3 +9,6 @@ class RenderedMenuObject:
             screen.blit(self.image, self.pos)
         else:
             screen.blit(self.image, self.pos, self.crop)
+
+    def get_image_size(self):
+        return self.image.get_size()
