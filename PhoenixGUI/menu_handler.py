@@ -30,7 +30,6 @@ class MenuHandler:
 
         if (self.current_menu_key != current_menu_key 
             and self.current_menu_key != None):
-
             # mouse is hovering over a different menu
             self.menues[self.current_menu_key].reset_buttons()
 
@@ -51,7 +50,8 @@ class MenuHandler:
         current_button = None
         current_button_key = None
         for key, obj in current_menu.objects.items():
-            if is_button(obj) and self.compare_coords(obj.hitbox, menu_pos, mouse_pos):
+            #if is_button(obj) and self.compare_coords(obj.hitbox, menu_pos, mouse_pos):
+            if is_button(obj) and obj.hitbox.is_pos_inside(*mouse_pos):
                 current_button = obj
                 current_button_key = key
 

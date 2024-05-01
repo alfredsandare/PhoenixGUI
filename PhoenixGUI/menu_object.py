@@ -1,4 +1,5 @@
-from .util import update_pos_by_anchor
+from .hitbox import Hitbox
+from .util import sum_two_vectors
 
 class MenuObject:
     def __init__(self, pos, max_size, anchor, layer=0, active=True):
@@ -8,6 +9,20 @@ class MenuObject:
         self.layer = layer
         self.active = active
         self.render_flag = True
+        self.rendered_object = None
+        self.hitbox = None
+
+    def render_and_store(self, menu_pos, menu_size, ui_size, scroll):
+        self.rendered_object = self.render(menu_pos, menu_size, ui_size, scroll)
+        self.hitbox = Hitbox(*self.rendered_object.pos, 
+                             *sum_two_vectors(self.rendered_object.pos, 
+                                              self.rendered_object.image.get_size()))
+        
+    def draw(self, screen):
+        self.rendered_object.draw(screen)
+    
+    def is_rendered(self):
+        return self.rendered_object is not None
 
     def set_layer(self, layer):
         self.layer = layer

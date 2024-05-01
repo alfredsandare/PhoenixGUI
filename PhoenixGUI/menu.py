@@ -1,7 +1,6 @@
 from .rendered_menu_object import RenderedMenuObject
 from .shape import Shape
 from .util import flatten_list, is_button, update_pos_by_anchor
-import time
 
 class Menu:
     def __init__(self, 
@@ -17,7 +16,6 @@ class Menu:
         self.pos = pos
         self.size = size
         self.objects = {}
-        self.rendered_objects = {}
         self.outline_width = outline_width
         self.outline_color = outline_color
         self.layer = layer
@@ -28,52 +26,52 @@ class Menu:
         self.scroll = 0
         self.scroll_slidebar = scroll_slidebar
 
+        if self.bg_color is not None:
+            self.objects["_bg"] = Shape((0, 0), self.size, self.bg_color, "rect")
+        
+        if self.outline_width != None and self.outline_color != None:
+            self.objects["_outline"] = Shape((0, 0), 
+                         self.size, 
+                         self.outline_color, 
+                         "rect", 
+                         width=self.outline_width)
+
     def add_object(self, id, _object):
         if id in ("_bg", "_outline"):
             raise Exception("Object id cannot be '_bg' or '_outline'")
         self.objects[id] = _object
 
     def render_all(self, screen, ui_size):
-        if self.bg_color != None:
-            rect = Shape((0, 0), self.size, self.bg_color, "rect")
-            self.rendered_objects["_bg"] = rect.render(self.pos, 
-                                                       self.size, 
-                                                       ui_size, 
-                                                       0)
+        # Re-renders items with render flag and then draws all items.
+        if "_bg" in self.objects.keys() and not self.objects["_bg"].is_rendered():
+            self.objects["_bg"].render_and_store(self.pos, self.size, ui_size, 0)
 
-        if self.outline_width != None and self.outline_color != None:
-            rect = Shape((0, 0), 
-                         self.size, 
-                         self.outline_color, 
-                         "rect", 
-                         width=self.outline_width)
-            self.rendered_objects["_outline"] = rect.render(self.pos, 
-                                                            self.size, 
-                                                            ui_size, 
-                                                            0)
+        if "_outline" in self.objects.keys() and \
+            not self.objects["_outline"].is_rendered():
+            print("i'm re-rendering???")
+            self.objects["_outline"].render_and_store(self.pos, self.size, 
+                                                      ui_size, 0)
 
         for key, item in self.objects.items():
-            if item.render_flag:
-                if key == self.scroll_slidebar and item.active:
-                    self.rendered_objects[key] = item.render(self.pos, self.size, ui_size, 0)
-                elif item.active:
-                    self.rendered_objects[key] = item.render(self.pos, self.size, ui_size, -self.scroll)
-                else:
-                    self.rendered_objects[key] = None
-                item.render_flag = False
+            if not item.render_flag or key in ("_bg", "_outline"):
+                continue
+            if key == self.scroll_slidebar and item.active:
+                item.render_and_store(self.pos, self.size, ui_size, 0)
+            elif item.active:
+                item.render_and_store(self.pos, self.size, ui_size, -self.scroll)
+            item.render_flag = False
 
-        self.draw_all(screen)
+        # draw all
+        if "_bg" in self.objects.keys():
+            self.objects["_bg"].draw(screen)
 
-    def draw_all(self, screen):
-        if "_bg" in self.rendered_objects.keys():
-            self.rendered_objects["_bg"].draw(screen)
-
-        for key, item in self.rendered_objects.items():
+        for key, item in self.objects.items():
             if key not in ("_bg", "_outline") and item is not None:
                 item.draw(screen)
 
-        if "_outline" in self.rendered_objects.keys():
-            self.rendered_objects["_outline"].draw(screen)
+        if "_outline" in self.objects.keys():
+            print(self.objects["_outline"].rendered_object.pos)
+            self.objects["_outline"].draw(screen)
         
     def set_layer(self, layer):
         self.layer = layer
@@ -99,11 +97,11 @@ class Menu:
         # gets the total size of the menu dependent on the items
         largest_x = 0
         largest_y = 0
-        for key, obj in self.rendered_objects.items():
-            if key in ("_bg", "_outline", self.scroll_slidebar) or obj is None:
+        for key, obj in self.objects.items():
+            if key in ("_bg", "_outline", self.scroll_slidebar) or obj.rendered_object is None:
                 continue
             
-            size = obj.image.get_size()
+            size = obj.rendered_object.image.get_size()
             pos = update_pos_by_anchor(self.objects[key].pos, size, 
                                        self.objects[key].anchor)
             if size[0] + pos[0] > largest_x:

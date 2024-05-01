@@ -136,3 +136,6 @@ def get_value_from_state(state, standard, hover, click):
     elif state == "click" and click != None:
         return click
     return standard
+
+def sum_two_vectors(v1, v2):
+    return [v1[0] + v2[0], v1[1] + v2[1]]
