@@ -99,13 +99,10 @@ class Menu:
         # gets the total size of the menu dependent on the items
         largest_x = 0
         largest_y = 0
-        pairs = []
         for key, obj in self.rendered_objects.items():
             if key in ("_bg", "_outline", self.scroll_slidebar) or obj is None:
                 continue
-            pairs.append([key, obj])
-
-        for key, obj in pairs:
+            
             size = obj.image.get_size()
             pos = update_pos_by_anchor(self.objects[key].pos, size, 
                                        self.objects[key].anchor)
