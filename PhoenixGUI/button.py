@@ -1,6 +1,6 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
-from .util import object_crop, get_font, flatten_list, update_pos_by_anchor
+from .util import get_value_from_state, object_crop, get_font, flatten_list, update_pos_by_anchor
 from .image import Image
 from .text import Text
 from .shape import Shape
@@ -73,9 +73,10 @@ class Button(MenuObject):
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
         if self.image is not None:
-            image_to_use = self.get_value_from_state(self.image,
-                                                     self.hover_image,
-                                                     self.click_image)
+            image_to_use = get_value_from_state(self.state,
+                                                self.image,
+                                                self.hover_image,
+                                                self.click_image)
 
             menu_image = Image((0, 0), 
                                image_to_use, 
@@ -85,9 +86,10 @@ class Button(MenuObject):
                                                     ui_size, scroll)[0]
 
         if self.text:
-            text_color_to_use = self.get_value_from_state(self.text_color,
-                                                          self.text_hover_color,
-                                                          self.text_click_color)
+            text_color_to_use = get_value_from_state(self.state,
+                                                     self.text_color,
+                                                     self.text_hover_color,
+                                                     self.text_click_color)
             
             pos = (0, 0)
             if self.enable_rect:
@@ -106,13 +108,15 @@ class Button(MenuObject):
             text_size = rendered_menu_text.get_image_size()
             rect_size = (text_size[0] + 2*self.rect_padx, text_size[1] + 2*self.rect_pady)
 
-            rect_color = self.get_value_from_state(self.rect_color,
-                                                   self.rect_hover_color,
-                                                   self.rect_click_color)
+            rect_color = get_value_from_state(self.state,
+                                              self.rect_color,
+                                              self.rect_hover_color,
+                                              self.rect_click_color)
 
-            rect_outline_color = self.get_value_from_state(self.rect_outline_color,
-                                                           self.rect_outline_hover_color,
-                                                           self.rect_outline_click_color)
+            rect_outline_color = get_value_from_state(self.state,
+                                                      self.rect_outline_color,
+                                                      self.rect_outline_hover_color,
+                                                      self.rect_outline_click_color)
 
             menu_rect = Shape((0, 0),
                              rect_size,
@@ -124,18 +128,15 @@ class Button(MenuObject):
                              max_size=self.max_size)
             rendered_menu_rect = menu_rect.render(menu_pos, menu_size, ui_size, scroll)[0]
             
-        surface = None
+        surface_size = (0, 0)
         if self.image is not None:
-            surface = pygame.Surface(rendered_menu_image.get_image_size(),
-                                     pygame.SRCALPHA)
+            surface_size = rendered_menu_image.get_image_size()
         elif self.enable_rect:
-            surface = pygame.Surface(rendered_menu_rect.get_image_size(),
-                                     pygame.SRCALPHA)
+            surface_size = rendered_menu_rect.get_image_size()
         else:
-            surface = pygame.Surface(rendered_menu_text.get_image_size(),
-                                     pygame.SRCALPHA)
+            surface_size = rendered_menu_text.get_image_size()
             
-        surface_size = surface.get_size()
+        surface = pygame.Surface(surface_size, pygame.SRCALPHA)
             
         if self.image is not None:
             surface.blit(rendered_menu_image.image, (0, 0))
@@ -145,8 +146,8 @@ class Button(MenuObject):
            surface.blit(rendered_menu_text.image, (self.rect_padx, self.rect_pady))
 
         pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
-        pos = update_pos_by_anchor(pos, surface.get_size(), self.anchor)
-        crop, pos_change = object_crop(surface.get_size(), pos, 
+        pos = update_pos_by_anchor(pos, surface_size, self.anchor)
+        crop, pos_change = object_crop(surface_size, pos, 
                                        menu_size, menu_pos, self.max_size)
         pos = (pos[0] + pos_change[0], pos[1] + pos_change[1])
         
@@ -158,13 +159,6 @@ class Button(MenuObject):
         ]
 
         return [RenderedMenuObject(surface, pos, crop)]
-    
-    def get_value_from_state(self, standard, hover, click):
-        if self.state == "hover" and hover != None:
-            return hover
-        elif self.state == "click" and click != None:
-            return click
-        return standard
 
     def exec_command(self):
         if self.command is not None and self.enabled:
