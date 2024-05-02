@@ -23,9 +23,9 @@ class MenuObject:
 
         pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]+scroll]
         pos = update_pos_by_anchor(pos, image_size, self.anchor)
-        crop, pos_change = object_crop(image_size, pos, menu_size, menu_pos, self.max_size)
+        crop, pos = object_crop(image_size, pos, menu_size, menu_pos, self.max_size)
 
-        obj.pos = sum_two_vectors(pos, pos_change)
+        obj.pos = pos
         obj.crop = crop
         
         self.update_hitbox()

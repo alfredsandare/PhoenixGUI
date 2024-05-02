@@ -84,8 +84,9 @@ def object_crop(obj_size, obj_pos, menu_size, menu_pos, object_max_size):
         crop[3] = object_max_size[1]
 
     pos_change = [crop[0], crop[1]]
+    pos = sum_two_vectors(obj_pos, pos_change)
 
-    return crop, pos_change
+    return crop, pos
 
 def update_pos_by_anchor(object_pos, object_size, anchor):
     object_pos = list(object_pos)

@@ -28,8 +28,7 @@ class Shape(MenuObject):
     def render(self, menu_pos, menu_size, ui_size, scroll):
         pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]+scroll]
         pos = update_pos_by_anchor(pos, self.size, self.anchor)
-        crop, pos_change = object_crop(self.size, pos, menu_size, menu_pos, self.max_size)
-        pos = (pos[0]+pos_change[0], pos[1]+pos_change[1])
+        crop, pos = object_crop(self.size, pos, menu_size, menu_pos, self.max_size)
 
         surface = pygame.Surface(self.size, pygame.SRCALPHA)
         if self.type_ == "rect":
