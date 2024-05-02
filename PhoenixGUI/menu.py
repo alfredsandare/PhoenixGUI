@@ -12,7 +12,8 @@ class Menu:
                  outline_width=None,
                  outline_color=None,
                  enable_scroll=False, 
-                 scroll_slidebar=None):
+                 scroll_slidebar=None,
+                 max_scroll_offset=0):
         self.pos = pos
         self.size = size
         self.objects = {}
@@ -25,6 +26,7 @@ class Menu:
         self.enable_scroll = enable_scroll
         self.scroll = 0
         self.scroll_slidebar = scroll_slidebar
+        self.max_scroll_offset = max_scroll_offset
 
         self.hitbox = Hitbox(*self.pos, *sum_two_vectors(self.pos, self.size))
 
@@ -124,11 +126,20 @@ class Menu:
         for obj in self.objects.values():
             obj.light_render_flag = True
 
+    def get_max_scroll(self):
+        max_scroll = (self.get_size_from_items()[1] 
+                      - self.size[1]
+                      + self.max_scroll_offset)
+        
+        if max_scroll < 0:
+            max_scroll = 0
+
+        return max_scroll
+
     def scroll_event(self, scroll):
         self.scroll -= scroll
 
-        max_scroll = self.get_size_from_items()[1] - self.size[1] \
-            if self.get_size_from_items()[1] > 0 else 0
+        max_scroll = self.get_max_scroll()
         
         if self.scroll < 0:
             self.scroll = 0
@@ -141,7 +152,6 @@ class Menu:
         self.set_light_render_flag_all()
         
     def set_scroll_by_progress(self, progress):
-        max_scroll = self.get_size_from_items()[1] - self.size[1] \
-            if self.get_size_from_items()[1] > 0 else 0
+        max_scroll = self.get_max_scroll()
         self.scroll = progress * max_scroll
         self.set_light_render_flag_all()

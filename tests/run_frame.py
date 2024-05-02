@@ -6,7 +6,7 @@ menu_handler = MenuHandler()
 menu_handler.set_scroll_strength_multiplier(3)
 
 
-my_menu = Menu((50, 50), (500, 600), enable_scroll=True, scroll_slidebar="sldbr", outline_width=1, outline_color=(255, 0, 0))
+my_menu = Menu((50, 50), (500, 600), enable_scroll=True, scroll_slidebar="sldbr", outline_width=1, outline_color=(255, 0, 0), max_scroll_offset=20)
 menu_handler.add_menu("menu", my_menu)
 
 menu2 = Menu((200, 200), (300, 300), active=False, bg_color=(100, 100, 100, 200), outline_width=1, outline_color=(0, 255, 0))
