@@ -142,6 +142,7 @@ class MenuHandler:
         for obj in current_menu.objects.values():
             if isinstance(obj, Radiobutton) and obj.group == group:
                 obj.is_checked = False
+                obj.render_flag = True
 
     def set_scroll_strength_multiplier(self, strength):
         self.scroll_strength_multiplier = strength
