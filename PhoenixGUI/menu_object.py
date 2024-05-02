@@ -1,5 +1,5 @@
 from .hitbox import Hitbox
-from .util import sum_two_vectors
+from .util import object_crop, sum_two_vectors, update_pos_by_anchor
 
 class MenuObject:
     def __init__(self, pos, max_size, anchor, layer=0, active=True):
@@ -9,6 +9,7 @@ class MenuObject:
         self.layer = layer
         self.active = active
         self.render_flag = True
+        self.light_render_flag = True
         self.rendered_object = None
         self.hitbox = None
 
@@ -17,6 +18,17 @@ class MenuObject:
         self.hitbox = Hitbox(*self.rendered_object.pos, 
                              *sum_two_vectors(self.rendered_object.pos, 
                                               self.rendered_object.image.get_size()))
+        
+    def light_render_and_store(self, menu_pos, menu_size, ui_size, scroll):
+        obj = self.rendered_object
+        image_size = obj.image.get_size()
+
+        pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]+scroll]
+        pos = update_pos_by_anchor(pos, image_size, self.anchor)
+        crop, pos_change = object_crop(image_size, pos, menu_size, menu_pos, self.max_size)
+
+        obj.pos = sum_two_vectors(pos, pos_change)
+        obj.crop = crop
         
     def draw(self, screen):
         self.rendered_object.draw(screen)

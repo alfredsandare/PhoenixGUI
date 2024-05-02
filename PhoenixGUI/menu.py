@@ -52,13 +52,21 @@ class Menu:
                                                       ui_size, 0)
 
         for key, item in self.objects.items():
-            if not item.render_flag or key in ("_bg", "_outline"):
+            if not (item.render_flag or item.light_render_flag) \
+                or key in ("_bg", "_outline"):
                 continue
+
             if key == self.scroll_slidebar and item.active:
                 item.render_and_store(self.pos, self.size, ui_size, 0)
-            elif item.active:
+
+            elif item.active and item.render_flag:
                 item.render_and_store(self.pos, self.size, ui_size, -self.scroll)
+
+            elif item.active and item.light_render_flag:
+                item.light_render_and_store(self.pos, self.size, ui_size, -self.scroll)
+
             item.render_flag = False
+            item.light_render_flag = False
 
         # draw all
         if "_bg" in self.objects.keys():
@@ -113,6 +121,10 @@ class Menu:
         for obj in self.objects.values():
             obj.render_flag = True
 
+    def set_light_render_flag_all(self):
+        for obj in self.objects.values():
+            obj.light_render_flag = True
+
     def scroll_event(self, scroll):
         self.scroll -= scroll
 
@@ -127,10 +139,10 @@ class Menu:
         if self.scroll_slidebar is not None:
             self.objects[self.scroll_slidebar].progress = self.scroll / max_scroll
 
-        self.set_render_flag_all()
+        self.set_light_render_flag_all()
         
     def set_scroll_by_progress(self, progress):
         max_scroll = self.get_size_from_items()[1] - self.size[1] \
             if self.get_size_from_items()[1] > 0 else 0
         self.scroll = progress * max_scroll
-        self.set_render_flag_all()
+        self.set_light_render_flag_all()

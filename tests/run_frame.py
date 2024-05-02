@@ -123,4 +123,4 @@ while 1:
 
     pygame.display.flip()
     clock.tick()
-    #print("FPS:", round(clock.get_fps()))
+    print("FPS:", round(clock.get_fps()))

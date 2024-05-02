@@ -97,7 +97,6 @@ class MenuHandler:
 
                         obj.state = "none"
                         obj.render_flag = True
-                        print("settin render")
 
                     if (is_button(obj) and key != current_button_key 
                         and event.type == pygame.MOUSEBUTTONUP):
@@ -114,11 +113,11 @@ class MenuHandler:
                         current_menu.set_scroll_by_progress(obj.progress)
                         obj.event(event, menu_pos, 0)
 
-                    elif (current_menu.scroll_slidebar == key 
-                          and current_menu.enable_scroll):
+                    # elif (current_menu.scroll_slidebar == key 
+                    #       and current_menu.enable_scroll):
                         
-                        obj.event(event, menu_pos, 0)
-                        current_menu.set_scroll_by_progress(obj.progress)
+                    #     obj.event(event, menu_pos, 0)
+                    #     current_menu.set_scroll_by_progress(obj.progress)
 
                     else:
                         obj.event(event, menu_pos, current_menu.scroll)
