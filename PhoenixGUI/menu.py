@@ -104,7 +104,8 @@ class Menu:
         largest_x = 0
         largest_y = 0
         for key, obj in self.objects.items():
-            if key in ("_bg", "_outline", self.scroll_slidebar) or obj.rendered_object is None:
+            if key in ("_bg", "_outline", self.scroll_slidebar) or \
+                obj.rendered_object is None:
                 continue
             
             size = obj.rendered_object.image.get_size()
@@ -117,10 +118,6 @@ class Menu:
         
         return (largest_x, largest_y)
     
-    def set_render_flag_all(self):
-        for obj in self.objects.values():
-            obj.render_flag = True
-
     def set_light_render_flag_all(self):
         for obj in self.objects.values():
             obj.light_render_flag = True
