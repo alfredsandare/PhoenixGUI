@@ -18,25 +18,25 @@ def test_cut_line_long_max_width():
     assert t == "Hello There. My name is indeed General Kenobi"
 
 def test_object_crop_fits():
-    crop, pos_change = util.object_crop((200, 200), (0, 0), (300, 300), (0, 0), (1000, 1000))
+    crop, pos = util.object_crop((200, 200), (0, 0), (300, 300), (0, 0), (1000, 1000))
     assert crop == [0, 0, 200, 200]
 
 def test_object_crop_overflow_from_menu_size_right():
-    crop, pos_change = util.object_crop((200, 200), (0, 0), (90, 300), (0, 0), (1000, 1000))
+    crop, pos = util.object_crop((200, 200), (0, 0), (90, 300), (0, 0), (1000, 1000))
     assert crop == [0, 0, 90, 200]
 
 def test_object_crop_overflow_from_menu_size_top():
-    crop, pos_change = util.object_crop((200, 200), (0, -40), (300, 300), (0, 0), (1000, 1000))
+    crop, pos = util.object_crop((200, 200), (0, -40), (300, 300), (0, 0), (1000, 1000))
     assert crop == [0, 40, 200, 200]
-    assert pos_change == [0, 40]
+    assert pos == [0, 0]
 
 def test_object_crop_overflow_from_menu_size_left():
-    crop, pos_change = util.object_crop((200, 200), (-40, 0), (300, 300), (0, 0), (1000, 1000))
+    crop, pos = util.object_crop((200, 200), (-40, 0), (300, 300), (0, 0), (1000, 1000))
     assert crop == [40, 0, 200, 200]
-    assert pos_change == [40, 0]
+    assert pos == [0, 0]
 
 def test_object_crop_overflow_from_menu_size_down():
-    crop, pos_change = util.object_crop((200, 200), (0, 0), (300, 80), (0, 0), (1000, 1000))
+    crop, pos = util.object_crop((200, 200), (0, 0), (300, 80), (0, 0), (1000, 1000))
     assert crop == [0, 0, 200, 80]
 
 def test_update_pos_by_anchor_nw():
