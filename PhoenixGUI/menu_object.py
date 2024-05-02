@@ -15,9 +15,7 @@ class MenuObject:
 
     def render_and_store(self, menu_pos, menu_size, ui_size, scroll):
         self.rendered_object = self.render(menu_pos, menu_size, ui_size, scroll)
-        self.hitbox = Hitbox(*self.rendered_object.pos, 
-                             *sum_two_vectors(self.rendered_object.pos, 
-                                              self.rendered_object.image.get_size()))
+        self.update_hitbox()
         
     def light_render_and_store(self, menu_pos, menu_size, ui_size, scroll):
         obj = self.rendered_object
@@ -29,6 +27,13 @@ class MenuObject:
 
         obj.pos = sum_two_vectors(pos, pos_change)
         obj.crop = crop
+        
+        self.update_hitbox()
+
+    def update_hitbox(self):
+        self.hitbox = Hitbox(*self.rendered_object.pos, 
+                             *sum_two_vectors(self.rendered_object.pos, 
+                                              self.rendered_object.image.get_size()))
         
     def draw(self, screen):
         self.rendered_object.draw(screen)
