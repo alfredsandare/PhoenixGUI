@@ -1,6 +1,6 @@
-from .rendered_menu_object import RenderedMenuObject
+from .hitbox import Hitbox
 from .shape import Shape
-from .util import flatten_list, is_button, update_pos_by_anchor
+from .util import flatten_list, is_button, sum_two_vectors, update_pos_by_anchor
 
 class Menu:
     def __init__(self, 
@@ -25,6 +25,8 @@ class Menu:
         self.enable_scroll = enable_scroll
         self.scroll = 0
         self.scroll_slidebar = scroll_slidebar
+
+        self.hitbox = Hitbox(*self.pos, *sum_two_vectors(self.pos, self.size))
 
         if self.bg_color is not None:
             self.objects["_bg"] = Shape((0, 0), self.size, self.bg_color, "rect")

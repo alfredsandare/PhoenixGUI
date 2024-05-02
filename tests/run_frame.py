@@ -2,7 +2,7 @@ from PhoenixGUI import *
 import pygame
 
 screen = pygame.display.set_mode((800, 800))
-menu_handler = MenuHandler(screen, 1)
+menu_handler = MenuHandler()
 menu_handler.set_scroll_strength_multiplier(3)
 
 
@@ -107,8 +107,6 @@ menu_handler.add_object("menu", "sldbr", slidebar)
 #     }
 # }
 
-# print(data)
-
 # menu_handler.load_data_from_dict(data, images)
 # menu_handler.menues["my_menu"].activate()
 
@@ -123,4 +121,4 @@ while 1:
 
     pygame.display.flip()
     clock.tick()
-    print("FPS:", round(clock.get_fps()))
+    #print("FPS:", round(clock.get_fps()))

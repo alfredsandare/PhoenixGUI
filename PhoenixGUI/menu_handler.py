@@ -10,7 +10,7 @@ from .text import Text
 
 
 class MenuHandler:
-    def __init__(self, screen, ui_size):
+    def __init__(self, ui_size=1):
         self.ui_size = ui_size
         self.menues: dict[str, MenuObject] = {}
         self.current_menu_key = None
@@ -18,12 +18,14 @@ class MenuHandler:
 
     def update(self, events, screen):
         # sort the menues by layer
-        sorted_menues = sorted(self.menues.items(), key=lambda menu: menu[1].layer, reverse=True)
+        sorted_menues = sorted(self.menues.items(), 
+                               key=lambda menu: menu[1].layer, 
+                               reverse=True)
+        
         mouse_pos = pygame.mouse.get_pos()
         current_menu_key = None
         for key, menu in sorted_menues:
-            if menu.pos[0] <= mouse_pos[0] <= menu.pos[0] + menu.size[0] and \
-                menu.pos[1] <= mouse_pos[1] <= menu.pos[1] + menu.size[1] and menu.active:
+            if menu.hitbox.is_pos_inside(*mouse_pos) and menu.active:
                 current_menu_key = key
                 break
 
@@ -113,12 +115,6 @@ class MenuHandler:
                         current_menu.set_scroll_by_progress(obj.progress)
                         obj.event(event, menu_pos, 0)
 
-                    # elif (current_menu.scroll_slidebar == key 
-                    #       and current_menu.enable_scroll):
-                        
-                    #     obj.event(event, menu_pos, 0)
-                    #     current_menu.set_scroll_by_progress(obj.progress)
-
                     else:
                         obj.event(event, menu_pos, current_menu.scroll)
 
@@ -133,10 +129,6 @@ class MenuHandler:
 
     def update_menu(self, id):
         self.menues[id].render_all(self.ui_size)
-
-    def compare_coords(self, hitbox, menu_pos, mouse_pos):
-        return hitbox[0] + menu_pos[0] <= mouse_pos[0] <= hitbox[2] + menu_pos[0] and \
-               hitbox[1] + menu_pos[1] <= mouse_pos[1] <= hitbox[3] + menu_pos[1]
 
     def update_radiobuttons(self, current_menu, group):
         for obj in current_menu.objects.values():
@@ -154,7 +146,8 @@ class MenuHandler:
         for menu_key, menu in data.items():
             objs = {}
             for obj_key, obj in menu["objects"].items():
-                module = importlib.import_module("." + obj["type"], package=__package__)
+                module = importlib.import_module("." + obj["type"], 
+                                                 package=__package__)
                 class_ = getattr(module, obj["type"].capitalize())
 
                 image_keys = ["image", "hover_image", "click_image"]
