@@ -122,5 +122,5 @@ while 1:
     #pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(200, 200, 200, 200), 1)
 
     pygame.display.flip()
-    clock.tick(30)
-    #print("FPS:", clock.get_fps())
+    clock.tick()
+    #print("FPS:", round(clock.get_fps()))

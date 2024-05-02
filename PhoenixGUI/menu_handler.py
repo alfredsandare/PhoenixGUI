@@ -11,7 +11,6 @@ from .text import Text
 
 class MenuHandler:
     def __init__(self, screen, ui_size):
-        self.screen = screen
         self.ui_size = ui_size
         self.menues: dict[str, MenuObject] = {}
         self.current_menu_key = None
@@ -50,7 +49,6 @@ class MenuHandler:
         current_button = None
         current_button_key = None
         for key, obj in current_menu.objects.items():
-            #if is_button(obj) and self.compare_coords(obj.hitbox, menu_pos, mouse_pos):
             if is_button(obj) and obj.hitbox.is_pos_inside(*mouse_pos):
                 current_button = obj
                 current_button_key = key
@@ -99,6 +97,7 @@ class MenuHandler:
 
                         obj.state = "none"
                         obj.render_flag = True
+                        print("settin render")
 
                     if (is_button(obj) and key != current_button_key 
                         and event.type == pygame.MOUSEBUTTONUP):

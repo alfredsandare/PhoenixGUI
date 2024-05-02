@@ -61,7 +61,6 @@ class Button(MenuObject):
         self.rect_outline_click_color = rect_outline_click_color
 
         self.state = "none"
-        self.hitbox = []
         self.is_selected = False  # becomes true when clicked on, and only becomes false when LMB is released
         self.enabled = True
 
@@ -151,13 +150,6 @@ class Button(MenuObject):
                                        menu_size, menu_pos, self.max_size)
         pos = (pos[0] + pos_change[0], pos[1] + pos_change[1])
         
-        self.hitbox = [
-            pos[0] - self.hitbox_padding - menu_pos[0],
-            pos[1] - self.hitbox_padding - menu_pos[1],
-            pos[0] + surface_size[0] + self.hitbox_padding - menu_pos[0],
-            pos[1] + surface_size[1] + self.hitbox_padding - menu_pos[1]
-        ]
-
         return RenderedMenuObject(surface, pos, crop)
 
     def exec_command(self):

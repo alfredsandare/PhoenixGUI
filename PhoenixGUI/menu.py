@@ -48,7 +48,6 @@ class Menu:
 
         if "_outline" in self.objects.keys() and \
             not self.objects["_outline"].is_rendered():
-            print("i'm re-rendering???")
             self.objects["_outline"].render_and_store(self.pos, self.size, 
                                                       ui_size, 0)
 
@@ -70,7 +69,6 @@ class Menu:
                 item.draw(screen)
 
         if "_outline" in self.objects.keys():
-            print(self.objects["_outline"].rendered_object.pos)
             self.objects["_outline"].draw(screen)
         
     def set_layer(self, layer):
