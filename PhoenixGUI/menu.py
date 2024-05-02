@@ -65,7 +65,7 @@ class Menu:
             self.objects["_bg"].draw(screen)
 
         for key, item in self.objects.items():
-            if key not in ("_bg", "_outline") and item is not None:
+            if key not in ("_bg", "_outline") and item is not None and item.active:
                 item.draw(screen)
 
         if "_outline" in self.objects.keys():
