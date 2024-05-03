@@ -92,7 +92,15 @@ class Menu:
     def reset_buttons(self):
         for obj in self.objects.values():
             if is_button(obj):
+                if obj.state != "none":
+                    obj.render_flag = True
                 obj.state = "none"
+
+    def deselect_all_buttons(self):
+        for obj in self.objects.values():
+            if is_button(obj) and obj.is_selected:
+                print("deselectin a button")
+                obj.is_selected = False
 
     def activate(self):
         self.active = True
