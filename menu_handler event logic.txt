@@ -40,7 +40,7 @@ MOUSEWHEEL
 EVERY FRAME
     current_button is not none
         not current_button.is_selected & current_button.state == "none"
-            # This is the case where the mouse stops hovering over a button.
+            # This is the case where the mouse starts hovering over a button.
             current_button.state = "hover"
                 current_button.render_flag = True
 

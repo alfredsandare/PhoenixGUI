@@ -69,16 +69,21 @@ class MenuHandler:
                 menu.render_all(screen, self.ui_size)
 
     def mousebuttondown_event(self, current_button, event, current_menu):
-        if current_button is not None:
-            current_button.state = "click"
-            current_button.is_selected = True
-            current_button.render_flag = True
-            if isinstance(current_button, Slidebar):
-                current_button.act_on_motion(event)
-                self.selected_slidebar = current_button
-                self.selected_slidebar_menu = current_menu
-                if current_button.is_scroll_slidebar:
-                    current_menu.set_scroll_by_progress(current_button.progress)
+        if current_button is None:
+            return
+
+        current_button.state = "click"
+        current_button.is_selected = True
+        current_button.render_flag = True
+
+        if isinstance(current_button, Slidebar):
+            current_button.act_on_motion(event)
+            self.selected_slidebar = current_button
+            self.selected_slidebar_menu = current_menu
+
+        if isinstance(current_button, Slidebar) \
+            and current_button.is_scroll_slidebar:
+            current_menu.set_scroll_by_progress(current_button.progress)
 
     def mousebuttonup_event(self, current_button, current_menu):
         if current_button is not None and current_button.state == "click":
@@ -110,27 +115,34 @@ class MenuHandler:
     def check_button_states(self, current_button, current_button_key, 
                             prev_button, prev_button_key):
                             
-        if current_button is not None:
-            if not current_button.is_selected and current_button.state == "none" and \
-                self.selected_slidebar == None:
-                current_button.state = "hover"
-                current_button.render_flag = True
+        if (current_button is not None 
+            and not current_button.is_selected 
+            and current_button.state == "none" 
+            and self.selected_slidebar == None
+            and prev_button is None):
+                
+            current_button.state = "hover"
+            current_button.render_flag = True
 
-            if (current_button_key != prev_button_key and prev_button is not None 
-                and not (isinstance(prev_button, Slidebar) 
-                         and prev_button.is_selected)
-                and self.selected_slidebar == None):
-                current_button.state = "hover"
-                current_button.render_flag = True
-                prev_button.state = "none"
-                prev_button.render_flag = True
+        elif (current_button is not None 
+              and current_button_key != prev_button_key 
+              and prev_button is not None 
+              and not (isinstance(prev_button, Slidebar) 
+                       and prev_button.is_selected)
+              and self.selected_slidebar == None):
+            
+            current_button.state = "hover"
+            current_button.render_flag = True
+            prev_button.state = "none"
+            prev_button.render_flag = True
 
-        else:
-            if (prev_button is not None 
-                and not (isinstance(prev_button, Slidebar) 
-                         and prev_button.is_selected)):
-                prev_button.state = "none"
-                prev_button.render_flag = True
+        elif (current_button is None
+              and prev_button is not None 
+              and not (isinstance(prev_button, Slidebar) 
+                       and prev_button.is_selected)):
+            
+            prev_button.state = "none"
+            prev_button.render_flag = True
 
     def deselect_all_buttons(self):
         for menu in self.menues.values():
