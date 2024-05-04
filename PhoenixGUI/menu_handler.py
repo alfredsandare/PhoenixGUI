@@ -173,7 +173,6 @@ class MenuHandler:
     def check_button_states(self, current_button, current_button_key, 
                             prev_button, prev_button_key):
                             
-        print(current_button_key, prev_button_key)
         if current_button is not None:
             if current_button.is_selected and current_button.state == "none":
                 current_button.state = "click"
