@@ -19,8 +19,13 @@ MOUSEBUTTONUP
     current_button is none
         deselect any button that is selected
 
+MOUSEWHEEL
+    menu scroll_event
 
-MOUSEMOTION
+    current_button is none and prev_button is not none
+        prev_button.state = "none"
+
+EVERY FRAME
     current_button is not none
         current_button.is_selected & current_button.state == "none"
             current_button.state = "click"
@@ -30,12 +35,10 @@ MOUSEMOTION
             current_button.state = "hover"
                 current_button.render_flag = True
 
+        current_button != prev_button
+            current_button.state = "hover"
+            prev_button.state = "hover"
+
     current_button is none
         prev_button is not none
             prev_button.state = "none"
-
-        prev_button is none
-            nothing
-
-MOUSEWHEEL
-    scroll_event

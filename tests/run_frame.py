@@ -39,7 +39,7 @@ button = Button((0, 700),
                 anchor="sw")
 menu_handler.add_object("menu", "button", button)
 
-button2 = Button((520, 620), 
+button2 = Button((400, 620), 
                 text="Inte Johannes",
                 text_color=(255, 255, 255),
                 text_hover_color=(255, 100, 100),
@@ -52,8 +52,25 @@ button2 = Button((520, 620),
                 rect_pady=5,
                 rect_color=(0, 0, 255),
                 rect_outline_color=(255, 255, 255),
-                anchor="se")
+                anchor="w")
 menu_handler.add_object("menu", "button2", button2)
+
+
+button3 = Button((400, 620), 
+                text="Inte Johannes",
+                text_color=(255, 255, 255),
+                text_hover_color=(255, 100, 100),
+                text_click_color=(150, 0, 0),
+                font="arial",
+                font_size=20,
+                enable_rect=True,
+                command=menu2.activate,
+                rect_padx=10,
+                rect_pady=5,
+                rect_color=(0, 0, 255),
+                rect_outline_color=(255, 255, 255),
+                anchor="e")
+menu_handler.add_object("menu", "button3", button3)
 
 def c1():
     menu2.activate()

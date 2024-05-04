@@ -80,13 +80,9 @@ class MenuHandler:
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.mousebuttonup_event(current_button, current_menu)
 
-            elif event.type == pygame.MOUSEMOTION:
-                self.mousemotion_event(current_button, prev_button)
-
             elif event.type == pygame.MOUSEWHEEL and current_menu.enable_scroll:
                 current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
                 
-
 
             # if (event.type == pygame.MOUSEMOTION and current_button is not None
             #     and current_button.is_selected
@@ -149,6 +145,9 @@ class MenuHandler:
             #             obj.event(event, menu_pos, current_menu.scroll)
 
         
+        self.check_button_states(current_button, current_button_key, 
+                                 prev_button, prev_button_key)
+
         self.prev_menu_key = current_menu_key
         self.prev_button_key = current_button_key
 
@@ -171,7 +170,10 @@ class MenuHandler:
         else:
             self.deselect_all_buttons()
 
-    def mousemotion_event(self, current_button, prev_button):
+    def check_button_states(self, current_button, current_button_key, 
+                            prev_button, prev_button_key):
+                            
+        print(current_button_key, prev_button_key)
         if current_button is not None:
             if current_button.is_selected and current_button.state == "none":
                 current_button.state = "click"
@@ -180,6 +182,12 @@ class MenuHandler:
             elif not current_button.is_selected and current_button.state == "none":
                 current_button.state = "hover"
                 current_button.render_flag = True
+
+            if current_button_key != prev_button_key and prev_button is not None:
+                current_button.state = "hover"
+                current_button.render_flag = True
+                prev_button.state = "none"
+                prev_button.render_flag = True
 
         else:
             if prev_button is not None:
