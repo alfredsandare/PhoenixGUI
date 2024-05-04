@@ -28,6 +28,7 @@ class Slidebar(MenuObject):
         self.orientation = orientation
         self.is_scroll_slidebar = False
         self.is_selected = False
+        self.IS_SLIDEBAR = True
 
     def set_progress(self, progress):
         if progress < 0 or progress > 1:
@@ -49,10 +50,7 @@ class Slidebar(MenuObject):
 
         pos = list(update_pos_by_anchor(self.pos, total_size, self.anchor))
 
-        if self.orientation == "horizontal":
-            pos[0] += (self.length - self.circle_size) * self.progress
-        else:
-            pos[1] += (self.length - self.circle_size) * self.progress
+        pos = self._update_pos_by_progress(pos)
 
         circle = Shape(pos, 
                        [self.circle_size, self.circle_size], 
@@ -104,3 +102,10 @@ class Slidebar(MenuObject):
             self.progress = 1
         elif self.progress < 0:
             self.progress = 0
+
+    def _update_pos_by_progress(self, pos):
+        if self.orientation == "horizontal":
+            pos[0] += (self.length - self.circle_size) * self.progress
+        else:  # horizontal
+            pos[1] += (self.length - self.circle_size) * self.progress
+        return pos

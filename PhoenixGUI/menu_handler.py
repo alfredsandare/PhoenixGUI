@@ -52,7 +52,6 @@ class MenuHandler:
                 self.mousebuttonup_event(current_button, current_menu)
 
             elif event.type == pygame.MOUSEMOTION:
-                print("doin this")
                 self.mousemotion_event(event)
 
             elif event.type == pygame.MOUSEWHEEL and current_menu.enable_scroll:

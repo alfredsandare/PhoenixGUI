@@ -11,7 +11,7 @@ MOUSEBUTTONDOWN
             slidebar.act_on_motion
 
 MOUSEBUTTONUP
-    current_button is not none
+    current_button is not none and selected_slidebar is None
         current_button.state = "hover"
         current_button.is_selected = False
         current_button.render_flag = True
