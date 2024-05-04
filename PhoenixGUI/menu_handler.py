@@ -2,7 +2,6 @@ from .menu_object import MenuObject
 import pygame
 import importlib
 from .menu import Menu
-from .rendered_menu_object import RenderedMenuObject
 from .util import is_button
 from .radiobutton import Radiobutton
 from .slidebar import Slidebar
@@ -24,11 +23,7 @@ class MenuHandler:
                                reverse=True)
         
         mouse_pos = pygame.mouse.get_pos()
-        current_menu_key = None
-        for key, menu in sorted_menues:
-            if menu.hitbox.is_pos_inside(*mouse_pos) and menu.active:
-                current_menu_key = key
-                break
+        current_menu_key = self._get_current_menu_key(mouse_pos, sorted_menues)
 
         if ((self.prev_menu_key != current_menu_key 
              and self.prev_menu_key != None)  # mouse is hovering over a different menu
@@ -36,40 +31,14 @@ class MenuHandler:
                 and self.prev_menu_key != None)):  # mouse stopped hovering over any menu
             self.menues[self.prev_menu_key].reset_buttons()
 
-        sorted_menues.reverse()
-        for key, menu in sorted_menues:
-            if not menu.active:
-                continue
-            menu.render_all(screen, self.ui_size)
-
-        # if current_menu_key == None:
-        #     self.prev_menu_key = current_menu_key
-        #     return
         current_menu = None
         if current_menu_key != None:
             current_menu = self.menues[current_menu_key]
 
-        # menu_pos = current_menu.pos
-        #sorted_objects = sorted(current_menu.objects.items(), 
-        #                        key=lambda obj: obj[1].layer)
-        current_button = None
-        current_button_key = None
-        if current_menu != None:
-            for key, obj in current_menu.objects.items():
-                if is_button(obj) and obj.hitbox.is_pos_inside(*mouse_pos):
-                    current_button = obj
-                    current_button_key = key
+        current_button, current_button_key, prev_button, prev_button_key = \
+            self._get_buttons_data(current_menu, mouse_pos)
 
-        prev_button_key = self.prev_button_key
-        prev_button = None
-        if prev_button_key is not None and self.prev_menu_key is not None:
-            prev_button = self.menues[self.prev_menu_key].objects[prev_button_key]
-
-        # A mousewheel event also comes with a mousedown and mouseup before.
-        # This deletes the two unnecessary and stupid events.
-        for i, event in enumerate(events):
-            if event.type == pygame.MOUSEWHEEL:
-                del events[i-2:i]
+        events = self._delete_unnecessary_events(events)
 
         for event in events:
             #print(event)
@@ -82,74 +51,17 @@ class MenuHandler:
 
             elif event.type == pygame.MOUSEWHEEL and current_menu.enable_scroll:
                 current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
-                
-
-            # if (event.type == pygame.MOUSEMOTION and current_button is not None
-            #     and current_button.is_selected
-            #     and current_button.state != "click"):
-            #     current_button.state = "click"
-            #     current_button.render_flag = True
-
-            # elif (event.type == pygame.MOUSEMOTION and current_button is not None
-            #       and not current_button.is_selected 
-            #       and current_button.state != "hover"):
-            #     current_button.state = "hover"
-            #     current_button.render_flag = True
-
-            # elif (event.type == pygame.MOUSEBUTTONDOWN 
-            #       and current_button is not None and event.button == 1):
-            #     current_button.state = "click"
-            #     current_button.is_selected = True
-            #     current_button.render_flag = True
-
-            # elif (event.type == pygame.MOUSEBUTTONUP 
-            #     and current_button is not None and event.button == 1):
-            #     current_button.state = "hover"
-            #     current_button.is_selected = False
-            #     current_button.render_flag = True
-            #     if isinstance(current_button, Radiobutton):
-            #         self.update_radiobuttons(current_menu, current_button.group)
-            #     current_button.exec_command()
-
-            # elif event.type == pygame.MOUSEWHEEL and current_menu.enable_scroll:
-            #     current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
-
-            # if (event.type == pygame.MOUSEMOTION 
-            #     or (event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP) 
-            #         and event.button == 1)):
-                
-            #     for key, obj in current_menu.objects.items():
-            #         if (is_button(obj) and key != current_button_key 
-            #             and event.type == pygame.MOUSEMOTION 
-            #             and obj.state != "none"):
-
-            #             obj.state = "none"
-            #             obj.render_flag = True
-
-            #         if (is_button(obj) and key != current_button_key 
-            #             and event.type == pygame.MOUSEBUTTONUP):
-            #             obj.is_selected = False
-
-            #     for key, obj in current_menu.objects.items():
-            #         if not isinstance(obj, Slidebar):
-            #             continue
-
-            #         if (current_menu.scroll_slidebar == key 
-            #             and current_menu.enable_scroll 
-            #             and obj.state == "click"):
-
-            #             current_menu.set_scroll_by_progress(obj.progress)
-            #             obj.event(event, menu_pos, 0)
-
-            #         else:
-            #             obj.event(event, menu_pos, current_menu.scroll)
-
         
         self.check_button_states(current_button, current_button_key, 
                                  prev_button, prev_button_key)
 
         self.prev_menu_key = current_menu_key
         self.prev_button_key = current_button_key
+
+        sorted_menues.reverse()
+        for key, menu in sorted_menues:
+            if menu.active:
+                menu.render_all(screen, self.ui_size)
 
     def mousebuttondown_event(self, current_button):
         if current_button is not None:
@@ -251,3 +163,33 @@ class MenuHandler:
             for obj in menu.objects.values():
                 if isinstance(obj, Text):
                     obj.font_path = path
+
+    def _delete_unnecessary_events(self, events):
+        # A mousewheel event also comes with a mousedown and mouseup before.
+        # This deletes the two unnecessary and stupid events.
+        for i, event in enumerate(events):
+            if event.type == pygame.MOUSEWHEEL:
+                del events[i-2:i]
+        return events
+    
+    def _get_current_menu_key(self, mouse_pos, sorted_menues):
+        for key, menu in sorted_menues:
+            if menu.hitbox.is_pos_inside(*mouse_pos) and menu.active:
+                return key
+        return None
+    
+    def _get_buttons_data(self, current_menu, mouse_pos):
+        current_button = None
+        current_button_key = None
+        if current_menu != None:
+            for key, obj in current_menu.objects.items():
+                if is_button(obj) and obj.hitbox.is_pos_inside(*mouse_pos):
+                    current_button = obj
+                    current_button_key = key
+
+        prev_button_key = self.prev_button_key
+        prev_button = None
+        if prev_button_key is not None and self.prev_menu_key is not None:
+            prev_button = self.menues[self.prev_menu_key].objects[prev_button_key]
+
+        return current_button, current_button_key, prev_button, prev_button_key
