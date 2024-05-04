@@ -94,7 +94,7 @@ class Menu:
 
     def reset_buttons(self):
         for obj in self.objects.values():
-            if is_button(obj):
+            if is_button(obj, include_slidebars=False):
                 if obj.state != "none":
                     obj.render_flag = True
                 obj.state = "none"

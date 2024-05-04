@@ -98,9 +98,9 @@ slidebar = Slidebar((500, 300), 600, 40, circle_hover_color=(255, 0, 0), circle_
 menu_handler.add_object("menu", "sldbr", slidebar)
 
 
-sldbr_rect = Shape((250, 400), (120, 20), (0, 255, 255), "rect")
+sldbr_rect = Shape((250, 400), (100, 20), (0, 255, 255), "rect")
 menu_handler.add_object("menu", "sldbr_rect", sldbr_rect)
-slidebar2 = Slidebar((250, 400), 100, 20, circle_hover_color=(255, 0, 0), circle_click_color=(0, 255, 255), orientation="horizontal")
+slidebar2 = Slidebar((250, 400), 100, 20, circle_hover_color=(255, 0, 0), circle_click_color=(255, 0, 255), orientation="horizontal")
 menu_handler.add_object("menu", "sldbr2", slidebar2)
 
 

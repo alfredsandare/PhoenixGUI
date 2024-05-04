@@ -60,55 +60,26 @@ class Slidebar(MenuObject):
                        'circle')
         return circle.render(menu_pos, menu_size, ui_size, scroll)
 
-    def event(self, event, menu_pos, menu_scroll):
-        if event.type == pygame.MOUSEMOTION:
-            if self.state == "none" and self.is_hovering(event, menu_pos):
-                self.state = "hover"
-                self.render_flag = True
-
-            elif self.state == "hover" and not self.is_hovering(event, menu_pos):
-                self.state = "none"
-                self.render_flag = True
-
-            elif (self.state == "click" 
-                  and self.orientation == "horizontal" 
-                  and (self.pos[0] + menu_pos[0] 
-                       <= event.pos[0] 
-                       <= self.pos[0] + self.length + menu_pos[0] 
-                       or self.progress not in (0, 1))):
-                
-                self.progress += event.rel[0] / self.length
-                self.set_progress_in_limits()
-                self.render_flag = True
-
-            elif (self.state == "click" 
-                  and self.orientation == "vertical" 
-                  and (self.pos[1] + menu_pos[1] 
-                       <= event.pos[1] 
-                       <= self.pos[1] + self.length + menu_pos[1] 
-                       or self.progress not in (0, 1))):
-                
-                self.progress += event.rel[1] / self.length
-                self.set_progress_in_limits()
-                self.render_flag = True
-
-        elif event.type == pygame.MOUSEBUTTONDOWN and self.state == "hover":
-            self.state = "click"
+    def act_on_motion(self, event):
+        if ((self.orientation == "vertical" and event.pos[1] > self.hitbox.bottom)
+            or (self.orientation == "horizontal" and event.pos[0] > self.hitbox.right)):
+            self.progress = 1
             self.render_flag = True
-
-            if self.orientation == "horizontal":
-                self.progress = (event.pos[0] 
-                                 - menu_pos[0] 
-                                 - self.pos[0]) / self.length
-            else:
-                self.progress = (event.pos[1] 
-                                 - menu_pos[1] 
-                                 - self.pos[1] 
-                                 + menu_scroll) / self.length
-
-        elif event.type == pygame.MOUSEBUTTONUP and self.state == "click":
-            self.state = "hover"
+            return
+        
+        elif ((self.orientation == "vertical" and event.pos[1] < self.hitbox.top)
+            or (self.orientation == "horizontal" and event.pos[0] < self.hitbox.left)):
+            self.progress = 0
             self.render_flag = True
+            return
+
+        relative_mouse_pos = (event.pos[1] - self.hitbox.top
+            if self.orientation == "vertical" else 
+                event.pos[0] - self.hitbox.left) - self.circle_size/2
+
+        self.progress = relative_mouse_pos / self.length
+        self.set_progress_in_limits()
+        self.render_flag = True
 
     def get_hitbox(self, rendered_pos, rendered_size):
         length_from_progress = self.progress * self.length

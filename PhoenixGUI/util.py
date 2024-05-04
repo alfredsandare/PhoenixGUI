@@ -115,7 +115,7 @@ def flatten_list(mixed_list):
             out.append(i)
     return out
 
-def is_button(obj):
+def is_button(obj, include_slidebars=True):
     from .button import Button
     from .checkbutton import Checkbutton
     from .radiobutton import Radiobutton
@@ -124,7 +124,7 @@ def is_button(obj):
         isinstance(obj, Button),
         isinstance(obj, Checkbutton),
         isinstance(obj, Radiobutton),
-        isinstance(obj, Slidebar)
+        isinstance(obj, Slidebar) if include_slidebars else False
     ])
 
 def compare_objects(a, b):

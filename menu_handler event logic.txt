@@ -7,6 +7,9 @@ MOUSEBUTTONDOWN
         current_button.is_selected = True
         current_button.render_flag = True
 
+        if current_button is slidebar:
+            slidebar.act_on_motion
+
 MOUSEBUTTONUP
     current_button is not none
         current_button.state = "hover"
@@ -19,6 +22,15 @@ MOUSEBUTTONUP
     current_button is none
         deselect any button that is selected
 
+    find selected slidebar
+        slidebar.state = "none"
+        slidebar.is_selected = False
+        slidebar.render_flag = True
+
+MOUSEMOTION
+    find selected slidebar (if none, do nothing)
+        slidebar.act_on_motion
+
 MOUSEWHEEL
     menu scroll_event
 
@@ -27,18 +39,17 @@ MOUSEWHEEL
 
 EVERY FRAME
     current_button is not none
-        current_button.is_selected & current_button.state == "none"
-            current_button.state = "click"
-                current_button.render_flag = True
-
         not current_button.is_selected & current_button.state == "none"
+            # This is the case where the mouse stops hovering over a button.
             current_button.state = "hover"
                 current_button.render_flag = True
 
-        current_button != prev_button
+        current_button != prev_button and this is not the selected slidebar
+            # This is the case where the mouse jumps straight from one button to another
             current_button.state = "hover"
-            prev_button.state = "hover"
+            prev_button.state = "none"
 
-    current_button is none
+    current_button is none and this is not the selected slidebar
+        # This is the case where the mouse stops hovering over a button.
         prev_button is not none
             prev_button.state = "none"

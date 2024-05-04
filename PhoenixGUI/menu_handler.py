@@ -15,6 +15,8 @@ class MenuHandler:
         self.prev_menu_key = None
         self.prev_button_key = None
         self.scroll_strength_multiplier = 0
+        self.selected_slidebar = None
+        self.selected_slidebar_menu = None
 
     def update(self, events, screen):
         # sort the menues by layer
@@ -44,10 +46,14 @@ class MenuHandler:
             #print(event)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self.mousebuttondown_event(current_button)
+                self.mousebuttondown_event(current_button, event, current_menu)
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.mousebuttonup_event(current_button, current_menu)
+
+            elif event.type == pygame.MOUSEMOTION:
+                print("doin this")
+                self.mousemotion_event(event)
 
             elif event.type == pygame.MOUSEWHEEL and current_menu.enable_scroll:
                 current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
@@ -63,14 +69,20 @@ class MenuHandler:
             if menu.active:
                 menu.render_all(screen, self.ui_size)
 
-    def mousebuttondown_event(self, current_button):
+    def mousebuttondown_event(self, current_button, event, current_menu):
         if current_button is not None:
             current_button.state = "click"
             current_button.is_selected = True
             current_button.render_flag = True
+            if isinstance(current_button, Slidebar):
+                current_button.act_on_motion(event)
+                self.selected_slidebar = current_button
+                self.selected_slidebar_menu = current_menu
+                if current_button.is_scroll_slidebar:
+                    current_menu.set_scroll_by_progress(current_button.progress)
 
     def mousebuttonup_event(self, current_button, current_menu):
-        if current_button is not None:
+        if current_button is not None and current_button.state == "click":
             current_button.state = "hover"
             current_button.is_selected = False
             current_button.render_flag = True
@@ -79,29 +91,45 @@ class MenuHandler:
             if not isinstance(current_button, Slidebar):
                 current_button.exec_command()
 
-        else:
+        elif current_button is None:
             self.deselect_all_buttons()
+            
+        if self.selected_slidebar is not None:
+            self.selected_slidebar.state = "none"
+            self.selected_slidebar.is_selected = False
+            self.selected_slidebar.render_flag = True
+            self.selected_slidebar = None
+            self.selected_slidebar_menu = None
+
+    def mousemotion_event(self, event):
+        if self.selected_slidebar is not None:
+            self.selected_slidebar.act_on_motion(event)
+            if self.selected_slidebar.is_scroll_slidebar:
+                self.selected_slidebar_menu.set_scroll_by_progress(
+                    self.selected_slidebar.progress)
 
     def check_button_states(self, current_button, current_button_key, 
                             prev_button, prev_button_key):
                             
         if current_button is not None:
-            if current_button.is_selected and current_button.state == "none":
-                current_button.state = "click"
-                current_button.render_flag = True
-            
-            elif not current_button.is_selected and current_button.state == "none":
+            if not current_button.is_selected and current_button.state == "none" and \
+                self.selected_slidebar == None:
                 current_button.state = "hover"
                 current_button.render_flag = True
 
-            if current_button_key != prev_button_key and prev_button is not None:
+            if (current_button_key != prev_button_key and prev_button is not None 
+                and not (isinstance(prev_button, Slidebar) 
+                         and prev_button.is_selected)
+                and self.selected_slidebar == None):
                 current_button.state = "hover"
                 current_button.render_flag = True
                 prev_button.state = "none"
                 prev_button.render_flag = True
 
         else:
-            if prev_button is not None:
+            if (prev_button is not None 
+                and not (isinstance(prev_button, Slidebar) 
+                         and prev_button.is_selected)):
                 prev_button.state = "none"
                 prev_button.render_flag = True
 
