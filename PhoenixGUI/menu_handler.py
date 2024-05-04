@@ -65,6 +65,12 @@ class MenuHandler:
         if prev_button_key is not None and self.prev_menu_key is not None:
             prev_button = self.menues[self.prev_menu_key].objects[prev_button_key]
 
+        # A mousewheel event also comes with a mousedown and mouseup before.
+        # This deletes the two unnecessary and stupid events.
+        for i, event in enumerate(events):
+            if event.type == pygame.MOUSEWHEEL:
+                del events[i-2:i]
+
         for event in events:
             #print(event)
 
