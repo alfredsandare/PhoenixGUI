@@ -1,3 +1,5 @@
+from .util import get_value_from_state, update_pos_by_anchor
+from .hitbox import Hitbox
 import pygame
 from .shape import Shape
 from .menu_object import MenuObject
@@ -24,6 +26,8 @@ class Slidebar(MenuObject):
         self.progress = 0
         self.state = "none"
         self.orientation = orientation
+        self.is_scroll_slidebar = False
+        self.is_selected = False
 
     def set_progress(self, progress):
         if progress < 0 or progress > 1:
@@ -34,22 +38,26 @@ class Slidebar(MenuObject):
         return self.progress
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
-        color_to_use = self.circle_color
-        if self.circle_hover_color != None and self.state == "hover":
-            color_to_use = self.circle_hover_color
-        elif self.circle_click_color != None and self.state == "click":
-            color_to_use = self.circle_click_color
+        color = get_value_from_state(self.state, self.circle_color, 
+                                     self.circle_hover_color, 
+                                     self.circle_click_color)
 
-        pos = list(self.pos)
         if self.orientation == "horizontal":
-            pos[0] += self.length * self.progress
+            total_size = [self.length, self.circle_size]
         else:
-            pos[1] += self.length * self.progress
+            total_size = [self.circle_size, self.length]
+
+        pos = list(update_pos_by_anchor(self.pos, total_size, self.anchor))
+
+        if self.orientation == "horizontal":
+            pos[0] += (self.length - self.circle_size) * self.progress
+        else:
+            pos[1] += (self.length - self.circle_size) * self.progress
+
         circle = Shape(pos, 
                        [self.circle_size, self.circle_size], 
-                       color_to_use, 
-                       'circle', 
-                       anchor="c")
+                       color, 
+                       'circle')
         return circle.render(menu_pos, menu_size, ui_size, scroll)
 
     def event(self, event, menu_pos, menu_scroll):
@@ -102,23 +110,23 @@ class Slidebar(MenuObject):
             self.state = "hover"
             self.render_flag = True
 
-    def is_hovering(self, event, menu_pos):
-        if self.orientation == "horizontal":
-            left_boundary = self.pos[0] + menu_pos[0] - self.circle_size/2
-            right_boundary = self.pos[0] + self.length + self.circle_size/2 + menu_pos[0]
-            top_boundary = self.pos[1] - self.circle_size/2 + menu_pos[1]
-            bottom_boundary = self.pos[1] + self.circle_size/2 + menu_pos[1]
+    def get_hitbox(self, rendered_pos, rendered_size):
+        length_from_progress = self.progress * self.length
+        if self.orientation == "vertical":
+            top = rendered_pos[1] - length_from_progress
+            bottom = top + self.length + rendered_size[1]
+            left = rendered_pos[0]
+            right = rendered_pos[0] + rendered_size[0]
 
-            return (left_boundary <= event.pos[0] <= right_boundary 
-                    and top_boundary <= event.pos[1] <= bottom_boundary)
+        else:
+            top = rendered_pos[1]
+            bottom = rendered_pos[1] + rendered_size[1]
+            left = rendered_pos[0] - length_from_progress
+            right = left + self.length + rendered_size[0]
 
-        left_boundary = self.pos[0] - self.circle_size/2 + menu_pos[0]
-        right_boundary = self.pos[0] + self.circle_size/2 + menu_pos[0]
-        top_boundary = self.pos[1] + menu_pos[1] - self.circle_size/2
-        bottom_boundary = self.pos[1] + self.length + self.circle_size/2 + menu_pos[1]
+        # might need to set the hitbox inside menu borders here
 
-        return (left_boundary <= event.pos[0] <= right_boundary 
-                and top_boundary <= event.pos[1] <= bottom_boundary)
+        return Hitbox(left, top, right, bottom)
 
     def set_progress_in_limits(self):
         if self.progress > 1:

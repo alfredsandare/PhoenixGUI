@@ -16,6 +16,11 @@ class MenuObject:
     def render_and_store(self, menu_pos, menu_size, ui_size, scroll):
         self.rendered_object = self.render(menu_pos, menu_size, ui_size, scroll)
         self.update_hitbox()
+
+        # from .slidebar import Slidebar
+        # if isinstance(self, Slidebar):
+        #     print("heluuu", self.rendered_object.pos)
+        
         
     def light_render_and_store(self, menu_pos, menu_size, ui_size, scroll):
         obj = self.rendered_object
@@ -31,6 +36,11 @@ class MenuObject:
         self.update_hitbox()
 
     def update_hitbox(self):
+        from .slidebar import Slidebar
+        if isinstance(self, Slidebar):
+            self.hitbox = self.get_hitbox(self.rendered_object.pos, self.rendered_object.get_image_size())
+            return
+        
         self.hitbox = Hitbox(*self.rendered_object.pos, 
                              *sum_two_vectors(self.rendered_object.pos, 
                                               self.rendered_object.image.get_size()))

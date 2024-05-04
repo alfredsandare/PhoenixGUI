@@ -40,11 +40,14 @@ class Menu:
                          "rect", 
                          width=self.outline_width)
 
-    def add_object(self, id, _object):
+    def add_object(self, id, object_):
         if id in ("_bg", "_outline"):
             raise Exception("Object id cannot be '_bg' or '_outline'")
-        self.objects[id] = _object
+        self.objects[id] = object_
 
+        if id == self.scroll_slidebar:
+            object_.is_scroll_slidebar = True
+            
     def render_all(self, screen, ui_size):
         # Re-renders items with render flag and then draws all items.
         if "_bg" in self.objects.keys() and not self.objects["_bg"].is_rendered():
@@ -99,7 +102,6 @@ class Menu:
     def deselect_all_buttons(self):
         for obj in self.objects.values():
             if is_button(obj) and obj.is_selected:
-                print("deselectin a button")
                 obj.is_selected = False
 
     def activate(self):

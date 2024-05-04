@@ -6,7 +6,7 @@ menu_handler = MenuHandler()
 menu_handler.set_scroll_strength_multiplier(3)
 
 
-my_menu = Menu((50, 50), (500, 600), enable_scroll=True, scroll_slidebar="sldbr", outline_width=1, outline_color=(255, 0, 0), max_scroll_offset=20)
+my_menu = Menu((50, 50), (500, 600), enable_scroll=True, outline_width=1, outline_color=(255, 0, 0), max_scroll_offset=20, scroll_slidebar="sldbr")
 menu_handler.add_menu("menu", my_menu)
 
 menu2 = Menu((200, 200), (300, 300), active=False, bg_color=(100, 100, 100, 200), outline_width=1, outline_color=(0, 255, 0))
@@ -77,8 +77,14 @@ menu_handler.add_object("menu", "rbtn", radiobutton)
 radiobutton2 = Radiobutton((50, 500), "Really Not Bingus", "arial", 20, (255, 255, 255), text_hover_color=(255, 0, 0), group="r", command=c2, circle_size=2)
 menu_handler.add_object("menu", "rbtn2", radiobutton2)
 
-slidebar = Slidebar((475, 25), 550, 40, circle_hover_color=(255, 0, 0), circle_click_color=(0, 255, 255), orientation="vertical")
+slidebar = Slidebar((500, 300), 600, 40, circle_hover_color=(255, 0, 0), circle_click_color=(0, 255, 255), orientation="vertical", anchor="e")
 menu_handler.add_object("menu", "sldbr", slidebar)
+
+
+sldbr_rect = Shape((250, 400), (120, 20), (0, 255, 255), "rect")
+menu_handler.add_object("menu", "sldbr_rect", sldbr_rect)
+slidebar2 = Slidebar((250, 400), 100, 20, circle_hover_color=(255, 0, 0), circle_click_color=(0, 255, 255), orientation="horizontal")
+menu_handler.add_object("menu", "sldbr2", slidebar2)
 
 
 
@@ -120,5 +126,5 @@ while 1:
     #pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(200, 200, 200, 200), 1)
 
     pygame.display.flip()
-    clock.tick()
+    clock.tick(60)
     #print("FPS:", round(clock.get_fps()))

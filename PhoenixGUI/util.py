@@ -119,10 +119,12 @@ def is_button(obj):
     from .button import Button
     from .checkbutton import Checkbutton
     from .radiobutton import Radiobutton
+    from .slidebar import Slidebar
     return any([
         isinstance(obj, Button),
         isinstance(obj, Checkbutton),
-        isinstance(obj, Radiobutton)
+        isinstance(obj, Radiobutton),
+        isinstance(obj, Slidebar)
     ])
 
 def compare_objects(a, b):

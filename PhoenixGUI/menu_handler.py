@@ -165,7 +165,8 @@ class MenuHandler:
             current_button.render_flag = True
             if isinstance(current_button, Radiobutton):
                 self.reset_radiobuttons(current_menu, current_button.group)
-            current_button.exec_command()
+            if not isinstance(current_button, Slidebar):
+                current_button.exec_command()
 
         else:
             self.deselect_all_buttons()
