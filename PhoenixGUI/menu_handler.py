@@ -37,12 +37,10 @@ class MenuHandler:
         current_button, current_button_key, prev_button, prev_button_key = \
             self._get_buttons_data(current_menu, mouse_pos)
 
-        events = self._delete_unnecessary_events(events)
-
         for event in events:
             #print(event)
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 self.mousebuttondown_event(current_button, event, current_menu)
 
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -192,14 +190,6 @@ class MenuHandler:
                 if isinstance(obj, Text):
                     obj.font_path = path
 
-    def _delete_unnecessary_events(self, events):
-        # A mousewheel event also comes with a mousedown and mouseup before.
-        # This deletes the two unnecessary and stupid events.
-        for i, event in enumerate(events):
-            if event.type == pygame.MOUSEWHEEL:
-                del events[i-2:i]
-        return events
-    
     def _get_current_menu_key(self, mouse_pos, sorted_menues):
         for key, menu in sorted_menues:
             if menu.hitbox.is_pos_inside(*mouse_pos) and menu.active:
