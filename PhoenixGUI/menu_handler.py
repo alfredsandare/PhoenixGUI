@@ -146,14 +146,8 @@ class MenuHandler:
     def add_object(self, menu_id, object_id, _object):
         self.menues[menu_id].add_object(object_id, _object)
 
-    def render_object(self, menu_id, object_id):
-        self.menues[menu_id].render_object(object_id, self.ui_size)
-
     def add_menu(self, id, menu):
         self.menues[id] = menu
-
-    def update_menu(self, id):
-        self.menues[id].render_all(self.ui_size)
 
     def reset_radiobuttons(self, current_menu, group):
         for obj in current_menu.objects.values():
