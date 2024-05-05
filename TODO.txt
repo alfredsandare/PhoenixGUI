@@ -1,5 +1,1 @@
-Fix slidebar click/hover when moving mouse outside of menu
 Add hover menu
-Fix bug where program crashes on start when mouse is in the window
-Fix bug where you cannot scroll outside of the menu
-Fix bug where the scroll slidebar does not go exacty where it is supposed to when you click on it
