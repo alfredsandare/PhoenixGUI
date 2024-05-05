@@ -11,7 +11,7 @@ class MenuObject:
         self.render_flag = True
         self.light_render_flag = True
         self.rendered_object = None
-        self.hitbox = None
+        self.hitbox = Hitbox(0, 0, 0, 0)
         self.IS_SLIDEBAR = False
 
     def render_and_store(self, menu_pos, menu_size, ui_size, scroll):

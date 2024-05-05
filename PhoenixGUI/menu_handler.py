@@ -20,10 +20,7 @@ class MenuHandler:
 
     def update(self, events, screen):
         # sort the menues by layer
-        sorted_menues = sorted(self.menues.items(), 
-                               key=lambda menu: menu[1].layer, 
-                               reverse=True)
-        
+        sorted_menues = self._get_sorted_menues(reverse=True)
         mouse_pos = pygame.mouse.get_pos()
         current_menu_key = self._get_current_menu_key(mouse_pos, sorted_menues)
 
@@ -63,10 +60,7 @@ class MenuHandler:
         self.prev_menu_key = current_menu_key
         self.prev_button_key = current_button_key
 
-        sorted_menues.reverse()
-        for key, menu in sorted_menues:
-            if menu.active:
-                menu.render_all(screen, self.ui_size)
+        self._render_and_draw_menues(screen)
 
     def mousebuttondown_event(self, current_button, event, current_menu):
         if current_button is None:
@@ -232,3 +226,14 @@ class MenuHandler:
             prev_button = self.menues[self.prev_menu_key].objects[prev_button_key]
 
         return current_button, current_button_key, prev_button, prev_button_key
+
+    def _render_and_draw_menues(self, screen):
+        for key, menu in self._get_sorted_menues():
+            if menu.active:
+                menu.render_all(screen, self.ui_size)
+
+    def _get_sorted_menues(self, reverse=False):
+        return sorted(self.menues.items(), 
+                      key=lambda menu: menu[1].layer, 
+                      reverse=reverse)
+        
