@@ -43,7 +43,7 @@ class MenuHandler:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 self.mousebuttondown_event(current_button, event, current_menu)
 
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 self.mousebuttonup_event(current_button, current_menu)
 
             elif event.type == pygame.MOUSEMOTION:
