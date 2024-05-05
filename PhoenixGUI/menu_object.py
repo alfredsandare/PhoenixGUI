@@ -16,7 +16,7 @@ class MenuObject:
 
     def render_and_store(self, menu_pos, menu_size, ui_size, scroll):
         self.rendered_object = self.render(menu_pos, menu_size, ui_size, scroll)
-        self.update_hitbox()
+        self.update_hitbox(menu_pos, scroll)
 
     def light_render_and_store(self, menu_pos, menu_size, ui_size, scroll):
         obj = self.rendered_object
@@ -33,11 +33,11 @@ class MenuObject:
         obj.pos = pos
         obj.crop = crop
         
-        self.update_hitbox()
+        self.update_hitbox(menu_pos, scroll)
 
-    def update_hitbox(self):
+    def update_hitbox(self, menu_pos, scroll):
         if self.IS_SLIDEBAR:
-            self.hitbox = self.get_hitbox(self.rendered_object.pos, self.rendered_object.get_image_size())
+            self.hitbox = self.get_hitbox(menu_pos, scroll)
             return
         
         self.hitbox = Hitbox(*self.rendered_object.pos, 
