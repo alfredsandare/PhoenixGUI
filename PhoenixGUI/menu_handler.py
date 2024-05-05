@@ -51,7 +51,8 @@ class MenuHandler:
             elif event.type == pygame.MOUSEMOTION:
                 self.mousemotion_event(event)
 
-            elif event.type == pygame.MOUSEWHEEL and current_menu.enable_scroll:
+            elif current_menu is not None and event.type == pygame.MOUSEWHEEL \
+                and current_menu.enable_scroll:
                 current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
         
         self.check_button_states(current_button, current_button_key, 
