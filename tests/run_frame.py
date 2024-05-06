@@ -81,7 +81,7 @@ def c2():
 #rect = Rect((200, 200), (200, 200), (100, 100, 255), border_radius=40, anchor="c", width=5)
 #menu_handler.add_object("menu", "rect", rect)
 
-circle = Shape((200, 200), (100, 100), (255, 0, 255), "ellipse")
+circle = Shape((200, 200), (100, 100), (255, 0, 255), "circle")
 menu_handler.add_object("menu", "circle", circle)
 button2.command = circle.switch_active
 
