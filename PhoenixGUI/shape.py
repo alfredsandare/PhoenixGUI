@@ -25,6 +25,9 @@ class Shape(MenuObject):
         self.border_radius = border_radius
         self.width = width
 
+        if type_ not in ("rect", "circle"):
+            raise Exception("Shape type must be either 'rect' or 'circle'")
+
     def render(self, menu_pos, menu_size, ui_size, scroll):
         pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]+scroll]
         pos = update_pos_by_anchor(pos, self.size, self.anchor)
