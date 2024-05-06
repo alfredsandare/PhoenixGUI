@@ -192,7 +192,7 @@ class MenuHandler:
             del menu["objects"]
             instatiated_menu = Menu(**menu)
             instatiated_menu.deactivate()
-            instatiated_menu.objects = objs
+            instatiated_menu.objects.update(objs)
             self.add_menu(menu_key, instatiated_menu)
 
     def add_font_path(self, path: str):
