@@ -39,7 +39,7 @@ button = Button((0, 700),
                 anchor="sw")
 menu_handler.add_object("menu", "button", button)
 
-button2 = Button((400, 620), 
+button2 = Button((400, 520), 
                 text="Inte Johannes",
                 text_color=(255, 255, 255),
                 text_hover_color=(255, 100, 100),
@@ -56,7 +56,7 @@ button2 = Button((400, 620),
 menu_handler.add_object("menu", "button2", button2)
 
 
-button3 = Button((400, 620), 
+button3 = Button((400, 520), 
                 text="Inte Johannes",
                 text_color=(255, 255, 255),
                 text_hover_color=(255, 100, 100),

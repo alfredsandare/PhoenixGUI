@@ -41,19 +41,19 @@ class MenuHandler:
             #print(event)
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                self.mousebuttondown_event(current_button, event, current_menu)
+                self._mousebuttondown_event(current_button, event, current_menu)
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                self.mousebuttonup_event(current_button, current_menu)
+                self._mousebuttonup_event(current_button, current_menu)
 
             elif event.type == pygame.MOUSEMOTION:
-                self.mousemotion_event(event)
+                self._mousemotion_event(event)
 
             elif current_menu is not None and event.type == pygame.MOUSEWHEEL \
                 and current_menu.enable_scroll:
                 current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
         
-        self.check_button_states(current_button, current_button_key, 
+        self._update_button_states(current_button, current_button_key, 
                                  prev_button, prev_button_key)
 
         self.prev_menu_key = current_menu_key
@@ -61,7 +61,7 @@ class MenuHandler:
 
         self._render_and_draw_menues(screen)
 
-    def mousebuttondown_event(self, current_button, event, current_menu):
+    def _mousebuttondown_event(self, current_button, event, current_menu):
         if current_button is None:
             return
 
@@ -78,7 +78,7 @@ class MenuHandler:
             and current_button.is_scroll_slidebar:
             current_menu.set_scroll_by_progress(current_button.progress)
 
-    def mousebuttonup_event(self, current_button, current_menu):
+    def _mousebuttonup_event(self, current_button, current_menu):
         if current_button is not None and current_button.state == "click":
             current_button.state = "hover"
             current_button.is_selected = False
@@ -98,34 +98,38 @@ class MenuHandler:
             self.selected_slidebar = None
             self.selected_slidebar_menu = None
 
-    def mousemotion_event(self, event):
-        if self.selected_slidebar is not None:
-            self.selected_slidebar.act_on_motion(event)
-            if self.selected_slidebar.is_scroll_slidebar:
-                self.selected_slidebar_menu.set_scroll_by_progress(
-                    self.selected_slidebar.progress)
+    def _mousemotion_event(self, event):
+        if self.selected_slidebar is None:
+            return
+        
+        self.selected_slidebar.act_on_motion(event)
+        if self.selected_slidebar.is_scroll_slidebar:
+            self.selected_slidebar_menu.set_scroll_by_progress(
+                self.selected_slidebar.progress)
 
-    def check_button_states(self, current_button, current_button_key, 
+    def _update_button_states(self, current_button, current_button_key, 
                             prev_button, prev_button_key):
                             
         if (current_button is not None 
-            and not current_button.is_selected 
-            and current_button.state == "none" 
             and self.selected_slidebar == None
+            and current_button.state == "none" 
             and prev_button is None):
-                
-            current_button.state = "hover"
-            current_button.render_flag = True
+
+            # mouse started hovering over a button
+            
+            self._enable_button_by_hover(current_button)
 
         elif (current_button is not None 
+              and self.selected_slidebar == None
               and current_button_key != prev_button_key 
               and prev_button is not None 
               and not (isinstance(prev_button, Slidebar) 
-                       and prev_button.is_selected)
-              and self.selected_slidebar == None):
+                       and prev_button.is_selected)):
             
-            current_button.state = "hover"
-            current_button.render_flag = True
+            # mouse jumped straight from one button to another
+            
+            self._enable_button_by_hover(current_button)
+
             prev_button.state = "none"
             prev_button.render_flag = True
 
@@ -134,8 +138,17 @@ class MenuHandler:
               and not (isinstance(prev_button, Slidebar) 
                        and prev_button.is_selected)):
             
+            # mouse stopped hovering over a button
+            
             prev_button.state = "none"
             prev_button.render_flag = True
+
+    def _enable_button_by_hover(self, current_button):
+        if current_button.is_selected:
+            current_button.state = "click"
+        else:
+            current_button.state = "hover"
+        current_button.render_flag = True
 
     def deselect_all_buttons(self):
         for menu in self.menues.values():
