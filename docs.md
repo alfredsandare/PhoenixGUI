@@ -156,7 +156,7 @@ Used for placing buttons in menues. Buttons can contain an image, text, or a rec
 
 class Button(pos)
 
-## Paramters
+## Parameters
 
 pos: tuple, (x, y). The position of the button in pixels, relative to the menu.
 
