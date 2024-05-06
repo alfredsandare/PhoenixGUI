@@ -252,9 +252,22 @@ command: function. Function to be executed when button is pressed.
 
 class Slidebar(pos, length, circle_size)
 
-Used to instantiate slidebar objects.
+Used to instantiate slidebar objects. Think of the whole thing as a rectangle with a circle on it, although only the circle is actually rendered. No rectangle will be rendered, you'll have to put one behind it manually should you wish to. The rectangle's length will be set to the length specified with the 'length' parameter, and its width will be set to the diameter (size) of the circle. A slidebar's anchor is applied to the rectangle and not the circle.
 
 ### Parameters:
 
 pos: tuple, (x, y). The position of the button in pixels, relative to the menu.
 
+length: int. The length of the slidebar. The circle size is included in the length.
+
+circle_size: int. The diameter of the circle.
+
+### Keyword arguments:
+
+orientation: str. The orientation of the slidebar. Either 'horizontal' or 'vertical'. 'horizontal' by default.
+
+circle_color: tuple, (R, G, B) or (R, G, B, A). The color of the circle. White by default.
+
+circle_hover_color: tuple, (R, G, B) or (R, G, B, A). The color of the circle when the mouse is hovering on it.
+
+circle_click_color: tuple, (R, G, B) or (R, G, B, A). The color of the circle when it's clicked on.
