@@ -72,6 +72,24 @@ button3 = Button((400, 520),
                 anchor="e")
 menu_handler.add_object("menu", "button3", button3)
 
+button4 = Button((250, 600),
+                text="banan",
+                text_color=(255, 255, 255),
+                text_hover_color=(255, 100, 100),
+                text_click_color=(150, 0, 0),
+                font="arial",
+                font_size=20,
+                enable_rect=True,
+                command=menu2.activate,
+                rect_pady=5,
+                rect_color=(0, 0, 255),
+                rect_outline_color=(255, 255, 255),
+                anchor="s",
+                rect_length=200)
+menu_handler.add_object("menu", "button4", button4)
+
+
+
 def c1():
     menu2.activate()
 
