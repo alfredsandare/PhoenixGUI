@@ -88,8 +88,7 @@ class MenuHandler:
             if not isinstance(current_button, Slidebar):
                 current_button.exec_command()
 
-        elif current_button is None:
-            self.deselect_all_buttons()
+        self.deselect_all_buttons()
             
         if self.selected_slidebar is not None:
             self.selected_slidebar.state = "none"
@@ -129,9 +128,7 @@ class MenuHandler:
             # mouse jumped straight from one button to another
             
             self._enable_button_by_hover(current_button)
-
-            prev_button.state = "none"
-            prev_button.render_flag = True
+            self._disable_button_by_hover(prev_button)
 
         elif (current_button is None
               and prev_button is not None 
@@ -140,15 +137,18 @@ class MenuHandler:
             
             # mouse stopped hovering over a button
             
-            prev_button.state = "none"
-            prev_button.render_flag = True
+            self._disable_button_by_hover(prev_button)
 
-    def _enable_button_by_hover(self, current_button):
-        if current_button.is_selected:
-            current_button.state = "click"
+    def _enable_button_by_hover(self, button):
+        if button.is_selected:
+            button.state = "click"
         else:
-            current_button.state = "hover"
-        current_button.render_flag = True
+            button.state = "hover"
+        button.render_flag = True
+
+    def _disable_button_by_hover(self, button):
+        button.state = "none"
+        button.render_flag = True
 
     def deselect_all_buttons(self):
         for menu in self.menues.values():
