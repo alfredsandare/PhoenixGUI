@@ -31,7 +31,8 @@ class Menu:
         self.hitbox = Hitbox(*self.pos, *sum_two_vectors(self.pos, self.size))
 
         if self.bg_color is not None:
-            self.objects["_bg"] = Shape((0, 0), self.size, self.bg_color, "rect")
+            self.objects["_bg"] = Shape((0, 0), self.size, 
+                                        self.bg_color, "rect")
         
         if self.outline_width != None and self.outline_color != None:
             self.objects["_outline"] = Shape((0, 0), 
@@ -50,8 +51,10 @@ class Menu:
             
     def render_all(self, screen, ui_size):
         # Re-renders items with render flag and then draws all items.
-        if "_bg" in self.objects.keys() and not self.objects["_bg"].is_rendered():
-            self.objects["_bg"].render_and_store(self.pos, self.size, ui_size, 0)
+        if "_bg" in self.objects.keys() and \
+            not self.objects["_bg"].is_rendered():
+            self.objects["_bg"].render_and_store(self.pos, self.size, 
+                                                 ui_size, 0)
 
         if "_outline" in self.objects.keys() and \
             not self.objects["_outline"].is_rendered():
@@ -67,10 +70,12 @@ class Menu:
                 item.render_and_store(self.pos, self.size, ui_size, 0)
 
             elif item.active and item.render_flag:
-                item.render_and_store(self.pos, self.size, ui_size, -self.scroll)
+                item.render_and_store(self.pos, self.size, 
+                                      ui_size, -self.scroll)
 
             elif item.active and item.light_render_flag:
-                item.light_render_and_store(self.pos, self.size, ui_size, -self.scroll)
+                item.light_render_and_store(self.pos, self.size, 
+                                            ui_size, -self.scroll)
 
             item.render_flag = False
             item.light_render_flag = False
@@ -80,7 +85,8 @@ class Menu:
             self.objects["_bg"].draw(screen)
 
         for key, item in self.objects.items():
-            if key not in ("_bg", "_outline") and item is not None and item.active:
+            if key not in ("_bg", "_outline") and \
+                item is not None and item.active:
                 item.draw(screen)
 
         if "_outline" in self.objects.keys():

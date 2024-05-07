@@ -1,6 +1,6 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
-from .util import get_value_from_state, object_crop, get_font, flatten_list, update_pos_by_anchor
+from .util import get_value_from_state, object_crop, update_pos_by_anchor
 from .image import Image
 from .text import Text
 from .shape import Shape
