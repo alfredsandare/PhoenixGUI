@@ -1,3 +1,4 @@
+from .menu_object import MenuObject
 from .hitbox import Hitbox
 from .shape import Shape
 from .util import flatten_list, is_button, sum_two_vectors, update_pos_by_anchor
@@ -16,7 +17,7 @@ class Menu:
                  max_scroll_offset=0):
         self.pos = pos
         self.size = size
-        self.objects = {}
+        self.objects: dict[str, MenuObject] = {}
         self.outline_width = outline_width
         self.outline_color = outline_color
         self.layer = layer

@@ -1,4 +1,3 @@
-from .menu_object import MenuObject
 import pygame
 import importlib
 from .menu import Menu
@@ -11,7 +10,7 @@ from .text import Text
 class MenuHandler:
     def __init__(self, ui_size=1):
         self.ui_size = ui_size
-        self.menues: dict[str, MenuObject] = {}
+        self.menues: dict[str, Menu] = {}
         self.prev_menu_key = None
         self.prev_button_key = None
         self.scroll_strength_multiplier = 0
