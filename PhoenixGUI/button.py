@@ -167,8 +167,11 @@ class Button(MenuObject):
         return RenderedMenuObject(surface, pos, crop)
 
     def exec_command(self):
-        if self.command is not None and self.enabled:
+        if self.command is not None and self.enabled and callable(self.command):
             self.command()
+        elif type(self.command) is tuple and self.enabled:
+            command, args, kwargs = self.command
+            command(*args, **kwargs)
 
     def enable(self):
         self.enabled = True
