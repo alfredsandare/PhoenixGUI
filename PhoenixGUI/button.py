@@ -34,7 +34,8 @@ class Button(MenuObject):
                  rect_outline_color=None,
                  rect_outline_hover_color=None,
                  rect_outline_click_color=None,
-                 rect_length=None):
+                 rect_length=None,
+                 rect_height=None):
 
         super().__init__(pos, max_size, anchor)
         self.image = image
@@ -61,13 +62,18 @@ class Button(MenuObject):
         self.rect_outline_hover_color = rect_outline_hover_color
         self.rect_outline_click_color = rect_outline_click_color
         self.rect_length = rect_length
+        self.rect_height = rect_height
 
         self.state = "none"
         self.is_selected = False  # becomes true when clicked on, and only becomes false when LMB is released
         self.enabled = True
 
-        if self.text == None and self.image == None:
-            raise Exception("Cannot instanstiate button with neither text nor image.")
+        if self.text is None and self.image is None and not self.enable_rect:
+            raise Exception("Cannot instanstiate button with neither text nor image nor rect.")
+        
+        if (self.text is None and self.image is None and self.enable_rect 
+            and (self.rect_length is None or self.rect_height is None)):
+            raise Exception("Cannot instanstiate button with rect without length and height")
         
         if self.image is not None and self.enable_rect:
             raise Exception("Cannot instaniate button with both image and rect.")
@@ -110,15 +116,18 @@ class Button(MenuObject):
                                                   ui_size, scroll)
 
         if self.enable_rect:
-            text_size = rendered_menu_text.get_image_size()
-            rect_size = [text_size[0] + 2*self.rect_padx, 
-                         text_size[1] + 2*self.rect_pady]
+            if self.text:
+                text_size = rendered_menu_text.get_image_size()
+                rect_size = [text_size[0] + 2*self.rect_padx, 
+                            text_size[1] + 2*self.rect_pady]
 
-            if self.rect_length is not None and rect_size[0] < self.rect_length:
-                rect_size[0] = self.rect_length
+                if self.rect_length is not None and rect_size[0] < self.rect_length:
+                    rect_size[0] = self.rect_length
 
-                if self.text:
-                    text_pos[0] += (rect_size[0] - text_size[0])/2
+                text_pos[0] += (rect_size[0] - text_size[0])/2
+
+            else:
+                rect_size = [self.rect_length, self.rect_height]
 
             rect_color = get_value_from_state(self.state,
                                               self.rect_color,
@@ -139,6 +148,7 @@ class Button(MenuObject):
                              outline_color=rect_outline_color,
                              border_radius=self.rect_border_radius,
                              max_size=self.max_size)
+            
             rendered_menu_rect = menu_rect.render(menu_pos, menu_size, 
                                                   ui_size, scroll)
             
