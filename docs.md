@@ -271,3 +271,8 @@ circle_color: tuple, (R, G, B) or (R, G, B, A). The color of the circle. White b
 circle_hover_color: tuple, (R, G, B) or (R, G, B, A). The color of the circle when the mouse is hovering on it.
 
 circle_click_color: tuple, (R, G, B) or (R, G, B, A). The color of the circle when it's clicked on.
+
+## Problems and solutions
+
+### Objects are not finding the custom font added with MenuHandler.add_font_path()
+This can occur when an object is added with Menu.add_object(), because the path is only registered in the menu_handler, not in any Menu objects. To make sure your path is registered in all your objects, try adding them with MenuHandler.add_object() instead.
