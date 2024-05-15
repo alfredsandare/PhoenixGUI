@@ -16,6 +16,7 @@ class MenuHandler:
         self.scroll_strength_multiplier = 0
         self.selected_slidebar = None
         self.selected_slidebar_menu = None
+        self.font_path = None
 
     def update(self, events, screen):
         # sort the menues by layer
@@ -156,6 +157,9 @@ class MenuHandler:
     def add_object(self, menu_id, object_id, _object):
         self.menues[menu_id].add_object(object_id, _object)
 
+        if isinstance(_object, Text) and self.font_path is not None:
+            _object.font_path = self.font_path
+
     def add_menu(self, id, menu):
         self.menues[id] = menu
 
@@ -196,7 +200,7 @@ class MenuHandler:
 
     def add_font_path(self, path: str):
         # adds an absolute path where the menu handler will search for fonts.
-        # this function should be called after all menu objects have been loaded.
+        self.font_path = path
         for menu in self.menues.values():
             for obj in menu.objects.values():
                 if isinstance(obj, Text):
