@@ -206,6 +206,10 @@ class MenuHandler:
                 if isinstance(obj, Text):
                     obj.font_path = path
 
+    def deactivate_all_menues(self):
+        for menu in self.menues.values():
+            menu.deactivate()
+
     def _get_current_menu_key(self, mouse_pos, sorted_menues):
         for key, menu in sorted_menues:
             if menu.hitbox.is_pos_inside(*mouse_pos) and menu.active:
