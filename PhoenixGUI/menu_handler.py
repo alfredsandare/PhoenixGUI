@@ -21,7 +21,11 @@ class MenuHandler:
         self.font_path = None
         self.selected_text_input: TextInput = None
 
-    def update(self, events, screen):
+        # keys are pygame.key keys. first float is time since pressed
+        # and second float is time since last text addition.
+        self.pressed_buttons: dict[int, list[float, float]] = {}
+
+    def update(self, events, screen, time_passed):
         # sort the menues by layer
         sorted_menues = self._get_sorted_menues(reverse=True)
         mouse_pos = pygame.mouse.get_pos()
@@ -66,11 +70,53 @@ class MenuHandler:
         
         self._update_button_states(current_button, current_button_key, 
                                  prev_button, prev_button_key)
+        
+        self._check_key_states(time_passed)
 
         self.prev_menu_key = current_menu_key
         self.prev_button_key = current_button_key
 
         self._render_and_draw_menues(screen)
+
+    def _check_key_states(self, time_passed):
+        # this is only used for TextInput objects.
+        if self.selected_text_input is None:
+            return
+        
+        TIME_REQUIRED_FOR_ACTION = 400
+        TIME_BETWEEN_ACTION = 40
+
+        key_state = pygame.key.get_pressed()
+        INTERESTING_BUTTONS = [
+            pygame.K_LEFT,
+            pygame.K_RIGHT,
+            pygame.K_BACKSPACE
+        ]
+
+        for button in INTERESTING_BUTTONS:
+            if key_state[button] and button not in self.pressed_buttons:
+                self.pressed_buttons[button] = [0, 0]
+
+            elif not key_state[button] and button in self.pressed_buttons:
+                del self.pressed_buttons[button]
+
+            elif key_state[button]:
+                self.pressed_buttons[button][0] += time_passed
+
+        for button, times in self.pressed_buttons.items():
+            if times[0] >= TIME_REQUIRED_FOR_ACTION and times[1] >= TIME_BETWEEN_ACTION:
+                if button == pygame.K_LEFT:
+                    self.selected_text_input.step_left()
+                elif button == pygame.K_RIGHT:
+                    self.selected_text_input.step_right()
+                elif button == pygame.K_BACKSPACE:
+                    self.selected_text_input.remove_text()
+
+                self.pressed_buttons[button][1] -= TIME_BETWEEN_ACTION
+                self.pressed_buttons[button][1] += time_passed
+
+            elif times[0] >= TIME_REQUIRED_FOR_ACTION:
+                self.pressed_buttons[button][1] += time_passed
 
     def _update_text_inputs_from_mousebuttondown(self, current_menu: Menu, mouse_pos):
         if current_menu is not None:
@@ -89,15 +135,12 @@ class MenuHandler:
     def _keydown_event(self, event):
         if event.key == pygame.K_BACKSPACE and self.selected_text_input is not None:
             self.selected_text_input.remove_text()
-            self.selected_text_input.render_flag = True
 
         if event.key == pygame.K_LEFT and self.selected_text_input is not None:
             self.selected_text_input.step_left()
-            self.selected_text_input.render_flag = True
 
         if event.key == pygame.K_RIGHT and self.selected_text_input is not None:
             self.selected_text_input.step_right()
-            self.selected_text_input.render_flag = True
 
     def _textinput_event(self, event):
         if self.selected_text_input is None:

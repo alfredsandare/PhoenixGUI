@@ -1,6 +1,8 @@
 from PhoenixGUI import *
 import pygame
 
+pygame.init()
+
 screen = pygame.display.set_mode((800, 800))
 menu_handler = MenuHandler()
 menu_handler.set_scroll_strength_multiplier(3)
@@ -166,7 +168,7 @@ while 1:
     screen.fill((0, 0, 0))
 
     events = pygame.event.get()
-    menu_handler.update(events, screen)
+    menu_handler.update(events, screen, clock.get_time())
     #pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(200, 200, 200, 200), 1)
 
     pygame.display.flip()

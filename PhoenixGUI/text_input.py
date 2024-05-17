@@ -72,6 +72,8 @@ class TextInput(MenuObject):
             
         self.text_left = self.text_left[:-1]
 
+        self.render_flag = True
+
     def step_right(self):
         if not self.text_right:
             return
@@ -82,6 +84,8 @@ class TextInput(MenuObject):
         font = get_font("", self.font, self.font_size)
         if font.size(self.text_left)[0] - self.offset > self.length:
             self.offset += font.size(self.text_left[-1])[0]
+
+        self.render_flag = True
 
     def step_left(self):
         if not self.text_left:
@@ -96,6 +100,8 @@ class TextInput(MenuObject):
 
         if self.offset < 0:
             self.offset = 0
+
+        self.render_flag = True
 
     def _get_text(self):
         return self.text_left + self.text_right
