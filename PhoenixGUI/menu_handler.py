@@ -1,5 +1,7 @@
 import pygame
 import importlib
+
+from .text_input import TextInput
 from .menu import Menu
 from .util import is_button
 from .radiobutton import Radiobutton
@@ -17,6 +19,7 @@ class MenuHandler:
         self.selected_slidebar = None
         self.selected_slidebar_menu = None
         self.font_path = None
+        self.selected_text_input: TextInput = None
 
     def update(self, events, screen):
         # sort the menues by layer
@@ -52,6 +55,12 @@ class MenuHandler:
             elif current_menu is not None and event.type == pygame.MOUSEWHEEL \
                 and current_menu.enable_scroll:
                 current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
+
+            elif event.type == pygame.TEXTINPUT:
+                self._textinput_event(event)
+
+            elif event.type == pygame.KEYDOWN:
+                self._keydown_event(event)
         
         self._update_button_states(current_button, current_button_key, 
                                  prev_button, prev_button_key)
@@ -60,6 +69,27 @@ class MenuHandler:
         self.prev_button_key = current_button_key
 
         self._render_and_draw_menues(screen)
+
+    def _keydown_event(self, event):
+        if event.key == pygame.K_BACKSPACE and self.selected_text_input is not None:
+            self.selected_text_input.remove_text()
+            self.selected_text_input.render_flag = True
+
+        if event.key == pygame.K_LEFT and self.selected_text_input is not None:
+            self.selected_text_input.step_left()
+            self.selected_text_input.render_flag = True
+
+        if event.key == pygame.K_RIGHT and self.selected_text_input is not None:
+            self.selected_text_input.step_right()
+            self.selected_text_input.render_flag = True
+
+    def _textinput_event(self, event):
+        if self.selected_text_input is None:
+            return
+        
+        self.selected_text_input.add_text(event.text)
+        self.selected_text_input.render_flag = True
+        
 
     def _mousebuttondown_event(self, current_button, event, current_menu):
         if current_button is None:

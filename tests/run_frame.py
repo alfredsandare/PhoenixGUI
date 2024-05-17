@@ -121,6 +121,15 @@ menu_handler.add_object("menu", "sldbr_rect", sldbr_rect)
 slidebar2 = Slidebar((250, 400), 100, 20, circle_hover_color=(255, 0, 0), circle_click_color=(255, 0, 255), orientation="horizontal")
 menu_handler.add_object("menu", "sldbr2", slidebar2)
 
+text_input_rect = Shape((50, 600), (100, 20), (0, 140, 140), "rect")
+menu_handler.add_object("menu", "text_input_rect", text_input_rect)
+
+text_input = TextInput((50, 600), 100, "arial", 20, (255, 255, 255), anchor="nw")
+text_input.text_left = "Hello"
+text_input.text_right = " World"
+text_input.is_selected = True
+menu_handler.add_object("menu", "text_input", text_input)
+menu_handler.selected_text_input = text_input
 
 
 # images = {
