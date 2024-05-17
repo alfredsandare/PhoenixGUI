@@ -36,6 +36,7 @@ class TextInput(MenuObject):
 
         if self.is_selected:
             x_pos, height = font.size(self.text_left)
+            x_pos -= self.offset
             pygame.draw.line(surface, self.text_color, (x_pos, 0), (x_pos, height), 2)
 
         surface_size = surface.get_size()
@@ -62,11 +63,14 @@ class TextInput(MenuObject):
         if not self.text_left:
             return
 
-        self.text_left = self.text_left[:-1]
-
         font = get_font("", self.font, self.font_size)
-        if font.size(self.text_left)[0] - self.offset < 0:
+        if (font.size(self._get_text())[0] - self.offset <= self.length):
             self.offset -= font.size(self.text_left[-1])[0]
+        
+        if self.offset < 0:
+            self.offset = 0
+            
+        self.text_left = self.text_left[:-1]
 
     def step_right(self):
         if not self.text_right:
@@ -90,7 +94,8 @@ class TextInput(MenuObject):
         if font.size(self.text_left)[0] - self.offset < 0:
             self.offset -= font.size(self.text_right[0])[0]
 
+        if self.offset < 0:
+            self.offset = 0
 
     def _get_text(self):
         return self.text_left + self.text_right
-    
