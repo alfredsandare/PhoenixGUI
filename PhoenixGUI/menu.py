@@ -1,3 +1,4 @@
+from .text_input import TextInput
 from .menu_object import MenuObject
 from .hitbox import Hitbox
 from .shape import Shape
@@ -110,6 +111,12 @@ class Menu:
         for obj in self.objects.values():
             if is_button(obj) and obj.is_selected:
                 obj.is_selected = False
+
+    def deselect_all_text_inputs(self):
+        for obj in self.objects.values():
+            if isinstance(obj, TextInput):
+                obj.is_selected = False
+                obj.render_flag = True
 
     def activate(self):
         self.active = True

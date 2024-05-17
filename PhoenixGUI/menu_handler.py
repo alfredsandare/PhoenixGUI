@@ -45,6 +45,8 @@ class MenuHandler:
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 self._mousebuttondown_event(current_button, event, current_menu)
+                self._update_text_inputs_from_mousebuttondown(current_menu,
+                                                              mouse_pos)
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 self._mousebuttonup_event(current_button, current_menu)
@@ -70,6 +72,20 @@ class MenuHandler:
 
         self._render_and_draw_menues(screen)
 
+    def _update_text_inputs_from_mousebuttondown(self, current_menu: Menu, mouse_pos):
+        if current_menu is not None:
+            for obj in current_menu.objects.values():
+                if isinstance(obj, TextInput) and obj.hitbox.is_pos_inside(*mouse_pos):
+                    obj.is_selected = True
+                    obj.render_flag = True
+                    self.selected_text_input = obj
+                    return
+
+        for menu in self.menues.values():
+            menu.deselect_all_text_inputs()
+
+        self.selected_text_input = None
+
     def _keydown_event(self, event):
         if event.key == pygame.K_BACKSPACE and self.selected_text_input is not None:
             self.selected_text_input.remove_text()
@@ -90,7 +106,6 @@ class MenuHandler:
         self.selected_text_input.add_text(event.text)
         self.selected_text_input.render_flag = True
         
-
     def _mousebuttondown_event(self, current_button, event, current_menu):
         if current_button is None:
             return
