@@ -92,3 +92,11 @@ class MenuObject:
     def switch_active(self):
         self.active = not self.active
         self.render_flag = True
+
+    def _adjust_pos_and_crop(self, pos, surface_size, 
+                             menu_pos, menu_size, scroll):
+        
+        pos = [pos[0] + menu_pos[0], pos[1] + menu_pos[1] + scroll]
+        pos = update_pos_by_anchor(pos, surface_size, self.anchor)
+
+        return object_crop(surface_size, pos, menu_size, menu_pos, self.max_size)

@@ -10,9 +10,9 @@ class Image(MenuObject):
     def render(self, menu_pos, menu_size, ui_size, scroll):
         image_size = [self.image.get_rect()[2], self.image.get_rect()[3]]
 
-        pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]+scroll]
-        pos = update_pos_by_anchor(pos, image_size, self.anchor)
-        crop, pos = object_crop(image_size, pos, menu_size, menu_pos, self.max_size)
+        crop, pos = self._adjust_pos_and_crop(self.pos, image_size, 
+                                              menu_pos, menu_size, scroll)
+
         return RenderedMenuObject(self.image, pos, crop)
 
     def get_size(self):

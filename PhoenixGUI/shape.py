@@ -29,10 +29,6 @@ class Shape(MenuObject):
             raise Exception("Shape type must be either 'rect' or 'circle'")
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
-        pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]+scroll]
-        pos = update_pos_by_anchor(pos, self.size, self.anchor)
-        crop, pos = object_crop(self.size, pos, menu_size, menu_pos, self.max_size)
-
         surface = pygame.Surface(self.size, pygame.SRCALPHA)
         if self.type_ == "rect":
             pygame.draw.rect(surface,
@@ -59,5 +55,8 @@ class Shape(MenuObject):
                                     self.outline_color,
                                     pygame.Rect((0, 0), self.size),
                                     width=self.outline_width)
+                                
+        crop, pos = self._adjust_pos_and_crop(self.pos, self.size, 
+                                              menu_pos, menu_size, scroll)
                 
         return RenderedMenuObject(surface, pos, crop)

@@ -139,11 +139,9 @@ class SelectionButton(MenuObject):
 
         for obj in rendered_objects:
             obj.draw(surface)
-        
-        pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
-        pos = update_pos_by_anchor(pos, surface_size, self.anchor)
-        crop, pos = object_crop(surface_size, pos, 
-                                       menu_size, menu_pos, self.max_size)
+
+        crop, pos = self._adjust_pos_and_crop(self.pos, surface_size, 
+                                              menu_pos, menu_size, scroll)
 
         return RenderedMenuObject(surface, pos, crop)
             

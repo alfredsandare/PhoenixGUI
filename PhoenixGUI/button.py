@@ -169,12 +169,8 @@ class Button(MenuObject):
         if self.text:
            surface.blit(rendered_menu_text.image, text_pos)
 
-        # TODO move paragraph below into a function in util
-        # because all MenuObject subclasses use it.
-        pos = [self.pos[0] + menu_pos[0], self.pos[1] + menu_pos[1] + scroll]
-        pos = update_pos_by_anchor(pos, surface_size, self.anchor)
-        crop, pos = object_crop(surface_size, pos, 
-                                       menu_size, menu_pos, self.max_size)
+        crop, pos = self._adjust_pos_and_crop(self.pos, surface_size, 
+                                              menu_pos, menu_size, scroll)
         
         return RenderedMenuObject(surface, pos, crop)
 
