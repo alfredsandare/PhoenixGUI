@@ -69,7 +69,7 @@ class MenuHandler:
                 self._keydown_event(event)
         
         self._update_button_states(current_button, current_button_key, 
-                                 prev_button, prev_button_key)
+                                   prev_button, prev_button_key)
         
         self._check_key_states(time_passed)
 
@@ -104,7 +104,9 @@ class MenuHandler:
                 self.pressed_buttons[button][0] += time_passed
 
         for button, times in self.pressed_buttons.items():
-            if times[0] >= TIME_REQUIRED_FOR_ACTION and times[1] >= TIME_BETWEEN_ACTION:
+            if (times[0] >= TIME_REQUIRED_FOR_ACTION 
+                and times[1] >= TIME_BETWEEN_ACTION):
+
                 if button == pygame.K_LEFT:
                     self.selected_text_input.step_left()
                 elif button == pygame.K_RIGHT:
@@ -118,10 +120,15 @@ class MenuHandler:
             elif times[0] >= TIME_REQUIRED_FOR_ACTION:
                 self.pressed_buttons[button][1] += time_passed
 
-    def _update_text_inputs_from_mousebuttondown(self, current_menu: Menu, mouse_pos):
+    def _update_text_inputs_from_mousebuttondown(self, 
+                                                 current_menu: Menu, 
+                                                 mouse_pos):
+        
         if current_menu is not None:
             for obj in current_menu.objects.values():
-                if isinstance(obj, TextInput) and obj.hitbox.is_pos_inside(*mouse_pos):
+                if (isinstance(obj, TextInput) 
+                    and obj.hitbox.is_pos_inside(*mouse_pos)):
+
                     obj.is_selected = True
                     obj.render_flag = True
                     self.selected_text_input = obj
@@ -133,13 +140,16 @@ class MenuHandler:
         self.selected_text_input = None
 
     def _keydown_event(self, event):
-        if event.key == pygame.K_BACKSPACE and self.selected_text_input is not None:
+        if self.selected_text_input is None:
+            return
+        
+        if event.key == pygame.K_BACKSPACE:
             self.selected_text_input.remove_text()
 
-        if event.key == pygame.K_LEFT and self.selected_text_input is not None:
+        if event.key == pygame.K_LEFT:
             self.selected_text_input.step_left()
 
-        if event.key == pygame.K_RIGHT and self.selected_text_input is not None:
+        if event.key == pygame.K_RIGHT:
             self.selected_text_input.step_right()
 
     def _textinput_event(self, event):
@@ -195,7 +205,7 @@ class MenuHandler:
                 self.selected_slidebar.progress)
 
     def _update_button_states(self, current_button, current_button_key, 
-                            prev_button, prev_button_key):
+                              prev_button, prev_button_key):
                             
         if (current_button is not None 
             and self.selected_slidebar == None
