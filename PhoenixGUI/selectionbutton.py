@@ -1,7 +1,7 @@
 from .rendered_menu_object import RenderedMenuObject
 from .image import Image
 from .text import Text
-from .util import object_crop, update_pos_by_anchor, flatten_list, get_value_from_state
+from .util import get_value_from_state
 from .shape import Shape
 from .menu_object import MenuObject
 import pygame
@@ -69,7 +69,7 @@ class SelectionButton(MenuObject):
     def get_checked(self):
         return self.is_checked
 
-    def switch(self):
+    def switch_checked(self):
         self.is_checked = not self.is_checked
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
@@ -81,9 +81,9 @@ class SelectionButton(MenuObject):
                                           self.text_click_color)
         
         shape_color = get_value_from_state(self.state,
-                                            self.shape_color,
-                                            self.shape_hover_color,
-                                            self.shape_click_color)
+                                           self.shape_color,
+                                           self.shape_hover_color,
+                                           self.shape_click_color)
         
         image = get_value_from_state(self.state,
                                      self.image,
@@ -105,26 +105,25 @@ class SelectionButton(MenuObject):
         else:  # shape
             shape_size = font_height*self.shape_size
             menu_shape_1 = Shape((0, 0), 
-                                  (shape_size, shape_size), 
-                                  shape_color, 
-                                  self.shape, 
-                                  width=round(0.1*shape_size))
+                                 (shape_size, shape_size), 
+                                 shape_color, 
+                                 self.shape, 
+                                 width=round(0.1*shape_size))
+            
             rendered_objects.append(menu_shape_1.render((0, 0), menu_size, 
-                                                         ui_size, 0))
+                                                        ui_size, 0))
 
             # only render the middle shape when the button is checked
             if self.is_checked:
                 shape_2_pos = (round(0.2*shape_size), round(0.2*shape_size))
                 menu_shape_2 = Shape(shape_2_pos, 
-                                      (0.6*shape_size, 0.6*shape_size), 
-                                      shape_color, self.shape)
-                rendered_objects.append(menu_shape_2.render((0, 0), menu_size, 
-                                                             ui_size, 0))
+                                     (0.6*shape_size, 0.6*shape_size), 
+                                     shape_color, self.shape)
                 
-            text_pos = self._get_text_pos((shape_size, shape_size), 
-                                            font_height)
-
-        #rendered_objects = flatten_list(rendered_objects)
+                rendered_objects.append(menu_shape_2.render((0, 0), menu_size, 
+                                                            ui_size, 0))
+                
+            text_pos = self._get_text_pos((shape_size, shape_size), font_height)
 
         rendered_objects.append(menu_text.render((0, 0), menu_size, ui_size, 0))
         rendered_objects[-1].pos = text_pos
@@ -153,7 +152,7 @@ class SelectionButton(MenuObject):
     def exec_command(self):
         if not self.enabled:
             return
-        self.switch()
+        self.switch_checked()
         if self.command is not None:
             self.command()
 
