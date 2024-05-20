@@ -1,6 +1,5 @@
 from .rendered_menu_object import RenderedMenuObject
 from .menu_object import MenuObject
-from .util import object_crop, update_pos_by_anchor
 import pygame
 
 class Shape(MenuObject):

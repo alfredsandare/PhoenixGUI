@@ -2,7 +2,7 @@ from .text_input import TextInput
 from .menu_object import MenuObject
 from .hitbox import Hitbox
 from .shape import Shape
-from .util import flatten_list, is_button, sum_two_vectors, update_pos_by_anchor
+from .util import is_button, sum_two_vectors, update_pos_by_anchor
 
 class Menu:
     def __init__(self, 
@@ -38,10 +38,10 @@ class Menu:
         
         if self.outline_width != None and self.outline_color != None:
             self.objects["_outline"] = Shape((0, 0), 
-                         self.size, 
-                         self.outline_color, 
-                         "rect", 
-                         width=self.outline_width)
+                                             self.size, 
+                                             self.outline_color, 
+                                             "rect", 
+                                             width=self.outline_width)
 
     def add_object(self, id, object_):
         if id in ("_bg", "_outline"):

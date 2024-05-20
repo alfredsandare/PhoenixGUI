@@ -1,6 +1,5 @@
 from .util import get_value_from_state, sum_two_vectors, update_pos_by_anchor
 from .hitbox import Hitbox
-import pygame
 from .shape import Shape
 from .menu_object import MenuObject
 

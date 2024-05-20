@@ -1,7 +1,7 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
 import pygame
-from .util import flatten_list, get_font, cut_line, update_pos_by_anchor, wrap_line, object_crop
+from .util import flatten_list, get_font, cut_line, wrap_line
 
 pygame.font.init()
 

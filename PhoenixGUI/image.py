@@ -1,6 +1,5 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
-from .util import object_crop, update_pos_by_anchor
 
 class Image(MenuObject):
     def __init__(self, pos, image, max_size=None, anchor="nw"):
