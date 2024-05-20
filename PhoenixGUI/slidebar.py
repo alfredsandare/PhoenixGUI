@@ -14,8 +14,8 @@ class Slidebar(MenuObject):
                  orientation="horizontal",
                  circle_color=(255, 255, 255),
                  circle_hover_color=None,
-                 circle_click_color=None
-                 ):
+                 circle_click_color=None):
+        
         super().__init__(pos, max_size, anchor)
         self.length = length
         self.circle_size = circle_size
@@ -43,14 +43,14 @@ class Slidebar(MenuObject):
                                      self.circle_hover_color, 
                                      self.circle_click_color)
 
-        pos, total_size = self._get_pos_and_total_size()
-
+        pos = self._get_pos_and_total_size()[0]
         pos = self._update_pos_by_progress(pos)
 
         circle = Shape(pos, 
                        [self.circle_size, self.circle_size], 
                        color, 
                        'circle')
+        
         return circle.render(menu_pos, menu_size, ui_size, scroll)
 
     def act_on_motion(self, event):
@@ -81,7 +81,8 @@ class Slidebar(MenuObject):
         if not self.is_scroll_slidebar:
             pos[1] += scroll
 
-        return Hitbox(pos[0], pos[1], pos[0]+total_size[0], pos[1]+total_size[1])
+        # return Hitbox(pos[0], pos[1], pos[0]+total_size[0], pos[1]+total_size[1])
+        return Hitbox(*pos, *sum_two_vectors(pos, total_size))
     
     def set_progress_in_limits(self):
         if self.progress > 1:
