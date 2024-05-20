@@ -1,6 +1,6 @@
 import pygame
 from .rendered_menu_object import RenderedMenuObject
-from .util import get_font, object_crop, update_pos_by_anchor
+from .util import get_font
 from .menu_object import MenuObject
 
 
@@ -30,16 +30,17 @@ class TextInput(MenuObject):
     def render(self, menu_pos, menu_size, ui_size, scroll):
         font = get_font("", self.font, self.font_size)
 
-        surface = pygame.Surface((self.length, font.size(" ")[1]), pygame.SRCALPHA)
+        surface_size = (self.length, font.size(" ")[1])
+        surface = pygame.Surface(surface_size, pygame.SRCALPHA)
 
-        surface.blit(font.render(self._get_text(), True, self.text_color), (-self.offset, 0))
+        rendered_text = font.render(self.get_text(), True, self.text_color)
+        surface.blit(rendered_text, (-self.offset, 0))
 
         if self.is_selected:
             x_pos, height = font.size(self.text_left)
             x_pos -= self.offset
-            pygame.draw.line(surface, self.text_color, (x_pos, 0), (x_pos, height), 2)
-
-        surface_size = surface.get_size()
+            pygame.draw.line(surface, self.text_color, 
+                             (x_pos, 0), (x_pos, height), 2)
 
         crop, pos = self._adjust_pos_and_crop(self.pos, surface_size, 
                                               menu_pos, menu_size, scroll)
@@ -58,7 +59,7 @@ class TextInput(MenuObject):
             return
 
         font = get_font("", self.font, self.font_size)
-        if (font.size(self._get_text())[0] - self.offset <= self.length):
+        if (font.size(self.get_text())[0] - self.offset <= self.length):
             self.offset -= font.size(self.text_left[-1])[0]
         
         if self.offset < 0:
@@ -97,5 +98,5 @@ class TextInput(MenuObject):
 
         self.render_flag = True
 
-    def _get_text(self):
+    def get_text(self):
         return self.text_left + self.text_right
