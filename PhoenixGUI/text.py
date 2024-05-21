@@ -26,6 +26,9 @@ class Text(MenuObject):
         self.bg_color = bg_color
         self.font_path = None
 
+        if type(text) is not str:
+            raise TypeError(f"Text must be str, not {type(text)}")
+
     def get_size(self, menu_pos, menu_size, ui_size, scroll):
         object = self.render(menu_pos, menu_size, ui_size, scroll)
         return object.image.get_size()
