@@ -38,6 +38,10 @@ class Text(MenuObject):
 
 
     def render(self, menu_pos, menu_size, ui_size, scroll):
+        if self.text == "":
+            empty_surface = pygame.Surface((1, 1), pygame.SRCALPHA)
+            return RenderedMenuObject(empty_surface, (0, 0))
+        
         font = get_font(self.font_path if self.font_path is not None else "", 
                         self.font, 
                         self.font_size * ui_size)
