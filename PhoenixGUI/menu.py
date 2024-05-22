@@ -50,6 +50,10 @@ class Menu:
 
         if id == self.scroll_slidebar:
             object_.is_scroll_slidebar = True
+
+    def delete_object(self, id):
+        if id in self.objects.keys():
+            del self.objects[id]
             
     def render_all(self, screen, ui_size):
         # Re-renders items with render flag and then draws all items.

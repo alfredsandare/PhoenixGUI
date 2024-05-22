@@ -252,11 +252,14 @@ class MenuHandler:
         for menu in self.menues.values():
             menu.deselect_all_buttons()
 
-    def add_object(self, menu_id, object_id, _object):
-        self.menues[menu_id].add_object(object_id, _object)
+    def add_object(self, menu_id, object_id, object_):
+        self.menues[menu_id].add_object(object_id, object_)
 
-        if isinstance(_object, Text) and self.font_path is not None:
-            _object.font_path = self.font_path
+        if isinstance(object_, Text) and self.font_path is not None:
+            object_.font_path = self.font_path
+
+    def delete_object(self, menu_id, object_id):
+        self.menues[menu_id].delete_object(object_id)
 
     def add_menu(self, id, menu):
         self.menues[id] = menu
