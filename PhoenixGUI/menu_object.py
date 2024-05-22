@@ -93,6 +93,12 @@ class MenuObject:
         self.active = not self.active
         self.render_flag = True
 
+    def change_property(self, property, value):
+        if not hasattr(self, property):
+            raise Exception(f"Property {property} does not exist")
+        setattr(self, property, value)
+        self.render_flag = True
+
     def _adjust_pos_and_crop(self, pos, surface_size, 
                              menu_pos, menu_size, scroll):
         
