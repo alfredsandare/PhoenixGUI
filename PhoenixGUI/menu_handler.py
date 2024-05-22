@@ -328,7 +328,8 @@ class MenuHandler:
 
         prev_button_key = self.prev_button_key
         prev_button = None
-        if prev_button_key is not None and self.prev_menu_key is not None:
+        if prev_button_key is not None and self.prev_menu_key is not None \
+            and prev_button_key in self.menues[self.prev_menu_key].objects.keys():
             prev_button = self.menues[self.prev_menu_key].objects[prev_button_key]
 
         return current_button, current_button_key, prev_button, prev_button_key
