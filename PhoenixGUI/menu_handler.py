@@ -1,3 +1,4 @@
+import copy
 import pygame
 import importlib
 
@@ -260,6 +261,16 @@ class MenuHandler:
 
     def delete_object(self, menu_id, object_id):
         self.menues[menu_id].delete_object(object_id)
+        
+    def delete_multiple_objects(self, menu_id: str, ids: list[str], ids_startswith: list[str]):
+        # deletes all ids from the 'ids' parameter
+        # and deletes all ids that starts with the ids from the 'ids_startswith' parameter
+
+        for obj_key in copy.copy(list(self.menues[menu_id].objects.keys())):
+            if obj_key in ids or \
+                any([obj_key.startswith(id_) for id_ in ids_startswith]):
+
+                self.delete_object(menu_id, obj_key)
 
     def add_menu(self, id, menu):
         self.menues[id] = menu
