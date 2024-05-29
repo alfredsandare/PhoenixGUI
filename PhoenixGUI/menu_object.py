@@ -14,12 +14,13 @@ class MenuObject:
         self.hitbox = Hitbox(0, 0, 0, 0)
         self.IS_SLIDEBAR = False
 
-    def render(self, menu_pos, menu_size, ui_size, scroll):
+    def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
         # overriden by all subclasses.
         pass
 
-    def render_and_store(self, menu_pos, menu_size, ui_size, scroll):
-        self.rendered_object = self.render(menu_pos, menu_size, ui_size, scroll)
+    def render_and_store(self, menu_pos, menu_size, ui_size, scroll, font_path):
+        self.rendered_object = self.render(menu_pos, menu_size, ui_size, 
+                                           scroll, font_path)
         self.update_hitbox(menu_pos, scroll)
 
     def light_render_and_store(self, menu_pos, menu_size, ui_size, scroll):

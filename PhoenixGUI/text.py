@@ -24,7 +24,6 @@ class Text(MenuObject):
         self.wrap_lines = wrap_lines
         self.color = color
         self.bg_color = bg_color
-        self.font_path = None
 
         if type(text) is not str:
             raise TypeError(f"Text must be str, not {type(text)}")
@@ -33,19 +32,18 @@ class Text(MenuObject):
         object = self.render(menu_pos, menu_size, ui_size, scroll)
         return object.image.get_size()
     
-    def get_font_height(self):
-        font = get_font(self.font_path if self.font_path is not None else "", 
+    def get_font_height(self, font_path):
+        font = get_font(font_path if font_path is not None else "", 
                         self.font, 
                         self.font_size)
         return font.size('H')[1]
 
-
-    def render(self, menu_pos, menu_size, ui_size, scroll):
+    def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
         if self.text == "":
             empty_surface = pygame.Surface((1, 1), pygame.SRCALPHA)
             return RenderedMenuObject(empty_surface, (0, 0))
         
-        font = get_font(self.font_path if self.font_path is not None else "", 
+        font = get_font(font_path if font_path is not None else "", 
                         self.font, 
                         self.font_size * ui_size)
         

@@ -256,9 +256,6 @@ class MenuHandler:
     def add_object(self, menu_id, object_id, object_):
         self.menues[menu_id].add_object(object_id, object_)
 
-        if isinstance(object_, Text) and self.font_path is not None:
-            object_.font_path = self.font_path
-
     def delete_object(self, menu_id, object_id):
         self.menues[menu_id].delete_object(object_id)
         
@@ -313,10 +310,6 @@ class MenuHandler:
     def add_font_path(self, path: str):
         # adds an absolute path where the menu handler will search for fonts.
         self.font_path = path
-        for menu in self.menues.values():
-            for obj in menu.objects.values():
-                if isinstance(obj, Text):
-                    obj.font_path = path
 
     def deactivate_all_menues(self):
         for menu in self.menues.values():
@@ -348,7 +341,7 @@ class MenuHandler:
     def _render_and_draw_menues(self, screen):
         for key, menu in self._get_sorted_menues():
             if menu.active:
-                menu.render_all(screen, self.ui_size)
+                menu.render_all(screen, self.ui_size, self.font_path)
 
     def _get_sorted_menues(self, reverse=False):
         return sorted(self.menues.items(), 

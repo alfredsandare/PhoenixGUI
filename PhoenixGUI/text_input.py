@@ -27,8 +27,8 @@ class TextInput(MenuObject):
         self.is_selected = False
         self.offset = 0
 
-    def render(self, menu_pos, menu_size, ui_size, scroll):
-        font = get_font("", self.font, self.font_size)
+    def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
+        font = get_font(font_path, self.font, self.font_size)
 
         surface_size = (self.length, font.size(" ")[1])
         surface = pygame.Surface(surface_size, pygame.SRCALPHA)

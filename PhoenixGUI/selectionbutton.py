@@ -72,7 +72,7 @@ class SelectionButton(MenuObject):
     def switch_checked(self):
         self.is_checked = not self.is_checked
 
-    def render(self, menu_pos, menu_size, ui_size, scroll):
+    def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
         rendered_objects = []
 
         text_color = get_value_from_state(self.state,
@@ -93,7 +93,7 @@ class SelectionButton(MenuObject):
         menu_text = Text((0, 0), self.text, self.font, 
                          self.font_size, color=text_color)
         
-        font_height = menu_text.get_font_height()
+        font_height = menu_text.get_font_height(font_path)
 
         text_pos = (0, 0)
         if self.image is not None:
@@ -125,7 +125,8 @@ class SelectionButton(MenuObject):
                 
             text_pos = self._get_text_pos((shape_size, shape_size), font_height)
 
-        rendered_objects.append(menu_text.render((0, 0), menu_size, ui_size, 0))
+        rendered_objects.append(menu_text.render((0, 0), menu_size, 
+                                                 ui_size, 0, font_path))
         rendered_objects[-1].pos = text_pos
 
         x_size = max([obj.pos[0] + obj.get_image_size()[0] 

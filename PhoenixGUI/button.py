@@ -85,12 +85,12 @@ class Button(MenuObject):
             (self.rect_length is None or self.rect_height is None):
             raise Exception("Button instantiated without text must have rect_length and rect_height.")
         
-    def render(self, menu_pos, menu_size, ui_size, scroll):
+    def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
         rendered_image = self._get_rendered_image(menu_pos, menu_size, 
                                                   ui_size, scroll)
         
         rendered_text = self._get_rendered_text(menu_pos, menu_size, 
-                                                ui_size, scroll)
+                                                ui_size, scroll, font_path)
         
         text_size = None
         if rendered_text is not None:
@@ -152,7 +152,7 @@ class Button(MenuObject):
         
         return menu_image.render(menu_pos, menu_size, ui_size, scroll)
     
-    def _get_rendered_text(self, menu_pos, menu_size, ui_size, scroll):
+    def _get_rendered_text(self, menu_pos, menu_size, ui_size, scroll, font_path):
         if self.text is None:
             return None
         
@@ -169,7 +169,7 @@ class Button(MenuObject):
                          wrap_lines=False,
                          color=text_color_to_use)
         
-        return menu_text.render(menu_pos, menu_size, ui_size, scroll)
+        return menu_text.render(menu_pos, menu_size, ui_size, scroll, font_path)
     
     def _get_rendered_rect(self, menu_pos, menu_size, ui_size, scroll, size):
         if not self.enable_rect:

@@ -55,17 +55,17 @@ class Menu:
         if id in self.objects.keys():
             del self.objects[id]
             
-    def render_all(self, screen, ui_size):
+    def render_all(self, screen, ui_size, font_path):
         # Re-renders items with render flag and then draws all items.
         if "_bg" in self.objects.keys() and \
             not self.objects["_bg"].is_rendered():
             self.objects["_bg"].render_and_store(self.pos, self.size, 
-                                                 ui_size, 0)
+                                                 ui_size, 0, font_path)
 
         if "_outline" in self.objects.keys() and \
             not self.objects["_outline"].is_rendered():
             self.objects["_outline"].render_and_store(self.pos, self.size, 
-                                                      ui_size, 0)
+                                                      ui_size, 0, font_path)
 
         for key, item in self.objects.items():
             if not (item.render_flag or item.light_render_flag) \
@@ -73,11 +73,12 @@ class Menu:
                 continue
 
             if key == self.scroll_slidebar and item.active:
-                item.render_and_store(self.pos, self.size, ui_size, 0)
+                item.render_and_store(self.pos, self.size, 
+                                      ui_size, 0, font_path)
 
             elif item.active and item.render_flag:
                 item.render_and_store(self.pos, self.size, 
-                                      ui_size, -self.scroll)
+                                      ui_size, -self.scroll, font_path)
 
             elif item.active and item.light_render_flag:
                 item.light_render_and_store(self.pos, self.size, 

@@ -6,7 +6,7 @@ class Image(MenuObject):
         super().__init__(pos, max_size, anchor)
         self.image = image
 
-    def render(self, menu_pos, menu_size, ui_size, scroll):
+    def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
         image_size = [self.image.get_rect()[2], self.image.get_rect()[3]]
 
         crop, pos = self._adjust_pos_and_crop(self.pos, image_size, 

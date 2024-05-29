@@ -37,7 +37,7 @@ class Slidebar(MenuObject):
     def get_progress(self):
         return self.progress
 
-    def render(self, menu_pos, menu_size, ui_size, scroll):
+    def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
         color = get_value_from_state(self.state, self.circle_color, 
                                      self.circle_hover_color, 
                                      self.circle_click_color)

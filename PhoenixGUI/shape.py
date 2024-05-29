@@ -27,7 +27,7 @@ class Shape(MenuObject):
         if type_ not in ("rect", "circle"):
             raise Exception("Shape type must be either 'rect' or 'circle'")
 
-    def render(self, menu_pos, menu_size, ui_size, scroll):
+    def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
         surface = pygame.Surface(self.size, pygame.SRCALPHA)
         if self.type_ == "rect":
             pygame.draw.rect(surface,
