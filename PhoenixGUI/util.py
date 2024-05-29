@@ -8,7 +8,6 @@ def get_font(path, font, size):
     try:
         return pygame.font.Font(path+font+".ttf", size)
     except:
-        print(f"Font not found, using system font, Font: {font}, Size: {size}, Path: {path}")
         return pygame.font.SysFont(font, size)
 
 def trunc_line(text, font, max_width):
