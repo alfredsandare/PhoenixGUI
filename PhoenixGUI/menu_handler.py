@@ -16,7 +16,7 @@ class MenuHandler:
         self.menues: dict[str, Menu] = {}
         self.prev_menu_key = None
         self.prev_button_key = None
-        self.scroll_strength_multiplier = 0
+        self.scroll_strength_multiplier = 1
         self.selected_slidebar = None
         self.selected_slidebar_menu = None
         self.font_path = None
@@ -304,7 +304,10 @@ class MenuHandler:
             del menu["objects"]
             instatiated_menu = Menu(**menu)
             instatiated_menu.deactivate()
-            instatiated_menu.objects.update(objs)
+
+            for key, value in objs.items():
+                instatiated_menu.add_object(key, value)
+
             self.add_menu(menu_key, instatiated_menu)
 
     def add_font_path(self, path: str):
@@ -347,4 +350,11 @@ class MenuHandler:
         return sorted(self.menues.items(), 
                       key=lambda menu: menu[1].layer, 
                       reverse=reverse)
-        
+
+    def is_mouse_inside_menu(self):
+        for menu in self.menues.values():
+            if menu.hitbox.is_pos_inside(*pygame.mouse.get_pos()) \
+                and menu.active:
+                return True
+
+        return False

@@ -175,12 +175,20 @@ class Menu:
         if self.scroll > max_scroll:
             self.scroll = max_scroll
 
-        if self.scroll_slidebar is not None:
+        if self.scroll_slidebar is not None and max_scroll != 0:
             self.objects[self.scroll_slidebar].progress = self.scroll / max_scroll
+        elif self.scroll_slidebar is not None:
+            self.objects[self.scroll_slidebar].progress = 0
 
         self.set_light_render_flag_all()
         
     def set_scroll_by_progress(self, progress):
         max_scroll = self.get_max_scroll()
         self.scroll = progress * max_scroll
+        self.set_light_render_flag_all()
+
+    def reset_scroll(self):
+        self.scroll = 0
+        if self.scroll_slidebar is not None:
+            self.objects[self.scroll_slidebar].progress = 0
         self.set_light_render_flag_all()
