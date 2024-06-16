@@ -42,7 +42,8 @@ button = Button((0, 700),
                 rect_pady=5,
                 rect_color=(0, 0, 255),
                 rect_outline_color=(255, 255, 255),
-                anchor="sw")
+                anchor="sw",
+                text_justify="right")
 menu_handler.add_object("menu", "button", button)
 
 button2 = Button((400, 520), 
@@ -91,7 +92,8 @@ button4 = Button((250, 600),
                 rect_color=(0, 0, 255),
                 rect_outline_color=(255, 255, 255),
                 anchor="s",
-                rect_length=200)
+                rect_length=200,
+                text_justify="left")
 menu_handler.add_object("menu", "button4", button4)
 
 

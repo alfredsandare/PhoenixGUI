@@ -20,6 +20,7 @@ class Button(MenuObject):
                  text_color=(255, 255, 255),
                  text_hover_color=None,
                  text_click_color=None,
+                 text_justify="center",  # left, right or center
                  hitbox_padding=0,
                  command=None,
 
@@ -47,6 +48,7 @@ class Button(MenuObject):
         self.text_color = text_color
         self.text_hover_color = text_hover_color
         self.text_click_color = text_click_color
+        self.text_justify = text_justify
         self.hitbox_padding = hitbox_padding
         self.command = command
 
@@ -84,7 +86,10 @@ class Button(MenuObject):
         if self.enable_rect and self.text is None and \
             (self.rect_length is None or self.rect_height is None):
             raise Exception("Button instantiated without text must have rect_length and rect_height.")
-        
+
+        if self.text_justify not in ["left", "center", "right"]:
+            raise Exception(f"Invalid text_justify value: {self.text_justify}, must be 'left', 'center' or 'right'")
+
     def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):
         rendered_image = self._get_rendered_image(menu_pos, menu_size, 
                                                   ui_size, scroll)
@@ -225,18 +230,27 @@ class Button(MenuObject):
                          text_size[1] + self.rect_pady]
             
         return rect_size
-    
+
     def _get_text_pos(self, rendered_text, rendered_image,
                       rect_size, text_size):
         
         text_pos = (0, 0)
         if rendered_text is not None and self.enable_rect:
-            text_pos = ((rect_size[0] - text_size[0]) / 2,
+            text_pos = (self._get_text_x_pos(rect_size[0], text_size),
                         (rect_size[1] - text_size[1]) / 2)
 
         elif rendered_text is not None and self.image is not None:
             image_size = rendered_image.get_image_size()
-            text_pos = ((image_size[0] - text_size[0]) / 2,
+            text_pos = (self._get_text_x_pos(image_size[0], text_size),
                         (image_size[1] - text_size[1]) / 2)
-            
+
         return text_pos
+
+    def _get_text_x_pos(self, rect_or_image_width, text_size):
+        SIDE_OFFSET = 3
+        if self.text_justify == "left":
+            return SIDE_OFFSET
+        elif self.text_justify == "center":
+            return (rect_or_image_width - text_size[0]) / 2
+        elif self.text_justify == "right":
+            return rect_or_image_width - text_size[0] - SIDE_OFFSET
