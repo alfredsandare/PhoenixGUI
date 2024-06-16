@@ -121,6 +121,7 @@ class Dropdown(MenuObject):
         
         # now the mouse was not hovering over the first button.
 
+        self.selected_option = self.options[self.hovered_option_index-1]
         self.is_dropped_down = False
 
     def handle_mousemotion(self, mouse_pos):
