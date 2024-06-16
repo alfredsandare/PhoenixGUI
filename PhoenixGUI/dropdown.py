@@ -59,6 +59,8 @@ class Dropdown(MenuObject):
         surface = pygame.Surface((self.box_size[0], self.box_size[1]*(len(self.options)+1)))
         surface.blit(first_button.image, (0, 0))
 
+        self._render_triangle(surface)
+
         if self.is_dropped_down:
             self._render_dropdown(menu_pos, menu_size, ui_size, scroll, font_path, surface)
 
@@ -104,6 +106,30 @@ class Dropdown(MenuObject):
 
             rendered_button = button.render(menu_pos, menu_size, ui_size, scroll, font_path)
             surface.blit(rendered_button.image, (0, (i+1)*self.box_size[1]))
+
+    def _render_triangle(self, surface):
+        TRIANGLE_SIZE_FRACTION = 0.5  # the triangle is 50% of the box height.
+        triangle_size = int(self.box_size[1] * TRIANGLE_SIZE_FRACTION)
+        if triangle_size % 2 == 0:
+            triangle_size += 1  # make sure it's odd
+
+        temp_surface = pygame.Surface((triangle_size, triangle_size), pygame.SRCALPHA)
+
+        points = [(triangle_size-1, 0),  # top right
+                    (triangle_size-1, triangle_size-1),  # bottom right
+                    (triangle_size//2, triangle_size//2)]  # middle left
+
+        color = self._get_colors(self.hovered_option_index == 0)[2]  # same as text color
+        pygame.draw.polygon(temp_surface, color, points)
+
+        extra_y_offset = 0
+        if self.is_dropped_down:
+            temp_surface = pygame.transform.rotate(temp_surface, 90)
+            extra_y_offset = triangle_size/4
+
+        offset = (self.box_size[1] - triangle_size)/2
+        surface.blit(temp_surface, (self.box_size[0]-triangle_size-offset,
+                                    offset+extra_y_offset))
 
     def handle_mousebuttonup(self, mouse_pos):
         if self._is_mouse_on_first_button(mouse_pos):
