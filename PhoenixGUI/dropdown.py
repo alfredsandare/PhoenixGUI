@@ -14,9 +14,13 @@ class Dropdown(MenuObject):
                  font_size,
                  options,
                  selected_option,
+                 text_justify="left",
                  max_size=None,
                  anchor="nw",
 
+                 text_color=(255, 255, 255),
+                 text_hover_color=None,
+                 text_click_color=None,
                  box_bg_color=None,
                  box_bg_hover_color=None,
                  box_bg_click_color=None,
@@ -31,7 +35,11 @@ class Dropdown(MenuObject):
         self.font_size = font_size
         self.options = options
         self.selected_option = selected_option
+        self.text_justify = text_justify
 
+        self.text_color = text_color
+        self.text_hover_color = text_hover_color
+        self.text_click_color = text_click_color
         self.box_bg_color = box_bg_color
         self.box_bg_hover_color = box_bg_hover_color
         self.box_bg_click_color = box_bg_click_color
@@ -60,18 +68,8 @@ class Dropdown(MenuObject):
         return RenderedMenuObject(surface, pos, crop)
 
     def _render_first_button(self, menu_pos, menu_size, ui_size, scroll, font_path):
-        bg_color = self.box_bg_color
-        outline_color = self.box_outline_color
-        if self.hovered_option_index == 0:        
-            bg_color = get_value_from_state(self.state, 
-                                            self.box_bg_color, 
-                                            self.box_bg_hover_color, 
-                                            self.box_bg_click_color)
-
-            outline_color = get_value_from_state(self.state, 
-                                                    self.box_outline_color, 
-                                                    self.box_outline_hover_color, 
-                                                    self.box_outline_click_color)
+        bg_color, outline_color, text_color = \
+            self._get_colors(self.hovered_option_index == 0)
 
         button = Button((0, 0),
                         enable_rect=True,
@@ -81,25 +79,16 @@ class Dropdown(MenuObject):
                         font=self.font,
                         font_size=self.font_size,
                         rect_color=bg_color,
-                        rect_outline_color=outline_color)
+                        rect_outline_color=outline_color,
+                        text_color=text_color,
+                        text_justify=self.text_justify)
 
         return button.render(menu_pos, menu_size, ui_size, scroll, font_path)
 
     def _render_dropdown(self, menu_pos, menu_size, ui_size, scroll, font_path, surface):
         for i, option in enumerate(self.options):
-            bg_color = self.box_bg_color
-            outline_color = self.box_outline_color
-
-            if i+1 == self.hovered_option_index:
-                bg_color = get_value_from_state(self.state, 
-                                                self.box_bg_color, 
-                                                self.box_bg_hover_color, 
-                                                self.box_bg_click_color)
-
-                outline_color = get_value_from_state(self.state, 
-                                                    self.box_outline_color, 
-                                                    self.box_outline_hover_color, 
-                                                    self.box_outline_click_color)
+            bg_color, outline_color, text_color = \
+                self._get_colors(i+1 == self.hovered_option_index)
 
             button = Button((0, 0),
                             enable_rect=True,
@@ -109,13 +98,15 @@ class Dropdown(MenuObject):
                             font=self.font,
                             font_size=self.font_size,
                             rect_color=bg_color,
-                            rect_outline_color=outline_color)
+                            rect_outline_color=outline_color,
+                            text_color=text_color,
+                            text_justify=self.text_justify)
 
             rendered_button = button.render(menu_pos, menu_size, ui_size, scroll, font_path)
             surface.blit(rendered_button.image, (0, (i+1)*self.box_size[1]))
 
     def handle_mousebuttonup(self, mouse_pos):
-        if self.is_mouse_on_first_button(mouse_pos):
+        if self._is_mouse_on_first_button(mouse_pos):
             self.is_dropped_down = not self.is_dropped_down
             return
         
@@ -130,7 +121,7 @@ class Dropdown(MenuObject):
         old_index = self.hovered_option_index
 
         if not self.is_dropped_down or \
-            (self.is_dropped_down and self.is_mouse_on_first_button(mouse_pos)):
+            (self.is_dropped_down and self._is_mouse_on_first_button(mouse_pos)):
             self.hovered_option_index = 0
 
         for i, option in enumerate(self.options):
@@ -146,7 +137,7 @@ class Dropdown(MenuObject):
         if old_index != self.hovered_option_index:
             self.render_flag = True
 
-    def is_mouse_on_first_button(self, mouse_pos):
+    def _is_mouse_on_first_button(self, mouse_pos):
         relative_right_bottom = (self.rendered_object.image.get_size()[0], 
                                  self.box_size[1])
 
@@ -155,3 +146,26 @@ class Dropdown(MenuObject):
                                                       relative_right_bottom))
         
         return first_button_hitbox.is_pos_inside(*mouse_pos)
+
+    def _get_colors(self, is_hovered_over):
+        bg_color = self.box_bg_color
+        outline_color = self.box_outline_color
+        text_color = self.text_color
+
+        if is_hovered_over:
+            bg_color = get_value_from_state(self.state, 
+                                            self.box_bg_color, 
+                                            self.box_bg_hover_color, 
+                                            self.box_bg_click_color)
+
+            outline_color = get_value_from_state(self.state, 
+                                                 self.box_outline_color, 
+                                                 self.box_outline_hover_color, 
+                                                 self.box_outline_click_color)
+
+            text_color = get_value_from_state(self.state, 
+                                              self.text_color, 
+                                              self.text_hover_color, 
+                                              self.text_click_color)
+
+        return bg_color, outline_color, text_color

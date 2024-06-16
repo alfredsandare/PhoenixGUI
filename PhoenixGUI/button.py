@@ -247,7 +247,7 @@ class Button(MenuObject):
         return text_pos
 
     def _get_text_x_pos(self, rect_or_image_width, text_size):
-        SIDE_OFFSET = 3
+        SIDE_OFFSET = 5
         if self.text_justify == "left":
             return SIDE_OFFSET
         elif self.text_justify == "center":
