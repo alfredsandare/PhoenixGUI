@@ -7,7 +7,7 @@ from .menu import Menu
 from .util import is_button
 from .radiobutton import Radiobutton
 from .slidebar import Slidebar
-from .text import Text
+from .dropdown import Dropdown
 
 
 class MenuHandler:
@@ -57,7 +57,7 @@ class MenuHandler:
                 self._mousebuttonup_event(current_button, current_menu)
 
             elif event.type == pygame.MOUSEMOTION:
-                self._mousemotion_event(event)
+                self._mousemotion_event(event, current_button, mouse_pos)
 
             elif current_menu is not None and event.type == pygame.MOUSEWHEEL \
                 and current_menu.enable_scroll:
@@ -182,10 +182,16 @@ class MenuHandler:
             current_button.state = "hover"
             current_button.is_selected = False
             current_button.render_flag = True
+
             if isinstance(current_button, Radiobutton):
                 self.reset_radiobuttons(current_menu, current_button.group)
-            if not isinstance(current_button, Slidebar):
+
+            if not isinstance(current_button, Slidebar) \
+                and not isinstance(current_button, Dropdown):
                 current_button.exec_command()
+
+            if isinstance(current_button, Dropdown):
+                current_button.handle_mousebuttonup(pygame.mouse.get_pos())
 
         self.deselect_all_buttons()
             
@@ -196,7 +202,10 @@ class MenuHandler:
             self.selected_slidebar = None
             self.selected_slidebar_menu = None
 
-    def _mousemotion_event(self, event):
+    def _mousemotion_event(self, event, current_button, mouse_pos):
+        if isinstance(current_button, Dropdown):
+            current_button.handle_mousemotion(mouse_pos)
+
         if self.selected_slidebar is None:
             return
         
@@ -235,7 +244,7 @@ class MenuHandler:
                        and prev_button.is_selected)):
             
             # mouse stopped hovering over a button
-            
+
             self._disable_button_by_hover(prev_button)
 
     def _enable_button_by_hover(self, button):

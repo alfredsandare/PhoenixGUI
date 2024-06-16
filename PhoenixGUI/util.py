@@ -120,11 +120,13 @@ def is_button(obj, include_slidebars=True):
     from .checkbutton import Checkbutton
     from .radiobutton import Radiobutton
     from .slidebar import Slidebar
+    from .dropdown import Dropdown
     return any([
         isinstance(obj, Button),
         isinstance(obj, Checkbutton),
         isinstance(obj, Radiobutton),
-        isinstance(obj, Slidebar) if include_slidebars else False
+        isinstance(obj, Slidebar) if include_slidebars else False,
+        isinstance(obj, Dropdown)
     ])
 
 def compare_objects(a, b):
