@@ -4,7 +4,7 @@ import importlib
 
 from .text_input import TextInput
 from .menu import Menu
-from .util import is_button
+from .util import is_button, snake_case_to_pascal_case
 from .radiobutton import Radiobutton
 from .slidebar import Slidebar
 from .dropdown import Dropdown
@@ -300,7 +300,8 @@ class MenuHandler:
             for obj_key, obj in menu["objects"].items():
                 module = importlib.import_module("." + obj["type"], 
                                                  package=__package__)
-                class_ = getattr(module, obj["type"].capitalize())
+                class_name = snake_case_to_pascal_case(obj["type"])
+                class_ = getattr(module, class_name)
 
                 image_keys = ["image", "hover_image", "click_image"]
                 for image_key in image_keys:

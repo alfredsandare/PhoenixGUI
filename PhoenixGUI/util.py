@@ -144,3 +144,9 @@ def get_value_from_state(state, standard, hover, click):
 
 def sum_two_vectors(v1, v2):
     return [v1[0] + v2[0], v1[1] + v2[1]]
+
+def sum_multiple_vectors(*vectors):
+    return [sum(i) for i in zip(*vectors)]
+
+def snake_case_to_pascal_case(snake_case):
+    return ''.join(word.capitalize() for word in snake_case.split('_'))
