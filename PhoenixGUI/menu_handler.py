@@ -124,21 +124,22 @@ class MenuHandler:
     def _update_text_inputs_from_mousebuttondown(self, 
                                                  current_menu: Menu, 
                                                  mouse_pos):
-        
-        if current_menu is not None:
-            for obj in current_menu.objects.values():
-                if (isinstance(obj, TextInput) 
-                    and obj.hitbox.is_pos_inside(*mouse_pos)):
 
-                    obj.is_selected = True
-                    obj.render_flag = True
-                    self.selected_text_input = obj
-                    return
-
+        self.selected_text_input = None
         for menu in self.menues.values():
             menu.deselect_all_text_inputs()
 
-        self.selected_text_input = None
+        if current_menu is None:
+            return
+
+        for obj in current_menu.objects.values():
+            if (isinstance(obj, TextInput)
+                and obj.hitbox.is_pos_inside(*mouse_pos)):
+
+                obj.is_selected = True
+                obj.render_flag = True
+                self.selected_text_input = obj
+                return
 
     def _keydown_event(self, event):
         if self.selected_text_input is None:
