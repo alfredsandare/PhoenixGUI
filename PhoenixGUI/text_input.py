@@ -22,7 +22,9 @@ class TextInput(MenuObject):
                  max_size=None,
                  anchor="nw",
                  layer=0,
-                 active=True):
+                 active=True,
+                 command=None):
+
         super().__init__(pos, max_size, anchor, layer, active)
 
         self.length = length
@@ -31,6 +33,7 @@ class TextInput(MenuObject):
         self.text_color = text_color
         self.validity_check = validity_check
         self.invalid_text_color = invalid_text_color
+        self.command = command
 
         self.text_left = ""
         self.text_right = ""
@@ -68,6 +71,7 @@ class TextInput(MenuObject):
 
         self.render_flag = True
         self.check_validity()
+        self.exec_command()
 
     def remove_text(self):
         if not self.text_left:
@@ -84,6 +88,7 @@ class TextInput(MenuObject):
 
         self.render_flag = True
         self.check_validity()
+        self.exec_command()
 
     def step_right(self):
         if not self.text_right:
@@ -141,3 +146,17 @@ class TextInput(MenuObject):
             
     def get_validity(self):
         return self.is_valid
+
+    def exec_command(self):
+        if self.command is not None and callable(self.command):
+            self.command()
+        elif type(self.command) is tuple:
+            command, args, kwargs = self.command
+            command(*args, **kwargs)
+
+    def set_text(self, text):
+        self.text_left = text
+        self.text_right = ""
+        self.offset = 0
+        self.render_flag = True
+        self.check_validity()
