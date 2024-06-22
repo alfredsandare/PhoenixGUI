@@ -8,7 +8,8 @@ class validity_check:
     INTEGERS = 101 # -3, -2, -1, 0, 1, 2, 3, ...
     ALL_NUMBERS_COMMA = 102 # -3, -2, -1, 0, 1, 2, 3, ..., 0.1, 0.2, 0.3, ... using comma signs to indicate decimals
     ALL_NUMBERS_DOTS = 103 # -3, -2, -1, 0, 1, 2, 3, ..., 0.1, 0.2, 0.3, ... using dots to indicate decimals
-    ALL_NUMBERS_DOTS_COMMA = 104 # -3, -2, -1, 0, 1, 2, 3, ..., 0.1, 0.2, 0.3, ... using dots or comma signs to indicate decimals
+    ALL_NUMBERS_DOTS_COMMAS = 104 # -3, -2, -1, 0, 1, 2, 3, ..., 0.1, 0.2, 0.3, ... using dots or comma signs to indicate decimals
+    POSITIVE_NUMBERS_DOTS_COMMAS = 105 # 0, 1, 2, 3, ..., 0.1, 0.2, 0.3, ... using dots or comma signs to indicate decimals
 
 class TextInput(MenuObject):
     def __init__(self,
@@ -126,24 +127,29 @@ class TextInput(MenuObject):
         return self.text_left + self.text_right
 
     def check_validity(self):
+        text = self.get_text()
         if self.validity_check == validity_check.NATURAL:
-            self.is_valid = self.get_text().isdigit()
+            self.is_valid = text.isdigit()
 
         elif self.validity_check == validity_check.INTEGERS:
-            self.is_valid = self.get_text().lstrip("-").isdigit()
+            self.is_valid = text.lstrip("-").isdigit()
             
         elif self.validity_check == validity_check.ALL_NUMBERS_COMMA:
-            self.is_valid = self.get_text().replace(".", "").lstrip("-").replace(",", "", 1).isdigit()
+            self.is_valid = text.replace(".", "").lstrip("-").replace(",", "", 1).isdigit()
 
         elif self.validity_check == validity_check.ALL_NUMBERS_DOTS:
-            self.is_valid = self.get_text().replace(",", "").lstrip("-").replace(".", "", 1).isdigit()
+            self.is_valid = text.replace(",", "").lstrip("-").replace(".", "", 1).isdigit()
 
-        elif self.validity_check == validity_check.ALL_NUMBERS_DOTS_COMMA:
+        elif self.validity_check == validity_check.ALL_NUMBERS_DOTS_COMMAS:
             # disallow more than one dot or comma
-            text = self.get_text()
             self.is_valid = text.replace(",", "").replace(".", "").lstrip("-").isdigit() \
                             and text.count(".") + text.count(",") <= 1
-            
+
+        elif self.validity_check == validity_check.POSITIVE_NUMBERS_DOTS_COMMAS:
+            self.is_valid = text.replace(",", "").replace(".", "").isdigit() \
+                            and not text.startswith("-") \
+                            and text.count(".") + text.count(",") <= 1
+
     def get_validity(self):
         return self.is_valid
 

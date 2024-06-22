@@ -133,7 +133,7 @@ menu_handler.add_object("menu", "sldbr2", slidebar2)
 text_input_rect = Shape((50, 600), (100, 25), (0, 140, 140), "rect")
 menu_handler.add_object("menu", "text_input_rect", text_input_rect)
 
-text_input = TextInput((50, 600), 100, "arial", 20, (255, 255, 255), anchor="nw", validity_check=validity_check.ALL_NUMBERS_DOTS_COMMA)
+text_input = TextInput((50, 600), 100, "arial", 20, (255, 255, 255), anchor="nw", validity_check=validity_check.ALL_NUMBERS_DOTS_COMMAS)
 # text_input.text_left = "Hello"
 # text_input.text_right = " World"
 # text_input.is_selected = True
