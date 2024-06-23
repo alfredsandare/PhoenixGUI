@@ -8,23 +8,23 @@ import pygame
 
 class Dropdown(MenuObject):
     def __init__(self, 
-                 pos, 
-                 box_size,
-                 font,
-                 font_size,
-                 options,
-                 selected_option,
-                 text_justify="left",
-                 max_size=None,
+                 pos: tuple[int, int],
+                 box_size: tuple[int, int],
+                 font: str,
+                 font_size: int,
+                 options: list[str],
+                 selected_option: str,
+                 text_justify: str = "left",
+                 max_size: tuple[int, int] = None,
                  anchor="nw",
 
                  text_color=(255, 255, 255),
                  text_hover_color=None,
                  text_click_color=None,
-                 box_bg_color=None,
+                 box_bg_color=(0, 0, 0),
                  box_bg_hover_color=None,
                  box_bg_click_color=None,
-                 box_outline_color=None,
+                 box_outline_color=(255, 255, 255),
                  box_outline_hover_color=None,
                  box_outline_click_color=None):
 
@@ -56,7 +56,7 @@ class Dropdown(MenuObject):
         first_button = self._render_first_button(menu_pos, menu_size, ui_size,
                                                  scroll, font_path)
     
-        surface = pygame.Surface((self.box_size[0], self.box_size[1]*(len(self.options)+1)))
+        surface = pygame.Surface((self.box_size[0], self.box_size[1]*(len(self.options)+1)), pygame.SRCALPHA)
         surface.blit(first_button.image, (0, 0))
 
         self._render_triangle(surface)
