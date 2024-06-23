@@ -30,7 +30,7 @@ class Menu:
         self.scroll_slidebar = scroll_slidebar
         self.max_scroll_offset = max_scroll_offset
 
-        self.hitbox = Hitbox(*self.pos, *sum_two_vectors(self.pos, self.size))
+        self.calculate_hitbox()
 
         if self.bg_color is not None:
             self.objects["_bg"] = Shape((0, 0), self.size, 
@@ -42,6 +42,9 @@ class Menu:
                                              self.outline_color, 
                                              "rect", 
                                              width=self.outline_width)
+
+    def calculate_hitbox(self):
+        self.hitbox = Hitbox(*self.pos, *sum_two_vectors(self.pos, self.size))
 
     def add_object(self, id, object_):
         if id in ("_bg", "_outline"):
