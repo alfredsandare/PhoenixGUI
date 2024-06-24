@@ -195,3 +195,6 @@ class Dropdown(MenuObject):
                                               self.text_click_color)
 
         return bg_color, outline_color, text_color
+
+    def get_selected_option(self):
+        return self.selected_option
