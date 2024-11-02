@@ -84,7 +84,9 @@ class MenuHandler:
         # this is only used for TextInput objects.
         if self.selected_text_input is None:
             return
-        
+
+        # an action is one of the following: stepping left or right, 
+        # inserting text or removing text.
         TIME_REQUIRED_FOR_ACTION = 400
         TIME_BETWEEN_ACTION = 40
 
@@ -105,9 +107,12 @@ class MenuHandler:
             elif key_state[button]:
                 self.pressed_buttons[button][0] += time_passed
 
-        for button, times in self.pressed_buttons.items():
-            if (times[0] >= TIME_REQUIRED_FOR_ACTION 
-                and times[1] >= TIME_BETWEEN_ACTION):
+        for button, (time_since_pressed, time_since_last_text_addition) \
+            in self.pressed_buttons.items():
+            if (time_since_pressed >= TIME_REQUIRED_FOR_ACTION 
+                and time_since_last_text_addition >= TIME_BETWEEN_ACTION):
+                # this is the case when the user holds down a key
+                # and actions are performed rapidly.
 
                 if button == pygame.K_LEFT:
                     self.selected_text_input.step_left()
@@ -119,7 +124,9 @@ class MenuHandler:
                 self.pressed_buttons[button][1] -= TIME_BETWEEN_ACTION
                 self.pressed_buttons[button][1] += time_passed
 
-            elif times[0] >= TIME_REQUIRED_FOR_ACTION:
+            elif time_since_pressed >= TIME_REQUIRED_FOR_ACTION:
+                # this is the case when the user just pressed a down a key
+                # and actions have not yet started to be performed rapidly.
                 self.pressed_buttons[button][1] += time_passed
 
     def _update_text_inputs_from_mousebuttondown(self, 
