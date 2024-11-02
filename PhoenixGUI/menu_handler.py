@@ -63,8 +63,9 @@ class MenuHandler:
                 and current_menu.enable_scroll:
                 current_menu.scroll_event(event.y * self.scroll_strength_multiplier)
 
-            elif event.type == pygame.TEXTINPUT:
-                self._textinput_event(event)
+            elif event.type == pygame.TEXTINPUT \
+                and self.selected_text_input is not None:
+                self.selected_text_input.add_text(event.text)
 
             elif event.type == pygame.KEYDOWN:
                 self._keydown_event(event)
@@ -153,13 +154,6 @@ class MenuHandler:
 
         if event.key == pygame.K_RIGHT:
             self.selected_text_input.step_right()
-
-    def _textinput_event(self, event):
-        if self.selected_text_input is None:
-            return
-        
-        self.selected_text_input.add_text(event.text)
-        self.selected_text_input.render_flag = True
         
     def _mousebuttondown_event(self, current_button, event, current_menu):
         if current_button is None:
