@@ -116,9 +116,9 @@ class MenuHandler:
                 # and actions are performed rapidly.
 
                 if button == pygame.K_LEFT:
-                    self.selected_text_input.step_left()
+                    self.selected_text_input.step("left")
                 elif button == pygame.K_RIGHT:
-                    self.selected_text_input.step_right()
+                    self.selected_text_input.step("right")
                 elif button == pygame.K_BACKSPACE:
                     self.selected_text_input.remove_text()
 
