@@ -1,3 +1,4 @@
+from .rendered_menu_object import RenderedMenuObject
 from .hitbox import Hitbox
 from .util import object_crop, sum_two_vectors, update_pos_by_anchor
 
@@ -10,7 +11,7 @@ class MenuObject:
         self.active = active
         self.render_flag = True
         self.light_render_flag = True
-        self.rendered_object = None
+        self.rendered_object: RenderedMenuObject = None
         self.hitbox = Hitbox(0, 0, 0, 0)
         self.IS_SLIDEBAR = False
 
@@ -24,31 +25,27 @@ class MenuObject:
         self.update_hitbox(menu_pos, scroll)
 
     def light_render_and_store(self, menu_pos, menu_size, ui_size, scroll):
-        obj = self.rendered_object
-        image_size = obj.image.get_size()
-
+        image_size = self.rendered_object.image.get_size()
         pos = [self.pos[0]+menu_pos[0], self.pos[1]+menu_pos[1]+scroll]
 
         if self.IS_SLIDEBAR:
             pos = self._update_pos_by_progress(pos)
 
         pos = update_pos_by_anchor(pos, image_size, self.anchor)
-        crop, pos = object_crop(image_size, pos, menu_size, menu_pos, self.max_size)
+        self.rendered_object.crop, self.rendered_object.pos = \
+            object_crop(image_size, pos, menu_size, menu_pos, self.max_size)
 
-        obj.pos = pos
-        obj.crop = crop
-        
         self.update_hitbox(menu_pos, scroll)
 
     def update_hitbox(self, menu_pos, scroll):
         if self.IS_SLIDEBAR:
             self.hitbox = self.get_hitbox(menu_pos, scroll)
             return
-        
+
         self.hitbox = Hitbox(*self.rendered_object.pos, 
                              *sum_two_vectors(self.rendered_object.pos, 
                                               self.rendered_object.image.get_size()))
-        
+
     def draw(self, screen):
         self.rendered_object.draw(screen)
     
