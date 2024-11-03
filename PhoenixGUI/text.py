@@ -51,41 +51,25 @@ class Text(MenuObject):
 
         original_text, zone_borders, colors = self.decode_text(self.text, 
                                                                self.color)
+
+        # split the text into lines where the user hardcoded linebreaks.
         text_pieces = original_text.split('\n')
 
         words = flatten_list([piece.split() for piece in text_pieces])
         longest_word_length = max([font.size(word)[0] for word in words])
 
-        processed_text_pieces = []
-        for text in text_pieces:
-            if (self.max_size != None 
-                and self.max_size[0] < menu_size[0] - self.pos[0]):
-                max_width = self.max_size[0]
-            elif self.anchor in ["n", "c", "s"]:
-                distance_to_borders = [self.pos[0], menu_size[0] - self.pos[0]]
-                max_width = 2 * min(distance_to_borders)
-            elif self.anchor in ["nw", "w", "sw"]:
-                max_width = menu_size[0] - self.pos[0]
-            else:
-                max_width = self.pos[0]
-                
-            if max_width < longest_word_length:
-                max_width = longest_word_length
+        text_pieces = self.divide_text_into_lines(text_pieces, font, menu_size,
+                                                  longest_word_length)
 
-            if self.wrap_lines:
-                processed_text_pieces.extend(wrap_line(text, font, max_width))
-            else:
-                processed_text_pieces.append(cut_line(text, font, max_width))
-
-        zone_borders = self.consider_removed_chars(processed_text_pieces, 
+        zone_borders = self.consider_removed_chars(text_pieces, 
                                                    zone_borders, 
                                                    original_text)
-        zones = self.apply_text_colour_insertion(processed_text_pieces, 
-                                                 zone_borders, colors, 
-                                                 self.color)
+
+        zones = self.apply_text_colour_insertion(text_pieces, zone_borders,
+                                                 colors, self.color)
 
         #make lines out of the zones
-        joined_lines = ''.join(line for line in processed_text_pieces)
+        joined_lines = ''.join(line for line in text_pieces)
         final_text_pieces = []
         prev_zone_end = 0
         for zone in zones:
@@ -150,7 +134,32 @@ class Text(MenuObject):
         y_pos = zones[current_piece_index].y_level*font_height
         return (x_pos, y_pos)
             
+    def divide_text_into_lines(self, text_pieces, font, 
+                               menu_size, longest_word_length):
+        # splits the text pieces where they exceed the max width.
 
+        processed_text_pieces = []
+        for text in text_pieces:
+            if (self.max_size != None 
+                and self.max_size[0] < menu_size[0] - self.pos[0]):
+                max_width = self.max_size[0]
+            elif self.anchor in ["n", "c", "s"]:
+                distance_to_borders = [self.pos[0], menu_size[0] - self.pos[0]]
+                max_width = 2 * min(distance_to_borders)
+            elif self.anchor in ["nw", "w", "sw"]:
+                max_width = menu_size[0] - self.pos[0]
+            else:
+                max_width = self.pos[0]
+
+            if max_width < longest_word_length:
+                max_width = longest_word_length
+
+            if self.wrap_lines:
+                processed_text_pieces.extend(wrap_line(text, font, max_width))
+            else:
+                processed_text_pieces.append(cut_line(text, font, max_width))
+
+        return processed_text_pieces
 
     def decode_text(self, text, default_color):
         decoded_text = ''  # the extracted text
