@@ -91,32 +91,36 @@ class TextInput(MenuObject):
         self.check_validity()
         self.exec_command()
 
-    def step_right(self):
-        if not self.text_right:
+    def step(self, direction):
+        if (direction == "right" and not self.text_right) or \
+           (direction == "left" and not self.text_left):
             return
         
-        self.text_left += self.text_right[0]
-        self.text_right = self.text_right[1:]
+        step_length = 1
+        key_state = pygame.key.get_pressed()
+
+        if key_state[pygame.K_LCTRL] or key_state[pygame.K_RCTRL]:  # step word
+            search_text = self.text_right if direction == "right" \
+                else self.text_left[::-1]
+            chars_until_space = search_text.find(" ")
+            step_length = len(search_text) if chars_until_space == -1 \
+                else chars_until_space
+            if step_length == 0:
+                step_length = 1
 
         font = get_font("", self.font, self.font_size)
-        if font.size(self.text_left)[0] - self.offset > self.length:
-            self.offset += font.size(self.text_left[-1])[0]
 
-        self.render_flag = True
+        if direction == "right":
+            self.text_left += self.text_right[0:step_length]
+            self.text_right = self.text_right[step_length:]
+            if font.size(self.text_left)[0] - self.offset > self.length:
+                self.offset = font.size(self.text_left)[0] - self.length + 2
 
-    def step_left(self):
-        if not self.text_left:
-            return
-
-        self.text_right = self.text_left[-1] + self.text_right
-        self.text_left = self.text_left[:-1]
-
-        font = get_font("", self.font, self.font_size)
-        if font.size(self.text_left)[0] - self.offset < 0:
-            self.offset -= font.size(self.text_right[0])[0]
-
-        if self.offset < 0:
-            self.offset = 0
+        else:
+            self.text_right = self.text_left[-step_length:] + self.text_right
+            self.text_left = self.text_left[:-step_length]
+            if font.size(self.text_left)[0] - self.offset < 0:
+                self.offset = font.size(self.text_left)[0]
 
         self.render_flag = True
 

@@ -67,7 +67,8 @@ class MenuHandler:
                 and self.selected_text_input is not None:
                 self.selected_text_input.add_text(event.text)
 
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN \
+                and self.selected_text_input is not None:
                 self._keydown_event(event)
         
         self._update_button_states(current_button, current_button_key, 
@@ -150,18 +151,15 @@ class MenuHandler:
                 return
 
     def _keydown_event(self, event):
-        if self.selected_text_input is None:
-            return
-        
         if event.key == pygame.K_BACKSPACE:
             self.selected_text_input.remove_text()
 
-        if event.key == pygame.K_LEFT:
-            self.selected_text_input.step_left()
+        elif event.key == pygame.K_LEFT:
+            self.selected_text_input.step("left")
 
-        if event.key == pygame.K_RIGHT:
-            self.selected_text_input.step_right()
-        
+        elif event.key == pygame.K_RIGHT:
+            self.selected_text_input.step("right")
+
     def _mousebuttondown_event(self, current_button, event, current_menu):
         if current_button is None:
             return
