@@ -5,6 +5,19 @@ from .util import flatten_list, get_font, cut_line, wrap_line
 
 pygame.font.init()
 
+
+class Zone:
+    def __init__(self, end_point, color, y_level, origin):
+        self.end_point = end_point
+        self.color = color
+        self.y_level = y_level
+        self.origin = origin
+
+    def get_all(self):
+        # returns all property values in a tuple, except origin
+        return tuple(vars(self).values())[:3]
+
+
 class Text(MenuObject):
     def __init__(self, 
                  pos, 
@@ -235,7 +248,8 @@ class Text(MenuObject):
 
         return zone_borders
 
-    def apply_text_colour_insertion(self, lines, zone_borders, colours, default_color):
+    def apply_text_colour_insertion(self, lines, zone_borders, 
+                                    colours, default_color) -> list[Zone]:
         zones = []
         for i, line in enumerate(lines):
             length = len(line) + (0 if i==0 else zones[-1].end_point)
@@ -255,27 +269,14 @@ class Text(MenuObject):
                 zones[i-j-1].color = zones[i].color
                 zone_type = zones[i-j-2].origin
                 j+=1
-            
+
         # remove duplicates
         zones_copy = zones.copy()
         deleted = 0
         for i, zone in enumerate(zones_copy):
-            prev_zone_pos = 0
-            if i > 0:
-                prev_zone_pos = zones_copy[i-1].end_point
-            if zone.end_point == prev_zone_pos:
+            prev_zone_end_point = 0 if i==0 else zones_copy[i-1].end_point
+            if zone.end_point == prev_zone_end_point:
                 del zones[i-deleted]
                 deleted += 1
 
         return zones
-
-class Zone:
-    def __init__(self, end_point, color, y_level, origin):
-        self.end_point = end_point
-        self.color = color
-        self.y_level = y_level
-        self.origin = origin
-
-    def get_all(self):
-        # returns all property values in a tuple, except origin
-        return tuple(vars(self).values())[:3]
