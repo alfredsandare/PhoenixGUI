@@ -174,53 +174,71 @@ class Text(MenuObject):
 
         return processed_text_pieces
 
-    def decode_text(self, text, default_color):
+    def decode_text(self, text: str, default_color):
+
+        # decodes the text and returns the decoded text, zone borders and colors.
+        # Remember: A color zone is formatted like this: %%255 255 255%text%.
+        # First comes two % signs, then the color in RGB format, then % again,
+        # then the text, then a conclusive %.
+
+        # The algorithm iterates over every character in the text.
+        # If two percent signs are found, a new zone is created.
+        # The zone color and text is extracted and are added to decoded_text, zone_borders and colors.
+        # Then all the chars' indexes from the first two % to the last % are added to to_skip,
+        # so that the loop skips them when iterating over the text.
+        # Between color zones, new zones are created with the default color. These are referred to as "no zones".
+
         decoded_text = ''  # the extracted text
-        ''' a list of ints, where every int represents the end of a "zone". 
-        Example: the string "HelloThere" where both words are different colors
-        makes the zones variable: [5, 10].'''
+
+        # a list of ints, where every int represents the end of a "zone". 
+        # Example: the string "HelloThere" where both words are different colors
+        # makes the zones variable: [5, 10].
         zone_borders = []
-        colours = []  # a list of color tuples
-        '''the position of chars that are part of a zone, 
-        they are to be skipped while searching for zones.'''
+
+        colors = []  # a list of color tuples
+
+        # the position of chars that are part of a zone, 
+        # they are to be skipped while searching for zones.
         to_skip = []
+
         # the total number of chars that are not part of the actual text
         chars_to_be_ignored = 0
+
         for i, char in enumerate(text):
             if (char == '%' and i+1<len(text) 
                 and text[i+1] == '%' 
                 and i not in to_skip):  # found a zone
+
                 # end previous nozone
                 if i > 0 and i-1 not in to_skip:
                     zone_borders.append(len(decoded_text))
-                    colours.append(default_color)
+                    colors.append(default_color)
 
-                # get the colour
-                j=1
-                while text[i+j+1] != '%':
-                    j+=1
-                offset = j # save the offset of the actual text in this zone
-                color_text = text[i+2:i+offset+1]
-                zone_color = tuple(int(color_text.split()[j]) for j in range(3))
+                # color_text is the text that holds the RGB value.
+                color_text_length = text.find('%', i+2)-i-1
+                color_text = text[i+2:i+color_text_length+1]
+                zone_color = tuple(int(color) for color in color_text.split())
+                colors.append(zone_color)
 
-                # get the text
-                j=1
-                while not (text[i+offset+j+1] == '%' 
-                           and text[i+offset+j] != "\\"):
-                    j+=1
-                zone_borders.append(i+j-1-chars_to_be_ignored)
-                colours.append(zone_color)
-                decoded_text += text[i+2+offset:i+offset+j+1]
-                for k in range(i, i+offset+j+2):
-                    to_skip.append(k)
-                chars_to_be_ignored += offset+3
+                # zone_text is the actual text in the zone.
+                zone_text_length = 1
+                while not (text[i+color_text_length+zone_text_length+1] == '%' 
+                           and text[i+color_text_length+zone_text_length] != "\\"):
+                    zone_text_length += 1
+
+                zone_borders.append(i+zone_text_length-1-chars_to_be_ignored)
+                decoded_text += text[i+color_text_length+2: \
+                                     i+color_text_length+zone_text_length+1]
+                to_skip.extend(range(i, i+color_text_length+zone_text_length+2))
+                chars_to_be_ignored += color_text_length+3
 
             elif i not in to_skip:  # no zone
                 decoded_text += char
 
+        # end last nozone
         if len(zone_borders) == 0 or len(decoded_text) > zone_borders[-1]:
             zone_borders.append(len(decoded_text))
-            colours.append(default_color)
+            colors.append(default_color)
 
         # purge decoded_text of preventative backslashes
         decoded_text = "".join([c if c != "\\" 
@@ -228,7 +246,7 @@ class Text(MenuObject):
                                 else "" 
                                 for i, c in enumerate(decoded_text)])
 
-        return decoded_text, zone_borders, colours
+        return decoded_text, zone_borders, colors
 
     def consider_removed_chars(self, lines, zone_borders, original_text):
         # when the lines are wrapped up spaces are stripped away from the lines.
@@ -249,20 +267,20 @@ class Text(MenuObject):
         return zone_borders
 
     def apply_text_colour_insertion(self, lines, zone_borders, 
-                                    colours, default_color) -> list[Zone]:
+                                    colors, default_color) -> list[Zone]:
         zones = []
         for i, line in enumerate(lines):
             length = len(line) + (0 if i==0 else zones[-1].end_point)
             zones.append(Zone(length, default_color, i, 'line_split'))
 
-        for border, color in zip(zone_borders, colours):
+        for border, color in zip(zone_borders, colors):
             for i, zone in enumerate(zones):
                 if zone.end_point >= border:
                     zones.insert(i, Zone(border, color, zone.y_level, 'zone'))
                     break
             
             # When adding a new zone, colour of previous 
-            # zones from line zones' colours need to be changed
+            # zones from line zones' colors need to be changed
             zone_type = 'zone' if i==0 else zones[i-1].origin
             j=0
             while zone_type == 'line_split':
