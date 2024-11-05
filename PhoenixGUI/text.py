@@ -62,8 +62,8 @@ class Text(MenuObject):
         
         font_height = font.size('H')[1]
 
-        original_text, zone_borders, colors = self.decode_text(self.text, 
-                                                               self.color)
+        original_text, zone_borders, colors = \
+            self.decode_text(self.text, self.color)
 
         # split the text into lines where the user hardcoded linebreaks.
         text_pieces = original_text.split('\n')
@@ -81,62 +81,62 @@ class Text(MenuObject):
         zones = self.apply_text_colour_insertion(text_pieces, zone_borders,
                                                  colors, self.color)
 
-        #make lines out of the zones
-        joined_lines = ''.join(line for line in text_pieces)
-        final_text_pieces = []
-        prev_zone_end = 0
-        for zone in zones:
-            final_text_pieces.append(joined_lines[prev_zone_end:zone.end_point])
-            prev_zone_end = zone.end_point
+        joined_text = ''.join(text for text in text_pieces)
+        text_pieces = self.apply_zones(zones, joined_text)
 
-        line_lengths = [font.size(final_text_pieces[0])[0]]
-        for i, text in enumerate(final_text_pieces[1:]):
-            if zones[i+1].y_level != zones[i].y_level:  # new line
-                line_lengths.append(font.size(text)[0])
-            else:
-                line_lengths[-1] += font.size(text)[0]
-        
-        longest_line = max(line_lengths)
+        longest_line = self.get_longest_line(zones, text_pieces, font)
         total_height = font_height * (zones[-1].y_level + 1)
-
         surface_size = (longest_line, total_height)
         surface = pygame.Surface(surface_size, pygame.SRCALPHA)
-        for i, text in enumerate(final_text_pieces):
-            pos = self.get_text_piece_pos(zones, 
-                                          font_height, 
-                                          i, 
-                                          final_text_pieces, 
-                                          font, 
-                                          longest_line)
-            rendered_text = font.render(text, 
-                                        True, 
-                                        zones[i].color, 
-                                        self.bg_color)
+
+        for i, text in enumerate(text_pieces):
+            pos = self.get_text_piece_pos(
+                zones, font_height, i, text_pieces, font, longest_line)
+            rendered_text = font.render(
+                text, True, zones[i].color, self.bg_color)
             surface.blit(rendered_text, pos)
 
         crop, pos = self._adjust_pos_and_crop(self.pos, surface_size, 
                                               menu_pos, menu_size, scroll)
 
         return RenderedMenuObject(surface, pos, crop)
-    
+
+    def get_longest_line(self, zones, text_pieces, font):
+        line_lengths = [font.size(text_pieces[0])[0]]
+        for i, text in enumerate(text_pieces[1:]):
+            if zones[i+1].y_level != zones[i].y_level:  # new line
+                line_lengths.append(font.size(text)[0])
+            else:
+                line_lengths[-1] += font.size(text)[0]
+        return max(line_lengths)
+
+    def apply_zones(self, zones, joined_text):
+        # splits the text into pieces at the zone borders.
+        text_pieces = []
+        prev_zone_end = 0
+        for zone in zones:
+            text_pieces.append(joined_text[prev_zone_end:zone.end_point])
+            prev_zone_end = zone.end_point
+        return text_pieces
+
     def get_text_piece_pos(self, 
                            zones, 
                            font_height, 
                            current_piece_index, 
-                           final_text_pieces, 
+                           text_pieces, 
                            font, 
                            longest_line):
         x_pos = 0
 
         for i in range(current_piece_index):
             if zones[i].y_level == zones[current_piece_index].y_level:
-                x_pos += font.size(final_text_pieces[i])[0]
+                x_pos += font.size(text_pieces[i])[0]
         
         y_level = zones[current_piece_index].y_level
         this_line_length = 0
         for i, zone in enumerate(zones):
             if zone.y_level == y_level:
-                this_line_length += font.size(final_text_pieces[i])[0]
+                this_line_length += font.size(text_pieces[i])[0]
 
         if self.anchor in ["n", "c", "s"]:
             x_pos += (longest_line - this_line_length) / 2
