@@ -60,15 +60,19 @@ class Menu:
             
     def render_all(self, screen, ui_size, font_path):
         # Re-renders items with render flag and then draws all items.
-        if "_bg" in self.objects.keys() and \
-            not self.objects["_bg"].is_rendered():
+        if self.has_bg() and \
+            (not self.objects["_bg"].is_rendered()
+            or self.objects["_bg"].render_flag):
             self.objects["_bg"].render_and_store(self.pos, self.size, 
                                                  ui_size, 0, font_path)
+            self.objects["_bg"].render_flag = False
 
-        if "_outline" in self.objects.keys() and \
-            not self.objects["_outline"].is_rendered():
+        if self.has_outline() and \
+            (not self.objects["_outline"].is_rendered()
+            or self.objects["_outline"].render_flag):
             self.objects["_outline"].render_and_store(self.pos, self.size, 
                                                       ui_size, 0, font_path)
+            self.objects["_outline"].render_flag = False
 
         for key, item in self.objects.items():
             if not (item.render_flag or item.light_render_flag) \
@@ -91,7 +95,7 @@ class Menu:
             item.light_render_flag = False
 
         # draw all
-        if "_bg" in self.objects.keys():
+        if self.has_bg():
             self.objects["_bg"].draw(screen)
 
         for key, item in self.objects.items():
@@ -99,7 +103,7 @@ class Menu:
                 item is not None and item.active:
                 item.draw(screen)
 
-        if "_outline" in self.objects.keys():
+        if self.has_outline():
             self.objects["_outline"].draw(screen)
         
     def set_layer(self, layer):
@@ -158,6 +162,28 @@ class Menu:
         for obj in self.objects.values():
             obj.light_render_flag = True
 
+    def set_render_flag_all(self):
+        for obj in self.objects.values():
+            obj.render_flag = True
+
+    def change_property(self, property: str, value):
+        if not hasattr(self, property):
+            raise Exception(f"Property {property} does not exist")
+        setattr(self, property, value)
+
+        if property == "size" and self.has_bg():
+            self.objects["_bg"].size = value
+        elif property == "bg_color" and self.has_bg():
+            self.objects["_bg"].color = value
+        if property == "size" and self.has_outline():
+            self.objects["_outline"].size = value
+        elif property == "outline_color" and self.has_outline():
+            self.objects["_outline"].color = value
+        elif property == "outline_width" and self.has_outline():
+            self.objects["_outline"].width = value
+
+        self.set_render_flag_all()
+
     def get_max_scroll(self):
         max_scroll = (self.get_size_from_items()[1] 
                       - self.size[1]
@@ -195,3 +221,9 @@ class Menu:
         if self.scroll_slidebar is not None:
             self.objects[self.scroll_slidebar].progress = 0
         self.set_light_render_flag_all()
+
+    def has_outline(self):
+        return "_outline" in self.objects.keys()
+
+    def has_bg(self):
+        return "_bg" in self.objects.keys()
