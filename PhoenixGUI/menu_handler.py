@@ -362,9 +362,5 @@ class MenuHandler:
                       reverse=reverse)
 
     def is_mouse_inside_menu(self):
-        for menu in self.menues.values():
-            if menu.hitbox.is_pos_inside(*pygame.mouse.get_pos()) \
-                and menu.active:
-                return True
-
-        return False
+        return any([menu.hitbox.is_pos_inside(*pygame.mouse.get_pos()) \
+                    and menu.active for menu in self.menues.values()])
