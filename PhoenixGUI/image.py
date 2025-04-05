@@ -2,8 +2,8 @@ from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
 
 class Image(MenuObject):
-    def __init__(self, pos, image, max_size=None, anchor="nw"):
-        super().__init__(pos, max_size, anchor)
+    def __init__(self, pos, image, max_size=None, anchor="nw", hover_text=None):
+        super().__init__(pos, max_size, anchor, hover_text=hover_text)
         self.image = image
 
     def render(self, menu_pos, menu_size, ui_size, scroll, font_path=None):

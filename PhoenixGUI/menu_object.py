@@ -3,12 +3,13 @@ from .hitbox import Hitbox
 from .util import object_crop, sum_two_vectors, update_pos_by_anchor
 
 class MenuObject:
-    def __init__(self, pos, max_size, anchor, layer=0, active=True):
+    def __init__(self, pos, max_size, anchor, layer=0, active=True, hover_text=None):
         self.pos = pos
         self.max_size = max_size
         self.anchor = anchor
         self.layer = layer
         self.active = active
+        self.hover_text = hover_text
         self.render_flag = True
         self.light_render_flag = True
         self.rendered_object: RenderedMenuObject = None

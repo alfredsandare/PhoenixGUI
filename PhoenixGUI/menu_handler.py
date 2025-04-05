@@ -8,10 +8,23 @@ from .util import is_button, snake_case_to_pascal_case
 from .radiobutton import Radiobutton
 from .slidebar import Slidebar
 from .dropdown import Dropdown
+from .text import Text
+
+HOVER_MENU_ID = "_hover_menu"
+HOVER_MENU_TEXT_OBJ_ID = "text"
 
 
 class MenuHandler:
-    def __init__(self, ui_size=1):
+    def __init__(self,
+                 ui_size=1,
+                 hover_menu_bg_color=None,
+                 hover_menu_outline_color=None,
+                 hover_menu_outline_width=1,
+                 hover_menu_text_color=None,
+                 hover_menu_width=200,
+                 hover_menu_text_font=None,
+                 hover_menu_text_size=None):
+
         self.ui_size = ui_size
         self.menues: dict[str, Menu] = {}
         self.prev_menu_key = None
@@ -25,6 +38,16 @@ class MenuHandler:
         # keys are pygame.key keys. first float is time since pressed
         # and second float is time since last text addition.
         self.pressed_buttons: dict[int, list[float, float]] = {}
+
+        menu = Menu((0, 0),
+                    (hover_menu_width, 2000),  # comically long
+                    bg_color=hover_menu_bg_color,
+                    outline_color=hover_menu_outline_color,
+                    outline_width=hover_menu_outline_width)
+        text_object = Text((0, 0), "", hover_menu_text_font, hover_menu_text_size, wrap_lines=True,
+                           color=hover_menu_text_color)
+        menu.add_object(HOVER_MENU_TEXT_OBJ_ID, text_object)
+        self.menues[HOVER_MENU_ID] = menu
 
     def update(self, events, screen, time_passed):
         # sort the menues by layer
@@ -57,7 +80,7 @@ class MenuHandler:
                 self._mousebuttonup_event(current_button, current_menu)
 
             elif event.type == pygame.MOUSEMOTION:
-                self._mousemotion_event(event, current_button, mouse_pos)
+                self._mousemotion_event(event, current_menu, current_button, mouse_pos)
 
             elif current_menu is not None and event.type == pygame.MOUSEWHEEL \
                 and current_menu.enable_scroll:
@@ -202,17 +225,22 @@ class MenuHandler:
             self.selected_slidebar = None
             self.selected_slidebar_menu = None
 
-    def _mousemotion_event(self, event, current_button, mouse_pos):
+    def _mousemotion_event(self, event, current_menu, current_button, mouse_pos):
         if isinstance(current_button, Dropdown):
             current_button.handle_mousemotion(mouse_pos)
 
-        if self.selected_slidebar is None:
-            return
-        
-        self.selected_slidebar.act_on_motion(event)
-        if self.selected_slidebar.is_scroll_slidebar:
-            self.selected_slidebar_menu.set_scroll_by_progress(
-                self.selected_slidebar.progress)
+        if self.selected_slidebar is not None:
+            self.selected_slidebar.act_on_motion(event)
+            if self.selected_slidebar.is_scroll_slidebar:
+                self.selected_slidebar_menu.set_scroll_by_progress(
+                    self.selected_slidebar.progress)
+
+        hovered_object = self._get_hovered_object(current_menu, mouse_pos)
+        if hovered_object is not None and hovered_object.hover_text is not None:
+            self.menues[HOVER_MENU_ID].activate()
+            self._update_hover_menu(hovered_object.hover_text, mouse_pos)
+        else:
+            self.menues[HOVER_MENU_ID].deactivate()
 
     def _update_button_states(self, current_button, current_button_key, 
                               prev_button, prev_button_key):
@@ -278,8 +306,10 @@ class MenuHandler:
 
                 self.delete_object(menu_id, obj_key)
 
-    def add_menu(self, id, menu):
-        self.menues[id] = menu
+    def add_menu(self, id_, menu):
+        if id_ == HOVER_MENU_ID:
+            raise Exception("Menu id may not be '_hover_menu'")
+        self.menues[id_] = menu
 
     def reset_radiobuttons(self, current_menu, group):
         for obj in current_menu.objects.values():
@@ -364,3 +394,24 @@ class MenuHandler:
     def is_mouse_inside_menu(self):
         return any([menu.hitbox.is_pos_inside(*pygame.mouse.get_pos()) \
                     and menu.active for menu in self.menues.values()])
+
+    def _get_hovered_object(self, current_menu: Menu, mouse_pos):
+        if current_menu == None:
+            return None
+
+        for key, obj in current_menu.objects.items():
+            if obj.hitbox.is_pos_inside(*mouse_pos) and key not in ["_bg", "_outline"]:
+                return obj
+        return None
+
+    def _update_hover_menu(self, text, mouse_pos):
+        hover_menu = self.menues[HOVER_MENU_ID]
+        hover_menu.change_property("pos", mouse_pos)
+
+        text_obj: Text = hover_menu.objects[HOVER_MENU_TEXT_OBJ_ID]
+        if text_obj.text != text:
+            text_obj.text = text
+            text_obj.render_and_store(hover_menu.pos, (hover_menu.size[0], 2000), self.ui_size, 0, self.font_path)
+
+            # Set the menu size to the size of the text
+            hover_menu.change_property("size", text_obj.rendered_object.image.get_size())
