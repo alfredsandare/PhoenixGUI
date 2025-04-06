@@ -30,9 +30,10 @@ class SelectionButton(MenuObject):
                  text_offset=10,
 
                  hitbox_padding=0,
-                 command=None):
+                 command=None,
+                 hover_text=None):
 
-        super().__init__(pos, max_size, anchor)
+        super().__init__(pos, max_size, anchor, hover_text=hover_text)
         self.shape = shape
         self.text = text
         self.font = font

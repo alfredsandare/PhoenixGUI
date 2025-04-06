@@ -24,9 +24,10 @@ class TextInput(MenuObject):
                  anchor="nw",
                  layer=0,
                  active=True,
-                 command=None):
+                 command=None,
+                 hover_text=None):
 
-        super().__init__(pos, max_size, anchor, layer, active)
+        super().__init__(pos, max_size, anchor, layer, active, hover_text=hover_text)
 
         self.length = length
         self.font = font

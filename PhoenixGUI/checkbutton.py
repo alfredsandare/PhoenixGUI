@@ -24,7 +24,8 @@ class Checkbutton(SelectionButton):
                  text_offset=10,
 
                  hitbox_padding=0,
-                 command=None):
+                 command=None,
+                 hover_text=None):
 
         super().__init__("rect",
                          pos,
@@ -48,4 +49,5 @@ class Checkbutton(SelectionButton):
                          text_offset=text_offset,
 
                          hitbox_padding = hitbox_padding,
-                         command = command)
+                         command = command,
+                         hover_text = hover_text)

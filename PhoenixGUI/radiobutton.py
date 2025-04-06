@@ -25,6 +25,7 @@ class Radiobutton(SelectionButton):
 
                  hitbox_padding=0,
                  command=None,
+                 hover_text=None,
                  group=None):
 
         super().__init__("circle",
@@ -49,5 +50,6 @@ class Radiobutton(SelectionButton):
                          text_offset=text_offset,
 
                          hitbox_padding = hitbox_padding,
-                         command = command)
+                         command = command,
+                         hover_text = hover_text)
         self.group = group

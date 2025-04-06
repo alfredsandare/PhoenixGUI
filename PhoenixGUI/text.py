@@ -28,9 +28,10 @@ class Text(MenuObject):
                  wrap_lines=False, 
                  color=(255, 255, 255), 
                  bg_color=None, 
-                 anchor="nw"):
+                 anchor="nw",
+                 hover_text=None):
         
-        super().__init__(pos, max_size, anchor)
+        super().__init__(pos, max_size, anchor, hover_text=hover_text)
         self.text = text
         self.font = font
         self.font_size = font_size

@@ -13,9 +13,10 @@ class Slidebar(MenuObject):
                  orientation="horizontal",
                  circle_color=(255, 255, 255),
                  circle_hover_color=None,
-                 circle_click_color=None):
+                 circle_click_color=None,
+                 hover_text=None):
         
-        super().__init__(pos, max_size, anchor)
+        super().__init__(pos, max_size, anchor, hover_text=hover_text)
         self.length = length
         self.circle_size = circle_size
         self.circle_color = circle_color
