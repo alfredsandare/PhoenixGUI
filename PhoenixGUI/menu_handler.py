@@ -358,7 +358,8 @@ class MenuHandler:
 
     def _get_current_menu_key(self, mouse_pos):
         menues = {key: value for key, value in sorted(self.menues.items(),
-                  key=lambda menu: menu[1].layer, reverse=True)}
+                  key=lambda menu: menu[1].layer, reverse=True)
+                  if key!=HOVER_MENU_ID}
         for key, menu in menues.items():
             if menu.hitbox.is_pos_inside(*mouse_pos) and menu.active:
                 return key
