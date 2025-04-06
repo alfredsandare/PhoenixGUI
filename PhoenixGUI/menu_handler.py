@@ -50,10 +50,8 @@ class MenuHandler:
         self.menues[HOVER_MENU_ID] = menu
 
     def update(self, events, screen, time_passed):
-        # sort the menues by layer
-        sorted_menues = self._get_sorted_menues(reverse=True)
         mouse_pos = pygame.mouse.get_pos()
-        current_menu_key = self._get_current_menu_key(mouse_pos, sorted_menues)
+        current_menu_key = self._get_current_menu_key(mouse_pos)
 
         if ((self.prev_menu_key != current_menu_key 
              and self.prev_menu_key != None)  # mouse is hovering over a different menu
@@ -358,8 +356,10 @@ class MenuHandler:
         for menu in self.menues.values():
             menu.deactivate()
 
-    def _get_current_menu_key(self, mouse_pos, sorted_menues):
-        for key, menu in sorted_menues:
+    def _get_current_menu_key(self, mouse_pos):
+        menues = {key: value for key, value in sorted(self.menues.items(),
+                  key=lambda menu: menu[1].layer, reverse=True)}
+        for key, menu in menues.items():
             if menu.hitbox.is_pos_inside(*mouse_pos) and menu.active:
                 return key
         return None
@@ -382,14 +382,12 @@ class MenuHandler:
         return current_button, current_button_key, prev_button, prev_button_key
 
     def _render_and_draw_menues(self, screen):
-        for key, menu in self._get_sorted_menues():
+        menues = [menu for key, menu in self.menues.items() if key!=HOVER_MENU_ID]
+        menues = sorted(menues, key=lambda menu: menu.layer)
+        menues.append(self.menues[HOVER_MENU_ID])
+        for menu in menues:
             if menu.active:
                 menu.render_all(screen, self.ui_size, self.font_path)
-
-    def _get_sorted_menues(self, reverse=False):
-        return sorted(self.menues.items(), 
-                      key=lambda menu: menu[1].layer, 
-                      reverse=reverse)
 
     def is_mouse_inside_menu(self):
         return any([menu.hitbox.is_pos_inside(*pygame.mouse.get_pos()) \
@@ -400,7 +398,8 @@ class MenuHandler:
             return None
 
         for key, obj in current_menu.objects.items():
-            if obj.hitbox.is_pos_inside(*mouse_pos) and key not in ["_bg", "_outline"]:
+            if obj.hitbox.is_pos_inside(*mouse_pos) \
+                and key not in ["_bg", "_outline"]:
                 return obj
         return None
 
