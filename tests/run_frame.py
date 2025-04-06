@@ -8,7 +8,8 @@ screen = pygame.display.set_mode((800, 800))
 menu_handler = MenuHandler(hover_menu_bg_color=[0, 0, 200],
                            hover_menu_text_color=[255, 255, 255],
                            hover_menu_text_font="arial",
-                           hover_menu_text_size=20)
+                           hover_menu_text_size=20,
+                           hover_menu_text_offset=[10, 10])
 menu_handler.set_scroll_strength_multiplier(3)
 
 

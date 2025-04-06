@@ -4,7 +4,7 @@ import importlib
 
 from .text_input import TextInput
 from .menu import Menu
-from .util import is_button, snake_case_to_pascal_case
+from .util import is_button, snake_case_to_pascal_case, sum_multiple_vectors
 from .radiobutton import Radiobutton
 from .slidebar import Slidebar
 from .dropdown import Dropdown
@@ -12,6 +12,7 @@ from .text import Text
 
 HOVER_MENU_ID = "_hover_menu"
 HOVER_MENU_TEXT_OBJ_ID = "text"
+HOVER_MENU_MAX_HEIGHT = 2000
 
 
 class MenuHandler:
@@ -23,7 +24,8 @@ class MenuHandler:
                  hover_menu_text_color=None,
                  hover_menu_width=200,
                  hover_menu_text_font=None,
-                 hover_menu_text_size=None):
+                 hover_menu_text_size=None,
+                 hover_menu_text_offset=None):
 
         self.ui_size = ui_size
         self.menues: dict[str, Menu] = {}
@@ -40,12 +42,23 @@ class MenuHandler:
         self.pressed_buttons: dict[int, list[float, float]] = {}
 
         menu = Menu((0, 0),
-                    (hover_menu_width, 2000),  # comically long
+                    (hover_menu_width, HOVER_MENU_MAX_HEIGHT),
                     bg_color=hover_menu_bg_color,
                     outline_color=hover_menu_outline_color,
                     outline_width=hover_menu_outline_width)
-        text_object = Text((0, 0), "", hover_menu_text_font, hover_menu_text_size, wrap_lines=True,
-                           color=hover_menu_text_color)
+
+        text_pos = [0, 0]
+        if hover_menu_text_offset is not None:
+            text_pos = hover_menu_text_offset
+
+        max_size = None
+        if hover_menu_text_offset is not None:
+            max_size=[hover_menu_width-2*hover_menu_text_offset[0],
+                      HOVER_MENU_MAX_HEIGHT]
+
+        text_object = Text(text_pos, "", hover_menu_text_font, hover_menu_text_size,
+                           wrap_lines=True, color=hover_menu_text_color,
+                           max_size=max_size)
         menu.add_object(HOVER_MENU_TEXT_OBJ_ID, text_object)
         self.menues[HOVER_MENU_ID] = menu
 
@@ -411,7 +424,10 @@ class MenuHandler:
         text_obj: Text = hover_menu.objects[HOVER_MENU_TEXT_OBJ_ID]
         if text_obj.text != text:
             text_obj.text = text
-            text_obj.render_and_store(hover_menu.pos, (hover_menu.size[0], 2000), self.ui_size, 0, self.font_path)
+            text_obj.render_and_store(hover_menu.pos, (hover_menu.size[0], 2000),
+                                      self.ui_size, 0, self.font_path)
 
             # Set the menu size to the size of the text
-            hover_menu.change_property("size", text_obj.rendered_object.image.get_size())
+            text_size = text_obj.rendered_object.get_image_size()
+            menu_size = sum_multiple_vectors(text_size, text_obj.pos, text_obj.pos)
+            hover_menu.change_property("size", menu_size)
