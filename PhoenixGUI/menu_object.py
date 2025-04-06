@@ -43,9 +43,9 @@ class MenuObject:
             self.hitbox = self.get_hitbox(menu_pos, scroll)
             return
 
-        self.hitbox = Hitbox(*self.rendered_object.pos, 
-                             *sum_two_vectors(self.rendered_object.pos, 
-                                              self.rendered_object.image.get_size()))
+        size = sum_two_vectors(self.rendered_object.pos,
+                               self.rendered_object.get_cropped_image_size())
+        self.hitbox = Hitbox(*self.rendered_object.pos, *size)
 
     def draw(self, screen):
         self.rendered_object.draw(screen)
