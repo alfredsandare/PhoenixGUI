@@ -57,7 +57,11 @@ class Dropdown(MenuObject):
         first_button = self._render_first_button(menu_pos, menu_size, ui_size,
                                                  scroll, font_path)
     
-        surface = pygame.Surface((self.box_size[0], self.box_size[1]*(len(self.options)+1)), pygame.SRCALPHA)
+        size = self.box_size
+        if self.is_dropped_down:
+            size = (self.box_size[0], self.box_size[1]*(len(self.options)+1))
+
+        surface = pygame.Surface(size, pygame.SRCALPHA)
         surface.blit(first_button.image, (0, 0))
 
         self._render_triangle(surface)

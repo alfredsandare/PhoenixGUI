@@ -378,14 +378,15 @@ class MenuHandler:
                 return key
         return None
     
-    def _get_buttons_data(self, current_menu, mouse_pos):
+    def _get_buttons_data(self, current_menu: Menu, mouse_pos):
         current_button = None
         current_button_key = None
         if current_menu != None:
-            for key, obj in current_menu.objects.items():
+            for key, obj in current_menu.get_items_sorted_by_layer().items():
                 if is_button(obj) and obj.hitbox.is_pos_inside(*mouse_pos):
                     current_button = obj
                     current_button_key = key
+                    break
 
         prev_button_key = self.prev_button_key
         prev_button = None

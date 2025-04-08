@@ -1,3 +1,4 @@
+from PhoenixGUI.dropdown import Dropdown
 from .text_input import TextInput
 from .menu_object import MenuObject
 from .hitbox import Hitbox
@@ -98,14 +99,31 @@ class Menu:
         if self.has_bg():
             self.objects["_bg"].draw(screen)
 
-        for key, item in self.objects.items():
+        for key, item in self.get_items_sorted_by_layer(reverse=True).items():
             if key not in ("_bg", "_outline") and \
                 item is not None and item.active:
                 item.draw(screen)
 
         if self.has_outline():
             self.objects["_outline"].draw(screen)
-        
+
+    def get_items_sorted_by_layer(self, reverse=False):
+        sorted_items = {k: v for k, v in sorted(self.objects.items(),
+                                                key=lambda item: item[1].layer)}
+
+        items = {}
+        for key, item in sorted_items.items():
+            if isinstance(item, Dropdown) and item.is_dropped_down:
+                items[key] = item
+
+        for key, item in sorted_items.items():
+            if not (isinstance(item, Dropdown) and item.is_dropped_down):
+                items[key] = item
+
+        if reverse:
+            return {k: items[k] for k in reversed(list(items.keys()))}
+        return items
+
     def set_layer(self, layer):
         self.layer = layer
 
