@@ -10,13 +10,15 @@ class Slidebar(MenuObject):
                  circle_size,
                  max_size=None,
                  anchor="nw",
+                 layer=0,
                  orientation="horizontal",
                  circle_color=(255, 255, 255),
                  circle_hover_color=None,
                  circle_click_color=None,
                  hover_text=None):
         
-        super().__init__(pos, max_size, anchor, hover_text=hover_text)
+        super().__init__(pos, max_size, anchor, hover_text=hover_text,
+                         layer=layer)
         self.length = length
         self.circle_size = circle_size
         self.circle_color = circle_color

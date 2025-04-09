@@ -109,7 +109,8 @@ class Menu:
 
     def get_items_sorted_by_layer(self, reverse=False):
         sorted_items = {k: v for k, v in sorted(self.objects.items(),
-                                                key=lambda item: item[1].layer)}
+                                                key=lambda item: item[1].layer,
+                                                reverse=True)}
 
         items = {}
         for key, item in sorted_items.items():

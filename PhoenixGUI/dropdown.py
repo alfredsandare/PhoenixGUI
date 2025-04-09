@@ -17,6 +17,7 @@ class Dropdown(MenuObject):
                  text_justify: str = "left",
                  max_size: tuple[int, int] = None,
                  anchor="nw",
+                 layer=0,
                  hover_text=None,
 
                  text_color=(255, 255, 255),
@@ -29,7 +30,8 @@ class Dropdown(MenuObject):
                  box_outline_hover_color=None,
                  box_outline_click_color=None):
 
-        super().__init__(pos, max_size, anchor, hover_text=hover_text)
+        super().__init__(pos, max_size, anchor, hover_text=hover_text,
+                         layer=layer)
 
         self.box_size = box_size
         self.font = font

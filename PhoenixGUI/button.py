@@ -23,6 +23,7 @@ class Button(MenuObject):
                  text_justify="center",  # left, right or center
                  hitbox_padding=0,
                  command=None,
+                 layer=0,
                  hover_text=None,
 
                  enable_rect=False,
@@ -39,7 +40,8 @@ class Button(MenuObject):
                  rect_length=None,
                  rect_height=None):
 
-        super().__init__(pos, max_size, anchor, hover_text=hover_text)
+        super().__init__(pos, max_size, anchor, hover_text=hover_text,
+                         layer=layer)
         self.image = image
         self.hover_image = hover_image
         self.click_image = click_image

@@ -14,9 +14,11 @@ class Shape(MenuObject):
                  width=0,
                  max_size=None, 
                  anchor="nw",
+                 layer=0,
                  hover_text=None):
 
-        super().__init__(pos, max_size, anchor, hover_text=hover_text)
+        super().__init__(pos, max_size, anchor, hover_text=hover_text,
+                         layer=layer)
         self.size = size
         self.color = color
         self.type_ = type_

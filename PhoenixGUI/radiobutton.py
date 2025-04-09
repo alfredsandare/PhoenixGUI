@@ -25,6 +25,7 @@ class Radiobutton(SelectionButton):
 
                  hitbox_padding=0,
                  command=None,
+                 layer=0,
                  hover_text=None,
                  group=None):
 
@@ -51,5 +52,6 @@ class Radiobutton(SelectionButton):
 
                          hitbox_padding = hitbox_padding,
                          command = command,
+                         layer = 0,
                          hover_text = hover_text)
         self.group = group

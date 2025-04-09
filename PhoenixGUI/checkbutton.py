@@ -25,6 +25,7 @@ class Checkbutton(SelectionButton):
 
                  hitbox_padding=0,
                  command=None,
+                 layer=0,
                  hover_text=None):
 
         super().__init__("rect",
@@ -50,4 +51,5 @@ class Checkbutton(SelectionButton):
 
                          hitbox_padding = hitbox_padding,
                          command = command,
+                         layer = layer,
                          hover_text = hover_text)

@@ -31,9 +31,11 @@ class SelectionButton(MenuObject):
 
                  hitbox_padding=0,
                  command=None,
+                 layer=0,
                  hover_text=None):
 
-        super().__init__(pos, max_size, anchor, hover_text=hover_text)
+        super().__init__(pos, max_size, anchor, hover_text=hover_text,
+                         layer=layer)
         self.shape = shape
         self.text = text
         self.font = font

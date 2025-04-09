@@ -125,16 +125,16 @@ menu_handler.add_object("menu", "rbtn", radiobutton)
 radiobutton2 = Radiobutton((50, 500), "Really Not Bingus", "arial", 20, (255, 255, 255), text_hover_color=(255, 0, 0), group="r", command=c2, circle_size=2)
 menu_handler.add_object("menu", "rbtn2", radiobutton2)
 
-slidebar = Slidebar((500, 300), 600, 40, circle_hover_color=(255, 0, 0), circle_click_color=(0, 255, 255), orientation="vertical", anchor="e")
+slidebar = Slidebar((500, 300), 600, 40, circle_hover_color=(255, 0, 0), circle_click_color=(0, 255, 255), orientation="vertical", anchor="e", layer=1)
 menu_handler.add_object("menu", "sldbr", slidebar)
 
 
-sldbr_rect = Shape((250, 400), (100, 20), (0, 255, 255), "rect")
+sldbr_rect = Shape((250, 400), (100, 20), (0, 255, 255), "rect", layer=-1)
 menu_handler.add_object("menu", "sldbr_rect", sldbr_rect)
 slidebar2 = Slidebar((250, 400), 100, 20, circle_hover_color=(255, 0, 0), circle_click_color=(255, 0, 255), orientation="horizontal")
 menu_handler.add_object("menu", "sldbr2", slidebar2)
 
-text_input_rect = Shape((50, 600), (100, 25), (0, 140, 140), "rect")
+text_input_rect = Shape((50, 600), (100, 25), (0, 140, 140), "rect", layer=-1)
 menu_handler.add_object("menu", "text_input_rect", text_input_rect)
 
 text_input = TextInput((50, 600), 100, "arial", 20, (255, 255, 255), anchor="nw", validity_check=validity_check.ALL_NUMBERS_DOTS_COMMAS)
@@ -146,7 +146,7 @@ menu_handler.add_object("menu", "text_input", text_input)
 
 slices = [0.1, 0.2, 0.2, 0.5]
 colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255)]
-pie_chart = PieChart((0, 0), 100, slices, colors, layer=-10)
+pie_chart = PieChart((0, 0), 100, slices, colors, layer=10)
 menu_handler.add_object("menu", "pie_chart", pie_chart)
 
 # images = {
