@@ -11,3 +11,4 @@ from .radiobutton import Radiobutton
 from .slidebar import Slidebar
 from .text_input import TextInput
 from .dropdown import Dropdown
+from .piechart import PieChart

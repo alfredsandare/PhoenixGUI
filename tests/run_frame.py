@@ -144,6 +144,10 @@ text_input = TextInput((50, 600), 100, "arial", 20, (255, 255, 255), anchor="nw"
 # menu_handler.selected_text_input = text_input
 menu_handler.add_object("menu", "text_input", text_input)
 
+slices = [0.1, 0.2, 0.2, 0.5]
+colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255)]
+pie_chart = PieChart((0, 0), 100, slices, colors, layer=-10)
+menu_handler.add_object("menu", "pie_chart", pie_chart)
 
 # images = {
 #     "my_image": pygame.image.load(__file__[:-18]+"kenneth.jpg")
