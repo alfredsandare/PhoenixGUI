@@ -1,7 +1,7 @@
 from .menu_object import MenuObject
 from .rendered_menu_object import RenderedMenuObject
 import pygame
-from .util import flatten_list, get_font, cut_line, wrap_line
+from .util import flatten_list, get_font
 
 pygame.font.init()
 
@@ -171,9 +171,9 @@ class Text(MenuObject):
                 max_width = longest_word_length
 
             if self.wrap_lines:
-                processed_text_pieces.extend(wrap_line(text, font, max_width))
+                processed_text_pieces.extend(self.wrap_line(text, font, max_width))
             else:
-                processed_text_pieces.append(cut_line(text, font, max_width))
+                processed_text_pieces.append(self.cut_line(text, font, max_width))
 
         return processed_text_pieces
 
@@ -333,3 +333,54 @@ class Text(MenuObject):
                     words_split.append(word[prev_split:i+1])
 
         return [word for word in words_split if word]
+
+    def wrap_line(self, text, font: pygame.font.Font, max_width):
+        if any(font.size(c)[0] > max_width for c in text):
+            # If any of the chars don't fit in a line by itself, just give up
+            raise ValueError(f"Max width ({max_width}) is too "
+                             f"small for a char to fit in")
+
+        words = self.get_words(text)
+        lines = [""]
+        for word in words:
+            if font.size(word)[0] > max_width:
+                lines = self.split_word(word, font, max_width, lines)
+                continue
+
+            if font.size(lines[-1]+word)[0] < max_width:
+                lines[-1] += word + " "
+            else:
+                lines[-1] = lines[-1][:-1]
+                lines.append(word + " ")
+
+        lines[-1] = lines[-1][:-1]
+        return lines
+
+    def split_word(self, word, font: pygame.font.Font, max_width, lines: list):
+        """ Splits a word so that it fits within max_width"""
+
+        prev_split = 0
+        for i in range(len(word)):
+            if font.size(lines[-1] + word[prev_split:i])[0] > max_width:
+                lines[-1] += word[prev_split:i-1]
+                lines.append("")
+                prev_split = i-1
+            elif i==len(word)-1:
+                lines[-1] += word[prev_split:i+1]
+
+        lines[-1] += " "
+        return lines
+
+    def cut_line(self, text, font, max_width):
+        '''Returns shorted version of given text so that it fits within the max_width'''
+        cut_text = ""
+        i=0
+        while True:
+            if i == 0:
+                cut_text = text
+            else:
+                cut_text = text[:-i]+".."
+            text_size = font.size(cut_text)[0]
+            if text_size <= max_width or cut_text == "":
+                return cut_text
+            i+=1

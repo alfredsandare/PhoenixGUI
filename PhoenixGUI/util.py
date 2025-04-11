@@ -10,56 +10,6 @@ def get_font(path, font, size):
     except:
         return pygame.font.SysFont(font, size)
 
-def trunc_line(text, font, max_width):
-    '''Internal function for WrapLine'''
-    real = len(text)
-    stext=text
-    l=font.size(text)[0]
-    cut=0
-    a=0
-    done=1
-    old=None
-    while l > max_width:
-        a+=1
-        n = text.rsplit(None, a)[0]
-        if stext == n:
-            cut+=1
-            stext = n[:-cut]
-        else:
-            stext = n
-        l=font.size(stext)[0]
-        real = len(stext)
-        done = 0
-    return real, done, stext
-
-
-def wrap_line(text, font, max_width):
-    '''Returns given text in a list of strings divided so that no line exceeds the maxWidth'''
-    '''text is text, font is the pygame font and maxWidth is the maximum width in pixels'''
-    done = 0
-    wrapped = []
-    while not done:
-        nl, done, stext = trunc_line(text, font, max_width)
-        wrapped.append(stext.strip())
-        text=text[nl:]
-    return wrapped
-
-
-def cut_line(text, font, max_width):
-    '''Returns shorted version of given text so that it fits within the maxWidth'''
-    done = False
-    i=0
-    while not done:
-        if i == 0: #för att str[:0] returnar ''
-            cut_text = text
-        else:
-            cut_text = text[:-i]+'..'
-        text_size = font.size(cut_text)[0]
-        if text_size <= max_width or cut_text == '': #sluta när den passar eller om den inte passar alls
-            done = True
-        i+=1
-
-    return cut_text
 
 def object_crop(obj_size, obj_pos, menu_size, menu_pos, object_max_size):
     ''' crops the object if it is partly outside the menu borders '''

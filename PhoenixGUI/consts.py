@@ -1,0 +1,3 @@
+HOVER_MENU_ID = "_hover_menu"
+HOVER_MENU_TEXT_OBJ_ID = "text"
+HOVER_MENU_MAX_HEIGHT = 2000

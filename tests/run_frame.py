@@ -28,7 +28,7 @@ menu2.set_layer(1)
 #menu_handler.add_object("menu", "my_text", text)
 
 image = pygame.image.load(__file__[:-18]+"kenneth.jpg")
-menu_image = Image((0, 0), image, anchor="nw", hover_text="HELLO THERE\n\u0009GENERAL KENOBI")
+menu_image = Image((0, 0), image, anchor="nw", hover_text="HELLO THERE\n    GENERAL KENOBI")
 menu_handler.add_object("menu", "my_image", menu_image)
 
 text2 = Text([300, 300], "Hello lorem ipsum dolor%%0 255 0%There lorem ipsum% Hello again", "arial", 20, color=(255, 0, 0), wrap_lines=True, anchor="se")

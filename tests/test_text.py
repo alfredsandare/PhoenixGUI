@@ -3,7 +3,7 @@ import pygame
 import unittest
 
 pygame.font.init()
-#font = pygame.font.SysFont("arial", 20)
+font = pygame.font.SysFont("arial", 20)
 a_text = text.Text((0, 0), "t", "arial", 20)
 
 DEFAULT_COLOR = (255, 255, 255)
@@ -138,3 +138,26 @@ def test_get_words_mixed_edge3():
     
 def test_get_words_mixed_edge4():
     assert a_text.get_words("  Hello There  General Kenobi ") == ["  Hello", "There", "  General", "Kenobi"]
+
+def test_wrap_line_1():
+    assert a_text.wrap_line("Hello", font, 300) == ["Hello"]
+
+def test_wrap_line_2():
+    assert a_text.wrap_line("Hello  There", font, 100) == ["Hello", "  There"]
+
+def test_wrap_line_3():
+    assert a_text.wrap_line("Hello There General Kenobi", font, 102) == ["Hello There", "General", "Kenobi"]
+
+def test_wrap_line_4():
+    assert a_text.wrap_line("HelloThereGeneralKenobi", font, 100) == ["HelloThere", "GeneralKe", "nobi"]
+
+def test_split_word():
+    assert a_text.split_word("HelloThereGeneralKenobi", font, 100, [""]) == ["HelloThere", "GeneralKe", "nobi "]
+
+def test_cut_line():
+    t = a_text.cut_line("Hello There. My name is indeed General Kenobi", font, 100)
+    assert t == "Hello The.."
+
+def test_cut_line_long_max_width():
+    t = a_text.cut_line("Hello There. My name is indeed General Kenobi", font, 1000)
+    assert t == "Hello There. My name is indeed General Kenobi"

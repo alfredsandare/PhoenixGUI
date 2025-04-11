@@ -1,3 +1,4 @@
+from PhoenixGUI.consts import HOVER_MENU_MAX_HEIGHT
 from PhoenixGUI.dropdown import Dropdown
 from .text_input import TextInput
 from .menu_object import MenuObject
@@ -30,6 +31,8 @@ class Menu:
         self.scroll = 0
         self.scroll_slidebar = scroll_slidebar
         self.max_scroll_offset = max_scroll_offset
+
+        self.IS_HOVER_MENU = False
 
         self.calculate_hitbox()
 
@@ -80,16 +83,19 @@ class Menu:
                 or key in ("_bg", "_outline"):
                 continue
 
+            menu_size = self.size if not self.IS_HOVER_MENU \
+                else (HOVER_MENU_MAX_HEIGHT, HOVER_MENU_MAX_HEIGHT)
+
             if key == self.scroll_slidebar and item.active:
-                item.render_and_store(self.pos, self.size, 
+                item.render_and_store(self.pos, menu_size,
                                       ui_size, 0, font_path)
 
             elif item.active and item.render_flag:
-                item.render_and_store(self.pos, self.size, 
+                item.render_and_store(self.pos, menu_size,
                                       ui_size, -self.scroll, font_path)
 
             elif item.active and item.light_render_flag:
-                item.light_render_and_store(self.pos, self.size, 
+                item.light_render_and_store(self.pos, menu_size,
                                             ui_size, -self.scroll)
 
             item.render_flag = False

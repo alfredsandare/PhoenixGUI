@@ -9,11 +9,7 @@ from .radiobutton import Radiobutton
 from .slidebar import Slidebar
 from .dropdown import Dropdown
 from .text import Text
-
-HOVER_MENU_ID = "_hover_menu"
-HOVER_MENU_TEXT_OBJ_ID = "text"
-HOVER_MENU_MAX_HEIGHT = 2000
-
+from .consts import HOVER_MENU_ID, HOVER_MENU_MAX_HEIGHT, HOVER_MENU_TEXT_OBJ_ID
 
 class MenuHandler:
     def __init__(self,
@@ -46,6 +42,7 @@ class MenuHandler:
                     bg_color=hover_menu_bg_color,
                     outline_color=hover_menu_outline_color,
                     outline_width=hover_menu_outline_width)
+        menu.IS_HOVER_MENU = True
 
         text_pos = [0, 0]
         if hover_menu_text_offset is not None:
@@ -425,7 +422,8 @@ class MenuHandler:
         text_obj: Text = hover_menu.objects[HOVER_MENU_TEXT_OBJ_ID]
         if text_obj.text != text:
             text_obj.text = text
-            text_obj.render_and_store(hover_menu.pos, (hover_menu.size[0], 2000),
+
+            text_obj.render_and_store(hover_menu.pos, hover_menu.size,
                                       self.ui_size, 0, self.font_path)
 
             # Set the menu size to the size of the text
