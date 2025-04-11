@@ -317,4 +317,19 @@ class Text(MenuObject):
             elif i==len(text)-1:
                 words.append(text[prev_split:i+1])
 
-        return [word for word in words if word != ""]
+        words = [word for word in words if word]
+
+        # Now words can contain multiple spaces.
+        # We want to transform all words like: "H  G" -> "H", "  G"
+        words_split = []
+        for word in words:
+            prev_split = 0
+            for i, c in enumerate(word):
+                prev_char = None if i==0 else word[i-1]
+                if c == " " and prev_char != " ":
+                    words_split.append(word[prev_split:i])
+                    prev_split = i
+                elif i==len(word)-1:
+                    words_split.append(word[prev_split:i+1])
+
+        return [word for word in words_split if word]
