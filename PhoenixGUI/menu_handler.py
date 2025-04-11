@@ -412,7 +412,7 @@ class MenuHandler:
         if current_menu == None:
             return None
 
-        for key, obj in current_menu.objects.items():
+        for key, obj in current_menu.get_items_sorted_by_layer().items():
             if obj.hitbox.is_pos_inside(*mouse_pos) \
                 and key not in ["_bg", "_outline"]:
                 return obj

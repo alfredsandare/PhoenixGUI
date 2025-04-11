@@ -8,8 +8,8 @@ screen = pygame.display.set_mode((800, 800))
 menu_handler = MenuHandler(hover_menu_bg_color=[0, 0, 200],
                            hover_menu_text_color=[255, 255, 255],
                            hover_menu_text_font="arial",
-                           hover_menu_text_size=20,
-                           hover_menu_text_offset=[10, 10])
+                           hover_menu_text_size=14,
+                           hover_menu_text_offset=[0, 0])
 menu_handler.set_scroll_strength_multiplier(3)
 
 
@@ -28,7 +28,7 @@ menu2.set_layer(1)
 #menu_handler.add_object("menu", "my_text", text)
 
 image = pygame.image.load(__file__[:-18]+"kenneth.jpg")
-menu_image = Image((0, 0), image, anchor="nw", hover_text="HEJ HOPP SKITSTÖVLAR")
+menu_image = Image((0, 0), image, anchor="nw", hover_text="HELLO THERE\n\u0009GENERAL KENOBI")
 menu_handler.add_object("menu", "my_image", menu_image)
 
 text2 = Text([300, 300], "Hello lorem ipsum dolor%%0 255 0%There lorem ipsum% Hello again", "arial", 20, color=(255, 0, 0), wrap_lines=True, anchor="se")

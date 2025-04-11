@@ -301,3 +301,20 @@ class Text(MenuObject):
                 deleted += 1
 
         return zones
+
+    def get_words(self, text):
+        """ Splits given at single spaces without keeping the single spaces
+        but keeps all spaces that occur in groups """
+
+        words = []
+        prev_split = 0
+        for i, char in enumerate(text):
+            prev_char = None if i==0 else text[i-1]
+            next_char = None if i==len(text)-1 else text[i+1]
+            if prev_char != " " and char == " " and next_char != " ":
+                words.append(text[prev_split:i])
+                prev_split = i+1
+            elif i==len(text)-1:
+                words.append(text[prev_split:i+1])
+
+        return [word for word in words if word != ""]

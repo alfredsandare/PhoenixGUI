@@ -114,3 +114,27 @@ def test_apply_text_color_insertion_multi_colors_multi_lines():
     ]
     for e, zone in zip(expected, zones):
         assert zone.get_all() == e
+
+def test_get_words_1():
+    assert a_text.get_words("Hello") == ["Hello"]
+    
+def test_get_words_single_space():
+    assert a_text.get_words("Hello There General Kenobi") == ["Hello", "There", "General", "Kenobi"]
+
+def test_get_words_double_space():
+    assert a_text.get_words("Hello  There") == ["Hello  There"]
+
+def test_get_words_mixed():
+    assert a_text.get_words("Hello There  General Kenobi") == ["Hello", "There  General", "Kenobi"]
+    
+def test_get_words_mixed_edge1():
+    assert a_text.get_words("Hello There  General Kenobi  ") == ["Hello", "There  General", "Kenobi  "]
+    
+def test_get_words_mixed_edge2():
+    assert a_text.get_words("  Hello There  General Kenobi") == ["  Hello", "There  General", "Kenobi"]
+    
+def test_get_words_mixed_edge3():
+    assert a_text.get_words(" Hello There  General Kenobi  ") == ["Hello", "There  General", "Kenobi  "]
+    
+def test_get_words_mixed_edge4():
+    assert a_text.get_words("  Hello There  General Kenobi ") == ["  Hello", "There  General", "Kenobi"]
