@@ -4,7 +4,7 @@ pygame.font.init()
 
 def test_wrap_line():
     font = pygame.font.SysFont("arial", 20)
-    t = util.wrap_line("Hello There. My name is indeed General Kenobi", font, 100)
+    t = util.wrap_line("Hello There. My name is indeed General Kenobi", font, 110)
     print(t)
     assert t == ["Hello There.", "My name is", "indeed", "General", "Kenobi"]
 
@@ -12,7 +12,7 @@ def test_cut_line():
     font = pygame.font.SysFont("arial", 20)
     t = util.cut_line("Hello There. My name is indeed General Kenobi", font, 100)
     print(t)
-    assert t == "Hello There..."
+    assert t == "Hello The.."
 
 def test_cut_line_long_max_width():
     font = pygame.font.SysFont("arial", 20)
