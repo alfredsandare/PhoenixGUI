@@ -43,6 +43,8 @@ class MenuHandler:
                     outline_color=hover_menu_outline_color,
                     outline_width=hover_menu_outline_width)
         menu.IS_HOVER_MENU = True
+        self.hover_menu_width = hover_menu_width
+        self.hover_menu_text_offset = hover_menu_text_offset
 
         text_pos = [0, 0]
         if hover_menu_text_offset is not None:
@@ -101,7 +103,7 @@ class MenuHandler:
             elif event.type == pygame.KEYDOWN \
                 and self.selected_text_input is not None:
                 self._keydown_event(event)
-        
+
         self._update_button_states(current_button, current_button_key, 
                                    prev_button, prev_button_key)
         
@@ -423,10 +425,15 @@ class MenuHandler:
         if text_obj.text != text:
             text_obj.text = text
 
-            text_obj.render_and_store(hover_menu.pos, hover_menu.size,
+            size = (self.hover_menu_width-2*self.hover_menu_text_offset[0],
+                    HOVER_MENU_MAX_HEIGHT)
+            text_obj.render_and_store(hover_menu.pos, size,
                                       self.ui_size, 0, self.font_path)
 
             # Set the menu size to the size of the text
             text_size = text_obj.rendered_object.get_image_size()
             menu_size = sum_multiple_vectors(text_size, text_obj.pos, text_obj.pos)
             hover_menu.change_property("size", menu_size)
+
+        text_obj.render_flag = False
+        text_obj.light_render_flag = True
