@@ -53,6 +53,31 @@ def test_decode_text_backslash():
     decoded_dext, zones, colors = a_text.decode_text(_text, DEFAULT_COLOR)
     assert decoded_dext == "N%N"
 
+def test_decode_text_backslash_zones():
+    _text = "%%255 0 0%N\\%N%HELLO"
+    decoded_dext, zones, colors = a_text.decode_text(_text, DEFAULT_COLOR)
+    assert zones == [3, 8]
+
+def test_decode_text_backslash_zones_2():
+    _text = "%%255 0 0%N\\%\\%\\%N%HELLO"
+    decoded_dext, zones, colors = a_text.decode_text(_text, DEFAULT_COLOR)
+    assert zones == [5, 10]
+
+def test_decode_text_backslash_zones_3():
+    _text = "%%255 0 0%N\\%\\%\\%N%\nHELLO"
+    decoded_dext, zones, colors = a_text.decode_text(_text, DEFAULT_COLOR)
+    assert zones == [5, 11]
+
+def test_decode_text_backslash_zone_4():
+    _text = "%%255 0 0%N\\%%\n%%100 0 0%HELLO%"
+    decoded_dext, zones, colors = a_text.decode_text(_text, DEFAULT_COLOR)
+    assert zones == [2, 3, 8]
+
+def test_decode_text_backslash_zones_5():
+    _text = "%%255 0 0%N\\%\\%%\n%%100 0 0%HELLO%"
+    decoded_dext, zones, colors = a_text.decode_text(_text, DEFAULT_COLOR)
+    assert zones == [3, 4, 9]
+
 def test_consider_removed_chars_no_change():
     lines = ["Hello There"]
     zones = [6, 11]

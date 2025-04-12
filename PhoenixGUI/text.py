@@ -207,6 +207,9 @@ class Text(MenuObject):
         # the total number of chars that are not part of the actual text
         chars_to_be_ignored = 0
 
+        # total amount of preventative backslashes
+        amount_of_backslashes = 0
+
         for i, char in enumerate(text):
             if (char == '%' and i+1<len(text) 
                 and text[i+1] == '%' 
@@ -214,7 +217,7 @@ class Text(MenuObject):
 
                 # end previous nozone
                 if i > 0 and i-1 not in to_skip:
-                    zone_borders.append(len(decoded_text))
+                    zone_borders.append(len(decoded_text)-amount_of_backslashes)
                     colors.append(default_color)
 
                 # color_text is the text that holds the RGB value.
@@ -233,7 +236,10 @@ class Text(MenuObject):
                     raise Exception("Can't find closing % in text color insertion "\
                                     f"at this text: {self.text}")
 
-                zone_borders.append(i+zone_text_length-1-chars_to_be_ignored)
+                amount_of_backslashes += \
+                    text[i:i+color_text_length+zone_text_length+1].count("\\%")
+                zone_borders.append(i+zone_text_length-1-chars_to_be_ignored \
+                                    -amount_of_backslashes)
                 decoded_text += text[i+color_text_length+2: \
                                      i+color_text_length+zone_text_length+1]
                 to_skip.extend(range(i, i+color_text_length+zone_text_length+2))
@@ -243,8 +249,9 @@ class Text(MenuObject):
                 decoded_text += char
 
         # end last nozone
-        if len(zone_borders) == 0 or len(decoded_text) > zone_borders[-1]:
-            zone_borders.append(len(decoded_text))
+        if len(zone_borders) == 0 or \
+            len(decoded_text)-amount_of_backslashes > zone_borders[-1]:
+            zone_borders.append(len(decoded_text)-amount_of_backslashes)
             colors.append(default_color)
 
         # purge decoded_text of preventative backslashes
