@@ -225,9 +225,13 @@ class Text(MenuObject):
 
                 # zone_text is the actual text in the zone.
                 zone_text_length = 1
-                while not (text[i+color_text_length+zone_text_length+1] == '%' 
-                           and text[i+color_text_length+zone_text_length] != "\\"):
-                    zone_text_length += 1
+                try:
+                    while not (text[i+color_text_length+zone_text_length+1] == '%'
+                               and text[i+color_text_length+zone_text_length] != "\\"):
+                        zone_text_length += 1
+                except IndexError:
+                    raise Exception("Can't find closing % in text color insertion "\
+                                    f"at this text: {self.text}")
 
                 zone_borders.append(i+zone_text_length-1-chars_to_be_ignored)
                 decoded_text += text[i+color_text_length+2: \
