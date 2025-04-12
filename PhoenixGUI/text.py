@@ -17,6 +17,9 @@ class Zone:
         # returns all property values in a tuple, except origin
         return tuple(vars(self).values())[:3]
 
+    def __repr__(self):
+        return f"{self.end_point} {self.y_level} {self.color} {self.origin}"
+
 
 class Text(MenuObject):
     def __init__(self, 
@@ -80,6 +83,9 @@ class Text(MenuObject):
         zone_borders = self.consider_removed_chars(text_pieces, 
                                                    zone_borders, 
                                                    original_text)
+
+        zone_borders, colors = self.remove_duplicate_zones(zone_borders,
+                                                           colors)
 
         zones = self.apply_text_colour_insertion(text_pieces, zone_borders,
                                                  colors, self.color)
@@ -279,6 +285,17 @@ class Text(MenuObject):
                 zone_borders[i] -= 1
 
         return zone_borders
+
+    def remove_duplicate_zones(self, zone_borders, colors):
+        i=0
+        while i < len(zone_borders)-1:
+            if zone_borders[i] == zone_borders[i+1]:
+                del zone_borders[i+1]
+                del colors[i+1]
+            else:
+                i+=1
+
+        return zone_borders, colors
 
     def apply_text_colour_insertion(self, lines, zone_borders, 
                                     colors, default_color) -> list[Zone]:
