@@ -246,7 +246,7 @@ class MenuHandler:
                     self.selected_slidebar.progress)
 
         hovered_object = self._get_hovered_object(current_menu, mouse_pos)
-        if hovered_object is not None and hovered_object.hover_text is not None:
+        if hovered_object is not None and hovered_object.hover_text:
             self.menues[HOVER_MENU_ID].activate()
             self._update_hover_menu(hovered_object.hover_text, mouse_pos)
         else:
