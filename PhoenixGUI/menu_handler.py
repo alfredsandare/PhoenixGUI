@@ -4,7 +4,7 @@ import importlib
 
 from .text_input import TextInput
 from .menu import Menu
-from .util import is_button, snake_case_to_pascal_case, sum_multiple_vectors
+from .util import is_button, snake_case_to_pascal_case, sum_multiple_vectors, sum_two_vectors
 from .radiobutton import Radiobutton
 from .slidebar import Slidebar
 from .dropdown import Dropdown
@@ -21,7 +21,8 @@ class MenuHandler:
                  hover_menu_width=200,
                  hover_menu_text_font=None,
                  hover_menu_text_size=None,
-                 hover_menu_text_offset=None):
+                 hover_menu_text_offset=None,
+                 hover_menu_offset=None):
 
         self.ui_size = ui_size
         self.menues: dict[str, Menu] = {}
@@ -45,6 +46,8 @@ class MenuHandler:
         menu.IS_HOVER_MENU = True
         self.hover_menu_width = hover_menu_width
         self.hover_menu_text_offset = hover_menu_text_offset
+        self.hover_menu_offset = [0, 0] if hover_menu_offset is None \
+            else hover_menu_offset
 
         text_pos = [0, 0]
         if hover_menu_text_offset is not None:
@@ -419,7 +422,8 @@ class MenuHandler:
 
     def _update_hover_menu(self, text, mouse_pos):
         hover_menu = self.menues[HOVER_MENU_ID]
-        hover_menu.change_property("pos", mouse_pos)
+        menu_pos = sum_two_vectors(mouse_pos, self.hover_menu_offset)
+        hover_menu.change_property("pos", menu_pos)
 
         text_obj: Text = hover_menu.objects[HOVER_MENU_TEXT_OBJ_ID]
         if text_obj.text != text:
