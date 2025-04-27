@@ -68,8 +68,9 @@ class Text(MenuObject):
         
         font_height = font.size('H')[1]
 
+        text = self.text if self.text[-1] != '\n' else self.text[:-1]
         original_text, zone_borders, colors = \
-            self.decode_text(self.text, self.color)
+            self.decode_text(text, self.color)
 
         # split the text into lines where the user hardcoded linebreaks.
         text_pieces = original_text.split('\n')
