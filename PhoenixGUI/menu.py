@@ -1,5 +1,6 @@
 from PhoenixGUI.consts import HOVER_MENU_MAX_HEIGHT
 from PhoenixGUI.dropdown import Dropdown
+from PhoenixGUI.radiobutton import Radiobutton
 from .text_input import TextInput
 from .menu_object import MenuObject
 from .hitbox import Hitbox
@@ -252,3 +253,9 @@ class Menu:
 
     def has_bg(self):
         return "_bg" in self.objects.keys()
+
+    def get_radiobutton_group_selection_text(self, group):
+        for key, obj in self.objects.items():
+            if isinstance(obj, Radiobutton) and obj.group == group \
+                and obj.is_checked:
+                return obj.text

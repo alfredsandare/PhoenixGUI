@@ -19,6 +19,7 @@ class Dropdown(MenuObject):
                  anchor="nw",
                  layer=0,
                  hover_text=None,
+                 command = None,
 
                  text_color=(255, 255, 255),
                  text_hover_color=None,
@@ -39,6 +40,7 @@ class Dropdown(MenuObject):
         self.options = options
         self.selected_option = selected_option
         self.text_justify = text_justify
+        self.command = command
 
         self.text_color = text_color
         self.text_hover_color = text_hover_color
@@ -147,6 +149,9 @@ class Dropdown(MenuObject):
 
         self.selected_option = self.options[self.hovered_option_index-1]
         self.is_dropped_down = False
+
+        if callable(self.command):
+            self.command(self.selected_option)
 
     def handle_mousemotion(self, mouse_pos):
         # because this function is called, the mouse is hovering over this object.
