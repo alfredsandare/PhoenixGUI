@@ -22,6 +22,9 @@ class PieChart(MenuObject):
         for i, slice_share in enumerate(self.slices):
             points = [(self.radius, self.radius)]
             resolution = round(2 * math.pi * self.radius * slice_share)
+            if resolution == 0:
+                continue
+
             for j in range(resolution):
                 angle = (sum_of_previous_slices + slice_share*j/resolution) * 2 * math.pi
                 x = self.radius + int(self.radius * math.cos(angle))
