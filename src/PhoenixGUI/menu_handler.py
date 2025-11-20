@@ -214,7 +214,9 @@ class MenuHandler:
             current_menu.set_scroll_by_progress(current_button.progress)
 
     def _mousebuttonup_event(self, current_button, current_menu):
-        self._undropdown_dropdowns(current_button, current_menu)
+        if current_menu is not None:
+            self._undropdown_dropdowns(current_button, current_menu)
+
         if current_button is not None and current_button.state == "click":
             current_button.state = "hover"
             current_button.is_selected = False
