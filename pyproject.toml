@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >= 1.26", "pygame >= 2.6.1"]
+requires = ["hatchling >= 1.26"]
 build-backend = "hatchling.build"
 
 [project]
@@ -17,6 +17,7 @@ classifiers = [
 ]
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
+dependencies = ["pygame"]
 
 [project.urls]
 Homepage = "https://github.com/alfredsandare/PhoenixGUI"
